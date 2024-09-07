@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        p {
+            font-size: 16px;
+        }
+        .info {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #4CAF50;
+            margin: 20px 0;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #888888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>登入通知</h1>
+        <p>親愛的用戶，</p>
+        <p>我們注意到您的帳戶於以下時間進行了一次登入：</p>
+        <div class="info">
+            <p><strong>時間：</strong>{{ login_time }}</p>
+            <p><strong>IP 位址：</strong>{{ ip_address }}</p>
+            <p><strong>裝置：</strong>{{ device_info }}</p>
+        </div>
+        <p>如果這是您本人操作，您可以忽略此郵件。</p>
+        <p>若您未進行此次登入，我們強烈建議您立即<a href="https://unknows/forgot_password/">重設您的密碼</a>以確保帳戶安全。</p>
+        <p>感謝您的理解與配合。</p>
+        <p>敬祝安好，</p>
+        <p>國立高雄科技大學_智慧商務系_系友會</p>
+        <div class="footer">
+            <p>此郵件為系統自動發送，請勿回覆。</p>
+            <p>&copy; {{ current_year }} 國立高雄科技大學_智慧商務系_系友會. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
