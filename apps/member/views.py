@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status , permissions 
+from rest_framework import viewsets, status , permissions
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
 
@@ -53,14 +53,36 @@ class MemberViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['patch'])
-    def deactivate(self, request):
+    def switch_active(self, request):
         """
         停用登入使用者的帳號 (將 is_active 設為 False)
         """
-        member = get_object_or_404(Member, private=request.user)
-        member.private.is_active = False
-        member.save()
-        return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
+        try:
+            member_id = request.data.get("member_id")
+            ob = Member.objects.get(id=member_id)
+            ob.private.is_active = not ob.private.is_active
+            ob.save()
+        except Member.DoesNotExist:
+            return Response({"message":"未知使用者"},status=404)
+        except Exception as e:
+            return Response({"message":f"未知錯誤:{e}"},status=500)
+
+    @action(detail=False, methods=['patch'])
+    def switch_paid(self, request):
+        """
+        因未繳費關閉帳號及記錄
+        """
+        try:
+            member_id = request.data.get("member_id")
+            ob = Member.objects.get(id=member_id)
+            ob.is_paid = not ob.is_paid
+            ob.private.is_active = not ob.private.is_active
+            ob.save()
+            return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
+        except Member.DoesNotExist:
+            return Response({"message":"未知使用者"},status=404)
+        except Exception as e:
+            return Response({"message":f"未知錯誤:{e}"},status=500)
 
 
 class MemberListView(ListAPIView):

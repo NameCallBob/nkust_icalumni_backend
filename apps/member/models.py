@@ -56,14 +56,14 @@ class Member(models.Model):
     is_paid = models.BooleanField(default=False)
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-    photo = models.ImageField(upload_to='static/', blank=True, null=True)
+    photo = models.ImageField(upload_to='static/member/', blank=True, null=True)
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
     graduate = models.ForeignKey(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.name} - {self.position}"
-    
+
     @staticmethod
     def search_members(name=None, gender=None, school=None, position=None, is_paid=None):
         """
@@ -90,4 +90,3 @@ class Member(models.Model):
             query &= Q(is_paid=is_paid)
 
         return Member.objects.filter(query)
-

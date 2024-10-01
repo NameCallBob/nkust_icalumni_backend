@@ -18,6 +18,7 @@ import os
 
 # 匯入環境變數
 load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,7 +29,7 @@ AUTH_USER_MODEL = 'Private.Private'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SERCRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -51,12 +52,20 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
 
+    # 使用者相關
     "apps.private.apps.PrivateConfig",
     "apps.member.apps.MemberConfig",
     "apps.company.apps.CompanyConfig",
     "apps.product.apps.ProductConfig",
-    
+    # 功能
+    "apps.article.apps.ArticleConfig",
+    "apps.picture.apps.PictureConfig",
+    "apps.recruit.apps.RecruitConfig",
+    "apps.notice.apps.NoticeConfig",
+    # swagger or redoc
     "drf_yasg",
+    # for article release
+    'ckeditor',
 
 
 

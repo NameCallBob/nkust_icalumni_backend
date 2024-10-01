@@ -1,7 +1,5 @@
 from django.db import models
 from apps.company.models import Company
-# Create your models here.
-
 
 class Recruit(models.Model):
     company = models.ForeignKey(Company,on_delete=models.CASCADE)

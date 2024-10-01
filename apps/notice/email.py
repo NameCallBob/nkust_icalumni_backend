@@ -28,7 +28,7 @@ def send_order_email(user_email, context, subject_template, html_template):
         subject_template: 主題模板，包含需要格式化的部分
         html_template: HTML內容模板名稱
 
-    return: 
+    return:
         Boolean 是否寄送成功
     """
 
@@ -53,7 +53,7 @@ def send_order_email(user_email, context, subject_template, html_template):
 
 
 class email:
-    
+
     def member_account_created(user_email):
         """帳號已被創造通知"""
         subject_template = f"『 歡迎加入智慧商務系 系友會！ 』帳號已創建"
@@ -62,7 +62,7 @@ class email:
         }
         html_template = "welcome.html"
         return send_order_email(user_email, context, subject_template, html_template)
-    
+
     def forgot_password(user_email, context):
         """忘記密碼寄送驗證碼"""
         subject_template = f"『 智慧商務系系友會 』忘記密碼驗證碼"
@@ -76,13 +76,9 @@ class email:
         """登入"""
         subject_template = f"『 智慧商務系系友會 』帳號已登入"
         context['current_year'] = datetime.now().year
-        
+
         html_template = "loginNotice.html"
         return send_order_email(user_email, context, subject_template, html_template)
-    
-
-
-print()
 
 if __name__ == "__main__":
     # 測試使用

@@ -5,6 +5,13 @@ class Industry(models.Model):
     title = models.CharField(max_length=50,null=False)
     intro = models.TextField()
 
+    class Meta:
+        verbose_name = "產業列"
+        verbose_name_plural = "產業列"
+
+    def __str__(self):
+        return self.title
+
 class Company(models.Model):
     name = models.CharField(max_length=255, verbose_name="公司名稱")
     member = models.ForeignKey(Member , on_delete=models.CASCADE)
@@ -18,7 +25,7 @@ class Company(models.Model):
     address = models.TextField(verbose_name="公司地點", null=True, blank=True)
     email = models.EmailField(verbose_name="聯絡信箱", null=True, blank=True)
     phone_number = models.CharField(max_length=20, verbose_name="聯絡電話", null=True, blank=True)
-    
+
     class Meta:
         verbose_name = "公司"
         verbose_name_plural = "公司"

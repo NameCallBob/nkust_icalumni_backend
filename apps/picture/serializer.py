@@ -1,17 +1,30 @@
 from rest_framework import serializers
-from apps.picture.models import PromotionAd,ContinuousAd,OtherImage
+from apps.picture.models import SelfImage, CompanyImage, ProductImage, SlideImage
+from apps.deal_base64 import Base64ImageField
+class SelfImageSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
 
-class PromotionAdSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PromotionAd
+        model = SelfImage
         fields = '__all__'
 
-class ContinuousAdSerializer(serializers.ModelSerializer):
+class CompanyImageSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
     class Meta:
-        model = ContinuousAd
+        model = CompanyImage
         fields = '__all__'
 
-class OtherImageSerializer(serializers.ModelSerializer):
+class ProductImageSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
     class Meta:
-        model = OtherImage
+        model = ProductImage
+        fields = '__all__'
+
+class SlideImageSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = SlideImage
         fields = '__all__'
