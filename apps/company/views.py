@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status , permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from apps.member.models import Member
@@ -51,7 +51,7 @@ class CompanyViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         company.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 
 from django.db.models import Q
 from rest_framework import generics
@@ -60,6 +60,8 @@ from apps.company.serializer import CompanySerializer
 
 class CompanyListView(generics.ListAPIView):
     serializer_class = CompanySerializer
+    authentication_classes=[]
+    permission_classes=[permissions.AllowAny]
 
     def get_queryset(self):
         queryset = Company.objects.all()
@@ -88,7 +90,7 @@ class CompanyListView(generics.ListAPIView):
             query &= Q(phone_number__icontains=phone_number)
 
         return queryset.filter(query)
-    
+
 
 class IndustryViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -130,7 +132,7 @@ class IndustryViewSet(viewsets.ViewSet):
         try:
             if request.data.get("id",'') == '':
                 return Response(status=400,data="無參數")
-            industry = Industry.objects.get(id=request.data.get('id'))        
+            industry = Industry.objects.get(id=request.data.get('id'))
         except Industry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         industry.delete()

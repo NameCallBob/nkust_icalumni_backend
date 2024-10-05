@@ -17,7 +17,7 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = '__all__'
-    
+
     def get_notice_type(self, instance):
         notice = getattr(instance, 'notice', None)
         if notice:
@@ -27,7 +27,7 @@ class MemberSerializer(serializers.ModelSerializer):
                 "promo": notice.promo_notifications,
             }
         return None
-    
+
     def get_position(self, instance):
         position = getattr(instance, 'position', None)
         if position:
@@ -35,7 +35,7 @@ class MemberSerializer(serializers.ModelSerializer):
                 "title": position.title,
             }
         return None
-    
+
     def get_graduate(self, instance):
         graduate = getattr(instance, 'graduate', None)
         if graduate:
@@ -86,3 +86,28 @@ class MemberSerializer(serializers.ModelSerializer):
 
         except Exception as e:
             raise serializers.ValidationError(f"An error occurred during creation: {str(e)}")
+
+class MemberSimpleSerializer(serializers.ModelSerializer):
+        position = serializers.SerializerMethodField()
+        graduate = serializers.SerializerMethodField()
+
+        class Meta:
+            model = Member
+            fields = ['name','gender','intro','photo','position','graduate']
+
+        def get_position(self, instance):
+            position = getattr(instance, 'position', None)
+            if position:
+                return {
+                    "title": position.title,
+                }
+            return None
+
+        def get_graduate(self, instance):
+            graduate = getattr(instance, 'graduate', None)
+            if graduate:
+                return {
+                    "school": graduate.school,
+                    "grade": graduate.grade
+                }
+            return None

@@ -65,7 +65,7 @@ class Member(models.Model):
         return f"{self.name} - {self.position}"
 
     @staticmethod
-    def search_members(name=None, gender=None, school=None, position=None, is_paid=None):
+    def search_members(name=None, gender=None, school=None, position=None, is_paid=None , intro=None):
         """
         搜尋會員資料，可以根據名字、性別、學校、職位和是否繳費進行篩選。
 
@@ -74,6 +74,7 @@ class Member(models.Model):
         :param school: 畢業學校的名稱 (部分或完整)
         :param position: 職位名稱 (部分或完整)
         :param is_paid: 是否繳費
+        :param intro: 自我介紹
         :return: 篩選後的會員 QuerySet
         """
         query = Q()
@@ -86,6 +87,8 @@ class Member(models.Model):
             query &= Q(graduate__school__icontains=school)
         if position:
             query &= Q(position__title__icontains=position)
+        if intro:
+            query &= Q(intro__icontains=position)
         if is_paid is not None:
             query &= Q(is_paid=is_paid)
 

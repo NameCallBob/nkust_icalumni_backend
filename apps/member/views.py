@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from apps.member.models import Member
-from apps.member.serializer import MemberSerializer
+from apps.member.serializer import MemberSerializer , MemberSimpleSerializer
 from django.shortcuts import get_object_or_404
 
 class MemberViewSet(viewsets.ViewSet):
@@ -100,3 +100,20 @@ class MemberListView(ListAPIView):
 
         # 使用 Member 模型中已定義的 search_members 方法
         return Member.search_members(name=name, gender=gender, school=school, position=position, is_paid=is_paid)
+
+
+class MemberListViewForAll(ListAPIView):
+    """查詢會員使用"""
+    serializer_class = MemberSimpleSerializer
+    permission_classes=[permissions.AllowAny]
+    authentication_classes=[JWTAuthentication]
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name', None)
+        intro = self.request.query_params.get('intro', None)
+        position = self.request.query_params.get('position', None)
+
+        # 使用 Member 模型中已定義的 search_members 方法
+        return Member.search_members(name=name,
+                                     intro=intro,
+                                     position=position)
