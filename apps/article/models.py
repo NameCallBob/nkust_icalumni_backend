@@ -21,8 +21,8 @@ class ArticleImage(models.Model):
     ]
 
     article = models.ForeignKey(Article, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='article_images/')
+    image = models.ImageField(upload_to='static/article/')
     pic_type = models.CharField("圖片大小", max_length=5, choices=IMAGE_SIZE_CHOICES, default='small')
 
     def __str__(self):
-        return f"Image for {self.article.title} ({self.get_size_display()})"
+        return f"Image for {self.article.title}"

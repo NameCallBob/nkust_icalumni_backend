@@ -1,4 +1,6 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status , permissions
+from rest_framework.decorators import action , authentication_classes , permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from apps.article.models import Article
 from apps.article.serializer import ArticleSerializer
@@ -9,13 +11,15 @@ class ArticleViewSet(viewsets.ViewSet):
     """
 
     # 查詢所有文章
-    def list(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def all(self, request):
         queryset = Article.objects.all()
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
 
     # 查詢單一文章
-    def retrieve(self, request, pk=None):
+    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def get_one(self, request, pk=None):
         try:
             article = Article.objects.get(pk=pk)
         except Article.DoesNotExist:
@@ -29,7 +33,8 @@ class ArticleViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     # 創建文章和圖片
-    def create(self, request):
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def new(self, request):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,7 +42,8 @@ class ArticleViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 更新文章和圖片
-    def update(self, request, pk=None):
+    @action(methods=['patch'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def change(self, request, pk=None):
         try:
             article = Article.objects.get(pk=pk)
         except Article.DoesNotExist:
@@ -50,7 +56,8 @@ class ArticleViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 刪除文章
-    def destroy(self, request, pk=None):
+    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request, pk=None):
         try:
             article = Article.objects.get(pk=pk)
         except Article.DoesNotExist:
