@@ -14,6 +14,7 @@ class Recruit(models.Model):
     click = models.IntegerField(default=0)
     deadline = models.DateField()
     release_date = models.DateField(auto_now_add=True)
+    active = models.BooleanField("是否發布",default=True)
 
 # 圖片資料庫
 class RecruitImage(models.Model):

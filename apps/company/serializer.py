@@ -7,7 +7,7 @@ class IndustrySerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'intro']  # 包含所有需要的欄位
 
 class CompanySerializer(serializers.ModelSerializer):
-    industry = IndustrySerializer()  # 嵌套 IndustrySerializer 顯示完整的行業資訊
+    industry = serializers.PrimaryKeyRelatedField(queryset=Industry.objects.all())  # 使用主鍵來關聯行業
 
     class Meta:
         model = Company
@@ -15,23 +15,19 @@ class CompanySerializer(serializers.ModelSerializer):
             'id', 'name', 'member', 'industry', 'positions', 'description',
             'products', 'product_description', 'photo', 'website',
             'address', 'email', 'phone_number'
-        ]  # 包含所有的欄位
+        ]
 
     def create(self, validated_data):
-        # 分離出 industry 的資料
-        industry_data = validated_data.pop('industry')
-        # 確認是否需要創建或取得已存在的行業
-        industry, created = Industry.objects.get_or_create(**industry_data)
+        # industry 已經是通過 ID 關聯，因此可以直接使用
+        industry = validated_data.pop('industry')
         # 建立公司
         company = Company.objects.create(industry=industry, **validated_data)
         return company
 
     def update(self, instance, validated_data):
         # 處理 industry 的修改
-        industry_data = validated_data.get('industry', None)
-        if industry_data:
-            # 確認是否需要創建或取得已存在的行業
-            industry, created = Industry.objects.get_or_create(**industry_data)
+        industry = validated_data.get('industry', None)
+        if industry:
             instance.industry = industry
 
         # 逐步處理其他欄位，使用 get 方法來支援部分更新

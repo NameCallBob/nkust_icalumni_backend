@@ -1,13 +1,13 @@
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from apps.picture.models import SelfImage, CompanyImage, ProductImage, SlideImage
 from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer, SlideImageSerializer
 
-# SelfImageViewSet
+# drf_yasg
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 class SelfImageViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -89,7 +89,6 @@ class SelfImageViewSet(viewsets.ViewSet):
         self_image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# CompanyImageViewSet
 class CompanyImageViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -171,7 +170,8 @@ class CompanyImageViewSet(viewsets.ViewSet):
         company_image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# ProductImageViewSet
+
+
 class ProductImageViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 

@@ -4,7 +4,7 @@ import base64
 from django.core.files.base import ContentFile
 
 class ArticleImageSerializer(serializers.ModelSerializer):
-    image = serializers.CharField(write_only=True)  # Base64 image input field
+    image = serializers.CharField()  # Base64 image input field
     pic_type = serializers.ChoiceField(choices=(("small", "Small"), ("large", "Large")))
 
     class Meta:
@@ -57,3 +57,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             ArticleImageSerializer().create({**image_data, 'article': instance})
 
         return instance
+
+class ArticleSerializer_TableOutput(serializers.ModelSerializer):
+        class Meta:
+            model = Article
+            fields = ['id', 'title', 'publish_at']
