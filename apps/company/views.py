@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status , permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action , authentication_classes , permission_classes
 from apps.member.models import Member
 from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer
@@ -35,6 +35,7 @@ class CompanyListView(generics.ListAPIView):
         """
         queryset = Company.objects.all()
         name = self.request.query_params.get('name', None)
+        industry = self.request.query_params.get('industry', None)
         member = self.request.query_params.get('member', None)
         positions = self.request.query_params.get('positions', None)
         products = self.request.query_params.get('products', None)
@@ -57,6 +58,8 @@ class CompanyListView(generics.ListAPIView):
             query &= Q(email__icontains=email)
         if phone_number:
             query &= Q(phone_number__icontains=phone_number)
+        if industry:
+            query &= Q(industry = industry)
 
         return queryset.filter(query)
 
@@ -135,7 +138,20 @@ class CompanyViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         company.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+    
+    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
+    def mostView(self, request):
+        # Fetch top 10 companies with the highest click counts
+        top_companies = Company.objects.order_by('-clicks')[:10]
+        serializer = CompanySerializer(top_companies)
+        return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
+    def newUpload(self, request):
+        # Fetch latest companies ordered by upload time (created_at)
+        new_companies = Company.objects.order_by('-created_at')[:10]
+        serializer = CompanySerializer(new_companies)
+        return Response(serializer.data)
 
 class IndustryViewSet(viewsets.ViewSet):
     @swagger_auto_schema(

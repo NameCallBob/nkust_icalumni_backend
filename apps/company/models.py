@@ -26,6 +26,7 @@ class Company(models.Model):
     website = models.URLField(max_length=500, verbose_name="公司網站連結")
     address = models.TextField(verbose_name="公司地點", null=True, blank=True)
     email = models.EmailField(verbose_name="聯絡信箱", null=True, blank=True)
+    clicks = models.BigIntegerField("點擊次數",default=0)
     phone_number = models.CharField(max_length=20, verbose_name="聯絡電話", null=True, blank=True)
 
     class Meta:
@@ -88,3 +89,4 @@ class Company(models.Model):
         )
 
         return cls.objects.filter(query)
+    
