@@ -2,7 +2,7 @@
 from apps.member.models import Member
 from django.db import models
 from django.db.models import Q
-
+from django.utils import timezone
 class Industry(models.Model):
     title = models.CharField(max_length=50, null=False)
     intro = models.TextField()
@@ -28,6 +28,7 @@ class Company(models.Model):
     email = models.EmailField(verbose_name="聯絡信箱", null=True, blank=True)
     clicks = models.BigIntegerField("點擊次數",default=0)
     phone_number = models.CharField(max_length=20, verbose_name="聯絡電話", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True,default=timezone.now())
 
     class Meta:
         verbose_name = "公司"

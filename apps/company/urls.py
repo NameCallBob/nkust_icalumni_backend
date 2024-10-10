@@ -4,7 +4,7 @@ from django.urls import path
 
 router = SimpleRouter()
 router.register(r'data', views.CompanyViewSet,basename="company_dataMaintaince")
-# router.register(r'search',views.CompanyListView.as_view,basename="company_search")
+router.register(r'industry',views.IndustryViewSet,basename="industry_modify")
 
 urlpatterns = router.urls
 

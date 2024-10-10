@@ -34,7 +34,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["140.133.74.162"]
 
 
 # Application definition
@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     "drf_yasg",
     # for article release
     'ckeditor',
+    # CORS
+    'corsheader',
 
 
 
@@ -78,6 +80,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # CORS
     'corsheaders.middleware.CorsMiddleware',
+    # 照片
+    'IC_alumni.middleware.CORSMiddlewareForStaticFiles',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -209,10 +214,10 @@ STATIC_ROOT = BASE_DIR / 'static_files'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS setting
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000/"
-]
+# CORS setting_開發完後要打開
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000/"
+# ]
 
 CORS_ALLOW_METHODS = [
     'GET',
@@ -226,7 +231,7 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = [
     'Accept',
     'accept-encoding',
-    'authorization',
+    'Authorization',
     'Content-Type',
     'dnt',
     'origin',

@@ -24,7 +24,7 @@ class CompanyImage(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='staic/product_image/')
+    image = models.ImageField(upload_to='static/product_image/')
     title = models.CharField(max_length=255,null=True)
     description = models.TextField(blank=True, null=True)
     priority = models.IntegerField("優先度",default=0)
@@ -33,7 +33,7 @@ class ProductImage(models.Model):
 
 class SlideImage(models.Model):
     type = models.TextField(default="None", null=False)
-    image = models.ImageField(upload_to='staic/slide/')
+    image = models.ImageField(upload_to='static/slide/')
     title = models.CharField(max_length=255,null=True)
     description = models.TextField(blank=True, null=True)
     active = models.BooleanField("是否使用")

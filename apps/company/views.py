@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action , authentication_classes , permission_classes
 from apps.member.models import Member
 from apps.company.models import Company , Industry
-from apps.company.serializer import CompanySerializer ,IndustrySerializer
+from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer
 
 from rest_framework import generics
 from django.db.models import Q
@@ -64,11 +64,13 @@ class CompanyListView(generics.ListAPIView):
         return queryset.filter(query)
 
 class CompanyViewSet(viewsets.ViewSet):
+    permission_classes=[permissions.IsAuthenticated]
     @swagger_auto_schema(
         operation_description="列出所有公司資料",
         responses={200: '成功返回公司列表'}
     )
-    def list(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[])
+    def all(self, request):
         queryset = Company.objects.all()
         serializer = CompanySerializer(queryset, many=True)
         return Response(serializer.data)
@@ -143,17 +145,28 @@ class CompanyViewSet(viewsets.ViewSet):
     def mostView(self, request):
         # Fetch top 10 companies with the highest click counts
         top_companies = Company.objects.order_by('-clicks')[:10]
-        serializer = CompanySerializer(top_companies)
+        serializer = SimpleCompanySerializer(top_companies,many=True)
         return Response(serializer.data)
     
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def newUpload(self, request):
         # Fetch latest companies ordered by upload time (created_at)
         new_companies = Company.objects.order_by('-created_at')[:10]
-        serializer = CompanySerializer(new_companies)
+        serializer = SimpleCompanySerializer(new_companies,many=True)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
+    def randomCompanies(self, request):
+        # Fetch 10 random companies
+        random_companies = Company.objects.order_by('?')[:10]
+        serializer = SimpleCompanySerializer(random_companies, many=True)
+        return Response(serializer.data)
+
+
 class IndustryViewSet(viewsets.ViewSet):
+    
+    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    
     @swagger_auto_schema(
         operation_description="列出所有行業資料",
         responses={200: '成功返回行業列表'}

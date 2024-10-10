@@ -45,3 +45,15 @@ class CompanySerializer(serializers.ModelSerializer):
         # 保存修改
         instance.save()
         return instance
+
+class SimpleCompanySerializer(serializers.ModelSerializer):
+    member_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Company
+        fields = [
+            'id', 'name', 'member_name','photo'
+        ]
+        
+    def get_member_name(self,obj):
+        return obj.member.name
