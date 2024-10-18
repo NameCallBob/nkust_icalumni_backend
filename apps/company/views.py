@@ -4,6 +4,7 @@ from rest_framework.decorators import action , authentication_classes , permissi
 from apps.member.models import Member
 from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework import generics
 from django.db.models import Q
@@ -69,7 +70,7 @@ class CompanyViewSet(viewsets.ViewSet):
         operation_description="列出所有公司資料",
         responses={200: '成功返回公司列表'}
     )
-    @action(methods=['get'],detail=False,authentication_classes=[])
+    @action(methods=['get'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def all(self, request):
         queryset = Company.objects.all()
         serializer = CompanySerializer(queryset, many=True)
@@ -83,6 +84,7 @@ class CompanyViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def create(self, request):
         request.data['private'] = request.user.id
         serializer = CompanySerializer(data=request.data)
@@ -98,7 +100,8 @@ class CompanyViewSet(viewsets.ViewSet):
             404: '公司不存在'
         }
     )
-    def retrieve(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def selfInfo(self, request):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:
@@ -115,7 +118,8 @@ class CompanyViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def update(self, request):
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def chagne(self, request):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:
@@ -133,7 +137,8 @@ class CompanyViewSet(viewsets.ViewSet):
             404: '公司不存在'
         }
     )
-    def destroy(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:

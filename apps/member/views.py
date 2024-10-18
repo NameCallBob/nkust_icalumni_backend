@@ -30,7 +30,8 @@ class MemberViewSet(viewsets.ViewSet):
         operation_description="取得登入使用者的資料",
         responses={200: '成功返回使用者資料'}
     )
-    def retrieve(self, request):
+    @action(methods=['get'] , detail=False , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def selfInfo(self, request):
         """
         取得登入使用者的資料
         """
@@ -46,7 +47,8 @@ class MemberViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def update(self, request):
+    @action(methods=['post'] , detail=False , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def change(self, request):
         """
         更新登入使用者的資料 (完整更新)
         """
@@ -65,7 +67,8 @@ class MemberViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def partial_update(self, request):
+    @action(methods=['patch'] , detail=False , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def partial_change(self, request):
         """
         部分更新登入使用者的資料 (PATCH)
         """
@@ -90,7 +93,7 @@ class MemberViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'])
+    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def switch_active(self, request):
         """
         停用登入使用者的帳號 (將 is_active 設為 False)
@@ -119,7 +122,7 @@ class MemberViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'])
+    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def switch_paid(self, request):
         """
         因未繳費關閉帳號及記錄
