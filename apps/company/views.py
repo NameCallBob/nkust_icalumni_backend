@@ -14,6 +14,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class CompanyListView(generics.ListAPIView):
+    """For管理端的公司查詢"""
     serializer_class = CompanySerializer
 
     @swagger_auto_schema(
@@ -65,6 +66,9 @@ class CompanyListView(generics.ListAPIView):
         return queryset.filter(query)
 
 class CompanyViewSet(viewsets.ViewSet):
+    """
+    公司資料查詢
+    """
     permission_classes=[permissions.IsAuthenticated]
     @swagger_auto_schema(
         operation_description="列出所有公司資料",
@@ -119,7 +123,7 @@ class CompanyViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
-    def chagne(self, request):
+    def selfChagne(self, request):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:
@@ -137,10 +141,11 @@ class CompanyViewSet(viewsets.ViewSet):
             404: '公司不存在'
         }
     )
-    @action(methods=['get'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def delete(self, request):
         try:
-            company = Company.objects.get(member=Member.objects.get(private=request.user))
+            id = request.data.get("id")
+            company = Company.objects.get(member=Member.objects.get(private=id))
         except Company.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         company.delete()
@@ -167,9 +172,10 @@ class CompanyViewSet(viewsets.ViewSet):
         serializer = SimpleCompanySerializer(random_companies, many=True)
         return Response(serializer.data)
 
-
 class IndustryViewSet(viewsets.ViewSet):
-    
+    """
+    公司類別CRUD
+    """
     permission_classes=[permissions.IsAuthenticatedOrReadOnly]
     
     @swagger_auto_schema(
@@ -189,7 +195,8 @@ class IndustryViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def create(self, request):
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def new(self, request):
         serializer = IndustrySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -207,7 +214,8 @@ class IndustryViewSet(viewsets.ViewSet):
             404: '行業不存在'
         }
     )
-    def retrieve(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def getone(self, request):
         try:
             if request.data.get("id", '') == '':
                 return Response(status=400, data="無參數")
@@ -226,7 +234,8 @@ class IndustryViewSet(viewsets.ViewSet):
             404: '行業不存在'
         }
     )
-    def update(self, request):
+    @action(methods=['put'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def change(self, request):
         try:
             if request.data.get("id", '') == '':
                 return Response(status=400, data="無參數")
@@ -247,7 +256,8 @@ class IndustryViewSet(viewsets.ViewSet):
             404: '行業不存在'
         }
     )
-    def destroy(self, request):
+    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request):
         try:
             if request.data.get("id", '') == '':
                 return Response(status=400, data="無參數")

@@ -10,6 +10,7 @@ class MemberSerializer(serializers.ModelSerializer):
     系友會會員的序列化器
     將 Member 模型轉換為 JSON 格式，並進行驗證和反序列化。
     """
+    email = serializers.SerializerMethodField()
     notice_type = serializers.SerializerMethodField()
     position = serializers.SerializerMethodField()
     graduate = serializers.SerializerMethodField()
@@ -17,6 +18,10 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = '__all__'
+
+    def get_email(self,instance):
+        private = getattr(instance, 'private', None)
+        return private.email
 
     def get_notice_type(self, instance):
         notice = getattr(instance, 'notice', None)
