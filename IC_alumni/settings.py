@@ -34,11 +34,17 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["140.133.74.162"]
+ALLOWED_HOSTS = [
+    # 本機端    
+    "127.0.0.1",
+    # 瓊文伺服器測試用
+    os.getenv("TEST_SERVER_IP"),
+    # 實際上架伺服器
+    # os.getenv("PRODUCTION_SERVER_IP"),
+    ]
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,6 +68,7 @@ INSTALLED_APPS = [
     "apps.picture.apps.PictureConfig",
     "apps.recruit.apps.RecruitConfig",
     "apps.notice.apps.NoticeConfig",
+
     # swagger or redoc
     "drf_yasg",
     # for article release
@@ -245,11 +252,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # SMTP Service
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'noreply_fourMei@gmail.com'
+DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'

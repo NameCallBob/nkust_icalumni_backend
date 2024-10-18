@@ -10,13 +10,15 @@ from apps.member.models import Member
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer
 from django.shortcuts import get_object_or_404
 
+import random ; import string
+
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class MemberViewSet(viewsets.ViewSet):
     """
-    系友會會員的 ViewSet
+    系友會「自身」會員的 ViewSet
     提供以下功能：
     - 取得登入使用者的資料
     - 更新登入使用者的資料 (完整或部分更新)
@@ -78,6 +80,70 @@ class MemberViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MemberAdminViewSet(viewsets.ViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=False, methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def getOne(self, request):
+        """查詢單一使用者"""
+        member_id = request.query_params.get('member_id')
+        try:
+            member = Member.objects.get(id=member_id)
+            serializer = MemberSerializer(member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Member.DoesNotExist:
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def partial_change(self, request):
+        """修改部分使用者資料"""
+        member_id = request.data.get('member_id')
+        try:
+            member = Member.objects.get(id=member_id)
+            serializer = MemberSerializer(member, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Member.DoesNotExist:
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['put'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def change(self, request):
+        """修改使用者資料"""
+        member_id = request.data.get('member_id')
+        try:
+            member = Member.objects.get(id=member_id)
+            serializer = MemberSerializer(member, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Member.DoesNotExist:
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def newUser_basic(self, request):
+        """建立新使用者（全部都填）"""
+        serializer = MemberSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['delete'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request):
+        """刪除使用者"""
+        member_id = request.data.get('member_id')
+        try:
+            member = Member.objects.get(id=member_id)
+            member.delete()
+            return Response({"message": "Member deleted"}, status=status.HTTP_200_OK)
+        except Member.DoesNotExist:
+            return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         operation_description="停用登入使用者的帳號 (將 is_active 設為 False)",
@@ -158,6 +224,10 @@ class MemberListView(ListAPIView):
         responses={200: '成功返回會員資料'}
     )
     def get_queryset(self):
+        # 若為ＩＤ查詢
+        id = self.request.query_params.get('id', None)
+        if id:
+            return Member.objects.get(id=id)
         name = self.request.query_params.get('name', None)
         gender = self.request.query_params.get('gender', None)
         school = self.request.query_params.get('school', None)
