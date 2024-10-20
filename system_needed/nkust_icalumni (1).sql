@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2024-10-19 13:08:22
--- 伺服器版本： 10.4.32-MariaDB
--- PHP 版本： 8.2.12
+-- 產生時間： 2024-10-20 21:08:07
+-- 伺服器版本： 10.4.27-MariaDB
+-- PHP 版本： 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,13 +41,6 @@ CREATE TABLE `article_article` (
   `link` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
---
--- 傾印資料表的資料 `article_article`
---
-
-INSERT INTO `article_article` (`id`, `title`, `content`, `active`, `created_at`, `publish_at`, `expire_at`, `view_count`, `link`) VALUES
-(1, '高科大校友會教師節健行活動', '<p>￼所有老師們教師節快樂</p>', 1, '2024-10-06 19:02:37.035614', '2024-09-28 00:59:00.000000', '2024-10-30 18:59:00.000000', 1, 'https://www.facebook.com/nkustic?locale=zh_TW');
-
 -- --------------------------------------------------------
 
 --
@@ -60,20 +53,6 @@ CREATE TABLE `article_articleimage` (
   `pic_type` varchar(5) NOT NULL,
   `article_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
-
---
--- 傾印資料表的資料 `article_articleimage`
---
-
-INSERT INTO `article_articleimage` (`id`, `image`, `pic_type`, `article_id`) VALUES
-(2, 'static/article/460981117_505441102397413_4513285111100183927_n_Hn8DSte.jpg', 'small', 1),
-(3, 'static/article/461497033_505441049064085_8210974127045321954_n.jpg', 'small', 1),
-(4, 'static/article/461415733_505441075730749_4510248790991197002_n.jpg', 'small', 1),
-(5, 'static/article/461295074_505441082397415_5927974448808684503_n.jpg', 'small', 1),
-(6, 'static/article/461171229_505441129064077_3438465100273537116_n.jpg', 'small', 1),
-(7, 'static/article/461191476_505441022397421_2376097113832818973_n.jpg', 'small', 1),
-(8, 'static/article/461319454_505441059064084_2350791166938593657_n.jpg', 'small', 1),
-(9, 'static/article/461161937_505441005730756_6019999216374866961_n.jpg', 'small', 1);
 
 -- --------------------------------------------------------
 
@@ -164,10 +143,10 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (46, 'Can change member', 12, 'change_member'),
 (47, 'Can delete member', 12, 'delete_member'),
 (48, 'Can view member', 12, 'view_member'),
-(49, 'Can add industry', 13, 'add_industry'),
-(50, 'Can change industry', 13, 'change_industry'),
-(51, 'Can delete industry', 13, 'delete_industry'),
-(52, 'Can view industry', 13, 'view_industry'),
+(49, 'Can add 產業列', 13, 'add_industry'),
+(50, 'Can change 產業列', 13, 'change_industry'),
+(51, 'Can delete 產業列', 13, 'delete_industry'),
+(52, 'Can view 產業列', 13, 'view_industry'),
 (53, 'Can add 公司', 14, 'add_company'),
 (54, 'Can change 公司', 14, 'change_company'),
 (55, 'Can delete 公司', 14, 'delete_company'),
@@ -204,14 +183,18 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (86, 'Can change recruit', 22, 'change_recruit'),
 (87, 'Can delete recruit', 22, 'delete_recruit'),
 (88, 'Can view recruit', 22, 'view_recruit'),
-(89, 'Can add notice', 23, 'add_notice'),
-(90, 'Can change notice', 23, 'change_notice'),
-(91, 'Can delete notice', 23, 'delete_notice'),
-(92, 'Can view notice', 23, 'view_notice'),
+(89, 'Can add contact', 23, 'add_contact'),
+(90, 'Can change contact', 23, 'change_contact'),
+(91, 'Can delete contact', 23, 'delete_contact'),
+(92, 'Can view contact', 23, 'view_contact'),
 (93, 'Can add recruit image', 24, 'add_recruitimage'),
 (94, 'Can change recruit image', 24, 'change_recruitimage'),
 (95, 'Can delete recruit image', 24, 'delete_recruitimage'),
-(96, 'Can view recruit image', 24, 'view_recruitimage');
+(96, 'Can view recruit image', 24, 'view_recruitimage'),
+(97, 'Can add notice', 25, 'add_notice'),
+(98, 'Can change notice', 25, 'change_notice'),
+(99, 'Can delete notice', 25, 'delete_notice'),
+(100, 'Can view notice', 25, 'view_notice');
 
 -- --------------------------------------------------------
 
@@ -230,19 +213,19 @@ CREATE TABLE `company_company` (
   `website` varchar(500) NOT NULL,
   `address` longtext DEFAULT NULL,
   `email` varchar(254) DEFAULT NULL,
-  `phone_number` varchar(20) DEFAULT NULL,
-  `member_id` bigint(20) NOT NULL,
-  `industry_id` bigint(20) NOT NULL,
   `clicks` bigint(20) NOT NULL,
-  `created_at` datetime(6) NOT NULL
+  `phone_number` varchar(20) DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `member_id` bigint(20) NOT NULL,
+  `industry_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
 --
 -- 傾印資料表的資料 `company_company`
 --
 
-INSERT INTO `company_company` (`id`, `name`, `positions`, `description`, `products`, `product_description`, `photo`, `website`, `address`, `email`, `phone_number`, `member_id`, `industry_id`, `clicks`, `created_at`) VALUES
-(1, '彬彬炸雞店(虛擬)', '員工', '歡迎光臨【彬彬炸雞店(虛擬)】，這裡是喜愛炸物的饕客天堂！我們店內以現炸現做為宗旨，提供多樣化的餐點選擇，從經典的炸雞、薯條到創意的海鮮拼盤，每一道餐點都以新鮮食材製作，讓您品嚐到食材的原汁原味。\r\n\r\n【彬彬炸雞店(虛擬)】特別注重口味的搭配，我們精選多種秘製調味料，無論是香辣、胡椒還是蒜香口味，都能讓您每一口都充滿驚喜。店內環境舒適、明亮，適合三五好友聚餐或是忙碌一天後的放鬆享受。我們提供乾淨衛生的用餐空間，讓每位顧客都能在輕鬆的氛圍下享受美食。\r\n\r\n多位顧客給予我們高度好評，尤其是對於食材的新鮮度與炸物的酥脆口感讚不絕口。我們不僅追求美味，也重視每一位顧客的用餐體驗，期望讓大家在這裡找到專屬於自己的炸物幸福時刻。', '炸物', '酥脆炸雞翅、黃金薯條、香辣雞米花、脆皮花枝圈、炸蝦天婦羅、鹽酥雞、香酥雞腿排、起司玉米球、酥炸甜不辣、韓式辣炸雞。', 'static/company/_70b986cc-1d1c-4b4b-816d-fa09a005c7f8.jpg', 'https://www.instagram.com/nkust_ic/', '新北市蘆洲區光明路50巷', 'c110156220@nkust.edu.tw', '0966684323', 1, 4, 0, '2024-10-10 11:02:38.522324');
+INSERT INTO `company_company` (`id`, `name`, `positions`, `description`, `products`, `product_description`, `photo`, `website`, `address`, `email`, `clicks`, `phone_number`, `created_at`, `member_id`, `industry_id`) VALUES
+(1, '國立高雄科技大學智慧商務系', '工讀生', '結合商業與科技領域的跨學科學系，旨在培養具備數位科技、商務管理及創新應用能力的專業人才。該系專注於智慧商務的理論與實務，包括電子商務、大數據分析、雲端運算、物聯網、行動商務等，並強調產學合作與實務經驗的累積，以提升學生的競爭力。學生畢業後可從事多種商務與科技相關工作，例如數位行銷、數據分析、系統管理及電子商務規劃等。該系亦積極培養學生的創新思維與跨領域協作能力，為智慧商務產業提供新一代專業人才。', '系統設計、行銷、電子商務', '暫無簡介', 'static/company/maxresdefault.jpg', 'https://ic.nkust.edu.tw/', '80778 高雄市三民區建工路415號', 'vhoffice01@nkust.edu.tw', 0, '07-3831332', '2024-10-19 19:26:11.573555', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -261,21 +244,7 @@ CREATE TABLE `company_industry` (
 --
 
 INSERT INTO `company_industry` (`id`, `title`, `intro`) VALUES
-(1, '3C', '代表電子產品、電腦、通訊產品等，例如手機、筆記型電腦、平板、數位相機等科技產品。'),
-(2, '家電', '家用電器，包括冰箱、洗衣機、微波爐、冷氣機等，提升居家生活品質的電器設備。'),
-(3, '美妝個清', '美妝及個人清潔用品，如化妝品、保養品、洗髮精、沐浴乳、香水等，關注外貌與個人衛生的產品。'),
-(4, '保健/食品', '健康相關產品及食品，如維他命、保健品、健康食品、零食、飲料等，維持健康與生活品質。'),
-(5, '服飾/內衣', '各式服裝、配件及內衣，包括日常穿著、運動服裝、時尚服飾等，滿足不同場合的需求。'),
-(6, '鞋包/精品', '鞋類與包包，包括皮鞋、運動鞋、時尚包包，以及奢侈品配件如手錶、飾品等。'),
-(7, '母嬰用品', '專為母親與嬰兒設計的產品，如嬰兒車、奶瓶、尿布、孕婦裝等，關注母嬰健康與舒適。'),
-(8, '圖書文具', '書籍與文具用品，包括教科書、小說、學習書籍、筆記本、書寫工具等，支持學習與辦公需求。'),
-(9, '傢寢運動', '家庭用品、寢具及運動器材，如床墊、被單、健身器材等，提升家居舒適度與運動習慣。'),
-(10, '運動用品', '與運動相關的產品，如球具、運動服、運動配件等，支援各種運動活動的進行。'),
-(11, '戶外休閒', '戶外活動與休閒用品，如露營設備、釣魚工具、登山用品等，適合愛好戶外活動的人群。'),
-(12, '數位內容', '數位產品與服務，包括遊戲、軟體、應用程式、線上課程等，提供數位娛樂與學習資源。'),
-(13, '玩具遊戲', '玩具與遊戲產品，從嬰幼兒玩具到成人桌遊、模型、拼圖等，增添娛樂與親子互動的樂趣。'),
-(14, '教育', '教學方面'),
-(15, '其他', '暫無介紹');
+(1, '教育', '教育');
 
 -- --------------------------------------------------------
 
@@ -299,45 +268,29 @@ CREATE TABLE `django_admin_log` (
 --
 
 INSERT INTO `django_admin_log` (`id`, `action_time`, `object_id`, `object_repr`, `action_flag`, `change_message`, `content_type_id`, `user_id`) VALUES
-(1, '2024-09-30 20:43:16.491720', '1', 'Industry object (1)', 1, '[{\"added\": {}}]', 13, 2),
-(2, '2024-09-30 20:43:29.699179', '2', 'Industry object (2)', 1, '[{\"added\": {}}]', 13, 2),
-(3, '2024-09-30 20:43:36.397195', '3', 'Industry object (3)', 1, '[{\"added\": {}}]', 13, 2),
-(4, '2024-09-30 20:43:42.568843', '4', 'Industry object (4)', 1, '[{\"added\": {}}]', 13, 2),
-(5, '2024-09-30 20:43:50.658792', '5', 'Industry object (5)', 1, '[{\"added\": {}}]', 13, 2),
-(6, '2024-09-30 20:43:58.005016', '6', 'Industry object (6)', 1, '[{\"added\": {}}]', 13, 2),
-(7, '2024-09-30 20:44:04.376997', '7', 'Industry object (7)', 1, '[{\"added\": {}}]', 13, 2),
-(8, '2024-09-30 20:44:10.561408', '8', 'Industry object (8)', 1, '[{\"added\": {}}]', 13, 2),
-(9, '2024-09-30 20:44:16.692115', '9', 'Industry object (9)', 1, '[{\"added\": {}}]', 13, 2),
-(10, '2024-09-30 20:44:23.487461', '10', 'Industry object (10)', 1, '[{\"added\": {}}]', 13, 2),
-(11, '2024-09-30 20:44:31.637286', '11', 'Industry object (11)', 1, '[{\"added\": {}}]', 13, 2),
-(12, '2024-09-30 20:44:38.588538', '12', 'Industry object (12)', 1, '[{\"added\": {}}]', 13, 2),
-(13, '2024-09-30 20:44:46.677333', '13', 'Industry object (13)', 1, '[{\"added\": {}}]', 13, 2),
-(14, '2024-09-30 20:48:00.111832', '1', '會長', 1, '[{\"added\": {}}]', 11, 2),
-(15, '2024-09-30 20:48:09.516581', '2', '測試', 1, '[{\"added\": {}}]', 11, 2),
-(16, '2024-09-30 20:48:25.778289', '1', '國立高雄科技大學 智慧商務系 - 113', 1, '[{\"added\": {}}]', 10, 2),
-(17, '2024-09-30 20:48:28.152618', '1', '楊兆彬 - 測試', 1, '[{\"added\": {}}]', 12, 2),
-(18, '2024-09-30 20:51:29.185862', '3', '副會長', 1, '[{\"added\": {}}]', 11, 2),
-(19, '2024-09-30 20:51:38.599678', '4', '會員', 1, '[{\"added\": {}}]', 11, 2),
-(20, '2024-09-30 20:57:43.918863', '1', '彬彬炸雞店(虛擬)', 1, '[{\"added\": {}}]', 14, 2),
-(21, '2024-09-30 21:02:27.129965', '1', '商品總攬', 1, '[{\"added\": {}}]', 15, 2),
-(22, '2024-09-30 21:03:20.668283', '2', '黃金薯條', 1, '[{\"added\": {}}]', 15, 2),
-(23, '2024-09-30 21:03:38.908587', '3', '香辣雞米花', 1, '[{\"added\": {}}]', 15, 2),
-(24, '2024-09-30 21:04:00.203637', '4', '脆皮花枝圈', 1, '[{\"added\": {}}]', 15, 2),
-(25, '2024-09-30 21:06:06.924155', '1', 'Recruit object (1)', 1, '[{\"added\": {}}]', 22, 2),
-(26, '2024-09-30 21:06:29.287745', '2', 'Recruit object (2)', 1, '[{\"added\": {}}]', 22, 2),
-(27, '2024-09-30 21:07:27.632056', '14', '教育', 1, '[{\"added\": {}}]', 13, 2),
-(28, '2024-09-30 21:07:37.311517', '15', '其他', 1, '[{\"added\": {}}]', 13, 2),
-(29, '2024-10-06 19:02:37.035614', '1', '高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 16, 2),
-(30, '2024-10-06 19:04:08.473175', '2', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(31, '2024-10-06 19:04:13.977059', '3', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(32, '2024-10-06 19:04:19.535110', '4', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(33, '2024-10-06 19:04:24.159617', '5', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(34, '2024-10-06 19:04:30.626246', '6', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(35, '2024-10-06 19:04:37.871450', '7', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(36, '2024-10-06 19:04:42.777305', '8', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(37, '2024-10-06 19:04:47.951564', '9', 'Image for 高科大校友會教師節健行活動', 1, '[{\"added\": {}}]', 17, 2),
-(38, '2024-10-10 09:12:33.304981', '1', 'SlideImage object (1)', 1, '[{\"added\": {}}]', 18, 1),
-(39, '2024-10-10 10:36:19.284815', '1', '高科大校友會教師節健行活動', 2, '[{\"changed\": {\"fields\": [\"\\u662f\\u5426\\u516c\\u958b\"]}}]', 16, 1);
+(1, '2024-10-19 18:44:26.086739', '1', '會長', 1, '[{\"added\": {}}]', 11, 2),
+(2, '2024-10-19 18:44:35.056370', '2', '理事', 1, '[{\"added\": {}}]', 11, 2),
+(3, '2024-10-19 18:44:45.010678', '3', '管理員', 1, '[{\"added\": {}}]', 11, 2),
+(4, '2024-10-19 18:44:57.252931', '1', '國立高雄科技大學智慧商務系 - 113', 1, '[{\"added\": {}}]', 10, 2),
+(5, '2024-10-19 19:10:55.989696', '1', '楊兆彬 - 管理員', 1, '[{\"added\": {}}]', 12, 2),
+(6, '2024-10-19 19:14:47.575350', '1', '楊兆彬 - 管理員', 2, '[]', 12, 2),
+(7, '2024-10-19 19:15:33.532210', '2', '楊兆彬 - 管理員', 1, '[{\"added\": {}}]', 12, 2),
+(8, '2024-10-19 19:16:08.411768', '3', '楊兆彬 - 管理員', 1, '[{\"added\": {}}]', 12, 2),
+(9, '2024-10-19 19:16:37.771909', '4', '楊兆彬 - 管理員', 1, '[{\"added\": {}}]', 12, 2),
+(10, '2024-10-19 19:19:24.417688', '1', 'kuasmis@gmail.com - 楊兆彬 - 管理員', 2, '[{\"changed\": {\"fields\": [\"Private\"]}}]', 12, 2),
+(11, '2024-10-19 19:20:09.812035', '1', '教育', 1, '[{\"added\": {}}]', 13, 2),
+(12, '2024-10-19 19:26:11.574559', '1', '國立高雄科技大學智慧商務系', 1, '[{\"added\": {}}]', 14, 2),
+(13, '2024-10-20 05:53:26.676896', '1', 'Recruit object (1)', 1, '[{\"added\": {}}]', 22, 2),
+(14, '2024-10-20 05:54:49.205626', '1', 'Small Image for 打掃工讀生多位', 1, '[{\"added\": {}}]', 24, 2),
+(15, '2024-10-20 05:55:16.083205', '1', 'Contact object (1)', 1, '[{\"added\": {}}]', 23, 2),
+(16, '2024-10-20 15:32:58.872464', '1', 'SelfImage object (1)', 1, '[{\"added\": {}}]', 21, 2),
+(17, '2024-10-20 15:34:41.043710', '2', 'SelfImage object (2)', 1, '[{\"added\": {}}]', 21, 2),
+(18, '2024-10-20 15:35:24.258862', '3', 'SelfImage object (3)', 1, '[{\"added\": {}}]', 21, 2),
+(19, '2024-10-20 15:35:49.842162', '4', 'SelfImage object (4)', 1, '[{\"added\": {}}]', 21, 2),
+(20, '2024-10-20 15:37:19.858608', '1', 'CompanyImage object (1)', 1, '[{\"added\": {}}]', 19, 2),
+(21, '2024-10-20 15:39:39.517709', '2', 'CompanyImage object (2)', 1, '[{\"added\": {}}]', 19, 2),
+(22, '2024-10-20 15:50:47.490713', '1', 'SlideImage object (1)', 1, '[{\"added\": {}}]', 18, 2),
+(23, '2024-10-20 15:52:32.061256', '2', 'SlideImage object (2)', 1, '[{\"added\": {}}]', 18, 2);
 
 -- --------------------------------------------------------
 
@@ -367,7 +320,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (10, 'member', 'graduate'),
 (12, 'member', 'member'),
 (11, 'member', 'position'),
-(23, 'notice', 'notice'),
+(25, 'notice', 'notice'),
 (19, 'picture', 'companyimage'),
 (20, 'picture', 'productimage'),
 (21, 'picture', 'selfimage'),
@@ -375,6 +328,7 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (9, 'Private', 'passwordresetcode'),
 (8, 'Private', 'private'),
 (15, 'product', 'product'),
+(23, 'recruit', 'contact'),
 (22, 'recruit', 'recruit'),
 (24, 'recruit', 'recruitimage'),
 (5, 'sessions', 'session'),
@@ -399,50 +353,44 @@ CREATE TABLE `django_migrations` (
 --
 
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
-(1, 'contenttypes', '0001_initial', '2024-09-30 20:34:32.882230'),
-(2, 'contenttypes', '0002_remove_content_type_name', '2024-09-30 20:34:32.912996'),
-(3, 'auth', '0001_initial', '2024-09-30 20:34:33.018118'),
-(4, 'auth', '0002_alter_permission_name_max_length', '2024-09-30 20:34:33.040429'),
-(5, 'auth', '0003_alter_user_email_max_length', '2024-09-30 20:34:33.043848'),
-(6, 'auth', '0004_alter_user_username_opts', '2024-09-30 20:34:33.046932'),
-(7, 'auth', '0005_alter_user_last_login_null', '2024-09-30 20:34:33.050516'),
-(8, 'auth', '0006_require_contenttypes_0002', '2024-09-30 20:34:33.051518'),
-(9, 'auth', '0007_alter_validators_add_error_messages', '2024-09-30 20:34:33.055525'),
-(10, 'auth', '0008_alter_user_username_max_length', '2024-09-30 20:34:33.058533'),
-(11, 'auth', '0009_alter_user_last_name_max_length', '2024-09-30 20:34:33.061038'),
-(12, 'auth', '0010_alter_group_name_max_length', '2024-09-30 20:34:33.067567'),
-(13, 'auth', '0011_update_proxy_permissions', '2024-09-30 20:34:33.071370'),
-(14, 'auth', '0012_alter_user_first_name_max_length', '2024-09-30 20:34:33.075595'),
-(15, 'Private', '0001_initial', '2024-09-30 20:34:33.242076'),
-(16, 'admin', '0001_initial', '2024-09-30 20:34:33.297097'),
-(17, 'admin', '0002_logentry_remove_auto_add', '2024-09-30 20:34:33.301479'),
-(18, 'admin', '0003_logentry_add_action_flag_choices', '2024-09-30 20:34:33.305610'),
-(19, 'member', '0001_initial', '2024-09-30 20:34:33.370322'),
-(20, 'company', '0001_initial', '2024-09-30 20:34:33.439181'),
-(21, 'notice', '0001_initial', '2024-09-30 20:34:33.484206'),
-(22, 'product', '0001_initial', '2024-09-30 20:34:33.514607'),
-(23, 'picture', '0001_initial', '2024-09-30 20:34:33.650442'),
-(24, 'recruit', '0001_initial', '2024-09-30 20:34:33.683038'),
-(25, 'sessions', '0001_initial', '2024-09-30 20:34:33.701415'),
-(26, 'token_blacklist', '0001_initial', '2024-09-30 20:34:33.773766'),
-(27, 'token_blacklist', '0002_outstandingtoken_jti_hex', '2024-09-30 20:34:33.783031'),
-(28, 'token_blacklist', '0003_auto_20171017_2007', '2024-09-30 20:34:33.795254'),
-(29, 'token_blacklist', '0004_auto_20171017_2013', '2024-09-30 20:34:33.824175'),
-(30, 'token_blacklist', '0005_remove_outstandingtoken_jti', '2024-09-30 20:34:33.834723'),
-(31, 'token_blacklist', '0006_auto_20171017_2113', '2024-09-30 20:34:33.842590'),
-(32, 'token_blacklist', '0007_auto_20171017_2214', '2024-09-30 20:34:34.548464'),
-(33, 'token_blacklist', '0008_migrate_to_bigautofield', '2024-09-30 20:34:34.767960'),
-(34, 'token_blacklist', '0010_fix_migrate_to_bigautofield', '2024-09-30 20:34:34.775500'),
-(35, 'token_blacklist', '0011_linearizes_history', '2024-09-30 20:34:34.776503'),
-(36, 'token_blacklist', '0012_alter_outstandingtoken_user', '2024-09-30 20:34:34.781314'),
-(37, 'company', '0002_alter_industry_options', '2024-10-06 18:53:49.794565'),
-(38, 'recruit', '0002_alter_recruit_intro_recruitimage', '2024-10-06 18:53:49.841499'),
-(39, 'article', '0001_initial', '2024-10-06 18:59:31.646982'),
-(40, 'article', '0002_alter_articleimage_image', '2024-10-08 19:11:48.869578'),
-(41, 'recruit', '0003_recruit_active_alter_recruitimage_image', '2024-10-08 19:11:48.892647'),
-(42, 'company', '0003_company_clicks', '2024-10-10 08:32:58.714359'),
-(43, 'company', '0004_company_created_at', '2024-10-10 11:02:38.530322'),
-(44, 'picture', '0002_alter_productimage_image_alter_slideimage_image', '2024-10-10 11:02:38.538359');
+(1, 'contenttypes', '0001_initial', '2024-10-19 18:34:52.717016'),
+(2, 'contenttypes', '0002_remove_content_type_name', '2024-10-19 18:34:52.742842'),
+(3, 'auth', '0001_initial', '2024-10-19 18:34:52.839904'),
+(4, 'auth', '0002_alter_permission_name_max_length', '2024-10-19 18:34:52.865079'),
+(5, 'auth', '0003_alter_user_email_max_length', '2024-10-19 18:34:52.868735'),
+(6, 'auth', '0004_alter_user_username_opts', '2024-10-19 18:34:52.872035'),
+(7, 'auth', '0005_alter_user_last_login_null', '2024-10-19 18:34:52.875043'),
+(8, 'auth', '0006_require_contenttypes_0002', '2024-10-19 18:34:52.876046'),
+(9, 'auth', '0007_alter_validators_add_error_messages', '2024-10-19 18:34:52.879587'),
+(10, 'auth', '0008_alter_user_username_max_length', '2024-10-19 18:34:52.882906'),
+(11, 'auth', '0009_alter_user_last_name_max_length', '2024-10-19 18:34:52.885914'),
+(12, 'auth', '0010_alter_group_name_max_length', '2024-10-19 18:34:52.892425'),
+(13, 'auth', '0011_update_proxy_permissions', '2024-10-19 18:34:52.895433'),
+(14, 'auth', '0012_alter_user_first_name_max_length', '2024-10-19 18:34:52.898944'),
+(15, 'Private', '0001_initial', '2024-10-19 18:34:53.060829'),
+(16, 'admin', '0001_initial', '2024-10-19 18:34:53.111948'),
+(17, 'admin', '0002_logentry_remove_auto_add', '2024-10-19 18:34:53.117283'),
+(18, 'admin', '0003_logentry_add_action_flag_choices', '2024-10-19 18:34:53.121801'),
+(19, 'article', '0001_initial', '2024-10-19 18:34:53.156166'),
+(20, 'member', '0001_initial', '2024-10-19 18:34:53.214531'),
+(21, 'company', '0001_initial', '2024-10-19 18:34:53.305170'),
+(22, 'notice', '0001_initial', '2024-10-19 18:34:53.342160'),
+(23, 'product', '0001_initial', '2024-10-19 18:34:53.373866'),
+(24, 'picture', '0001_initial', '2024-10-19 18:34:53.461214'),
+(25, 'recruit', '0001_initial', '2024-10-19 18:34:53.550908'),
+(26, 'sessions', '0001_initial', '2024-10-19 18:34:53.569899'),
+(27, 'token_blacklist', '0001_initial', '2024-10-19 18:34:53.640957'),
+(28, 'token_blacklist', '0002_outstandingtoken_jti_hex', '2024-10-19 18:34:53.648742'),
+(29, 'token_blacklist', '0003_auto_20171017_2007', '2024-10-19 18:34:53.661977'),
+(30, 'token_blacklist', '0004_auto_20171017_2013', '2024-10-19 18:34:53.691909'),
+(31, 'token_blacklist', '0005_remove_outstandingtoken_jti', '2024-10-19 18:34:53.700603'),
+(32, 'token_blacklist', '0006_auto_20171017_2113', '2024-10-19 18:34:53.708496'),
+(33, 'token_blacklist', '0007_auto_20171017_2214', '2024-10-19 18:34:55.190945'),
+(34, 'token_blacklist', '0008_migrate_to_bigautofield', '2024-10-19 18:34:55.398470'),
+(35, 'token_blacklist', '0010_fix_migrate_to_bigautofield', '2024-10-19 18:34:55.407465'),
+(36, 'token_blacklist', '0011_linearizes_history', '2024-10-19 18:34:55.408948'),
+(37, 'token_blacklist', '0012_alter_outstandingtoken_user', '2024-10-19 18:34:55.413698'),
+(38, 'member', '0002_member_private', '2024-10-19 19:13:52.057715');
 
 -- --------------------------------------------------------
 
@@ -461,8 +409,7 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('j1pfydo70c5lgygsdr6y62iy21ua68z5', '.eJxVjMEOwiAQRP-FsyGwLSt49O43kIUFqRpISnsy_rtt0oNe5jDvzbyFp3Upfu1p9hOLiwBx-u0CxWeqO-AH1XuTsdVlnoLcFXnQLm-N0-t6uH8HhXrZ1tESKYdhgDQGNQxb2JxHSg4NG22U5gxsQCOHCBbRnAMaclkjRGQWny_guDfK:1svNDO:yZI7ztrCQAK66NvITd6oGoPASZ35jmr2uFDwi9bQFoc', '2024-10-14 20:41:54.103773'),
-('v19lc8l93mq3sb8p2l96on7v3z8j90zg', '.eJxVjMEOwiAQRP-FsyFAQcCjd7-B7C5bqRpISnsy_rtt0oNe5jDvzbxFgnUpae08pymLi9Di9Nsh0JPrDvID6r1JanWZJ5S7Ig_a5a1lfl0P9--gQC_bmiI6xwhoaPBbDj4EyuhC5ozMXo2BLSqt4ewH7aON2llDypGxI2MUny8KTDhg:1sypCb:F1yb2NjxOXYamBfBdRrzLCDPh1TRUc4I-9U_eIRLlRc', '2024-10-24 09:11:21.470234');
+('c4xb8r2xu1ic0cakyzkozvn1dui8ewff', '.eJxVjMsOwiAQRf-FtSE8SgGX7v0GMsMMUjU0Ke3K-O_apAvd3nPOfYkE21rT1nlJE4mzMOL0uyHkB7cd0B3abZZ5busyodwVedAurzPx83K4fwcVev3WDGQdK3LFgiILrIyDCC5oREs0Fq-zKt6TG-I4GMzWow4YYoDsNJN4fwAEJTiJ:1t2EPq:rQBH1GJqCxLU2PAtpHKMuimGu-gtwR10Amcl4EMidu4', '2024-11-02 18:43:06.439417');
 
 -- --------------------------------------------------------
 
@@ -481,7 +428,7 @@ CREATE TABLE `member_graduate` (
 --
 
 INSERT INTO `member_graduate` (`id`, `school`, `grade`) VALUES
-(1, '國立高雄科技大學 智慧商務系', '113');
+(1, '國立高雄科技大學智慧商務系', '113');
 
 -- --------------------------------------------------------
 
@@ -502,15 +449,19 @@ CREATE TABLE `member_member` (
   `photo` varchar(100) DEFAULT NULL,
   `date_joined` date NOT NULL,
   `graduate_id` bigint(20) DEFAULT NULL,
-  `position_id` bigint(20) DEFAULT NULL
+  `position_id` bigint(20) DEFAULT NULL,
+  `private_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
 --
 -- 傾印資料表的資料 `member_member`
 --
 
-INSERT INTO `member_member` (`id`, `name`, `home_phone`, `mobile_phone`, `gender`, `address`, `is_paid`, `intro`, `birth_date`, `photo`, `date_joined`, `graduate_id`, `position_id`) VALUES
-(1, '楊兆彬', '0222856679', '0966683955', 'M', '新北市蘆洲區光明路50巷38號4樓', 1, '你好，我是彬彬，目前就讀大學或研究所即將要畢業了，主修後端開發。我熱愛寫程式，尤其專注於伺服器端的邏輯處理和資料庫管理。我經常使用 Python 作為主要開發語言，並在專案中使用 Django 框架來構建可靠且擴展性強的應用程式。\r\n\r\n我喜歡解決技術挑戰，無論是處理 API、JWT 驗證，還是設計高效的資料結構，都讓我感到充滿成就感。在開發中，我也會關注效能最佳化和安全性，確保每個專案都能穩定運行。\r\n\r\n除了專業技術，我也會持續學習新技術，像是嘗試前端開發工具，如 React，讓自己具備全端開發能力。我希望能將這些技能應用在實際專案中，並持續進步。', '2003-06-25', '', '2024-10-01', 1, 2);
+INSERT INTO `member_member` (`id`, `name`, `home_phone`, `mobile_phone`, `gender`, `address`, `is_paid`, `intro`, `birth_date`, `photo`, `date_joined`, `graduate_id`, `position_id`, `private_id`) VALUES
+(1, '楊兆彬', '0222856679', '0966683955', 'O', '新北市蘆洲區光明路50巷38號4樓', 1, 'django後端工程師', '2003-06-25', 'static/member/300.jpg', '2024-10-20', 1, 3, 2),
+(2, '楊兆彬', '0222856679', '0966683955', 'O', '新北市', 1, '全端工程師', '2003-06-25', 'static/member/300_nb7sejW.jpg', '2024-10-20', 1, 3, 1),
+(3, '楊兆彬', '0222856679', '0966683955', 'M', '蘆洲區', 1, '前端工程師', '2003-06-25', 'static/member/300_DlOdmQW.jpg', '2024-10-20', 1, 3, 4),
+(4, '楊兆彬', '0222856679', '0966683955', 'F', '光明路', 1, '哈摟', '2003-06-25', 'static/member/300_gwlxWOe.jpg', '2024-10-20', 1, 3, 5);
 
 -- --------------------------------------------------------
 
@@ -530,9 +481,8 @@ CREATE TABLE `member_position` (
 
 INSERT INTO `member_position` (`id`, `title`, `priority`) VALUES
 (1, '會長', 1),
-(2, '測試', 50),
-(3, '副會長', 2),
-(4, '會員', 10);
+(2, '理事', 3),
+(3, '管理員', 100);
 
 -- --------------------------------------------------------
 
@@ -565,6 +515,14 @@ CREATE TABLE `picture_companyimage` (
   `created_at` datetime(6) NOT NULL,
   `company_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
+
+--
+-- 傾印資料表的資料 `picture_companyimage`
+--
+
+INSERT INTO `picture_companyimage` (`id`, `image`, `title`, `description`, `priority`, `active`, `created_at`, `company_id`) VALUES
+(1, 'static/company_image/hq720.jpg', '歡迎', 'QRCode掃描了解更多', 0, 1, '2024-10-20 15:37:19.857605', 1),
+(2, 'static/company_image/mqdefault.jpg', '宣傳', '空拍', 1, 1, '2024-10-20 15:39:39.517709', 1);
 
 -- --------------------------------------------------------
 
@@ -601,6 +559,16 @@ CREATE TABLE `picture_selfimage` (
   `member_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
+--
+-- 傾印資料表的資料 `picture_selfimage`
+--
+
+INSERT INTO `picture_selfimage` (`id`, `image`, `title`, `description`, `priority`, `active`, `created_at`, `updated_at`, `member_id`) VALUES
+(1, 'static/self_image/blink-5.png', '程式碼_1', '很多程式碼', 0, 1, '2024-10-20 15:32:58.866943', '2024-10-20 15:32:58.866943', 2),
+(2, 'static/self_image/helloworld12.png', '程式碼_2', '很多程式碼', 1, 1, '2024-10-20 15:34:41.042707', '2024-10-20 15:34:41.042707', 2),
+(3, 'static/self_image/codecompletion.png', '程式碼_1', '很多程式碼', 1, 1, '2024-10-20 15:35:24.257859', '2024-10-20 15:35:24.257859', 1),
+(4, 'static/self_image/20107810x9r5Y7NoPW.png', '程式碼_3', '很多城市馬', 1, 1, '2024-10-20 15:35:49.840696', '2024-10-20 15:35:49.840696', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -622,7 +590,8 @@ CREATE TABLE `picture_slideimage` (
 --
 
 INSERT INTO `picture_slideimage` (`id`, `type`, `image`, `title`, `description`, `active`, `created_at`) VALUES
-(1, 'None', 'static/slide/326431594_911615443529376_4304352214119373700_n.jpg', '會長交接大會', '', 1, '2024-10-10 09:12:33.304981');
+(1, 'None', 'static/slide/326431594_911615443529376_4304352214119373700_n.jpg', '智慧商務系友會 交接大會', NULL, 1, '2024-10-20 15:50:47.489712'),
+(2, 'None', 'static/slide/411367604_755973239902103_7787603375567019156_n.jpg', '智慧商務系聯誼會交接大會', NULL, 1, '2024-10-20 15:52:32.060128');
 
 -- --------------------------------------------------------
 
@@ -637,15 +606,6 @@ CREATE TABLE `private_passwordresetcode` (
   `expires_at` datetime(6) NOT NULL,
   `private_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
-
---
--- 傾印資料表的資料 `private_passwordresetcode`
---
-
-INSERT INTO `private_passwordresetcode` (`id`, `code`, `created_at`, `expires_at`, `private_id`) VALUES
-(1, '715332', '2024-10-18 01:49:49.636937', '2024-10-18 02:49:49.636937', 1),
-(2, '570583', '2024-10-18 01:53:37.338776', '2024-10-18 02:53:37.337788', 1),
-(3, '196098', '2024-10-18 01:53:37.353734', '2024-10-18 02:53:37.352735', 1);
 
 -- --------------------------------------------------------
 
@@ -669,9 +629,11 @@ CREATE TABLE `private_private` (
 --
 
 INSERT INTO `private_private` (`id`, `email`, `password`, `is_active`, `is_staff`, `is_superuser`, `last_login`, `date_joined`) VALUES
-(1, 'c110156220@nkust.edu.tw', 'pbkdf2_sha256$720000$30pAsidGTVwwikdSOj8Kul$lfGxquzQV9xEd6kfTYksoz5I5OBPIABOwtYU2h8McKQ=', 1, 1, 1, '2024-10-18 01:54:33.907052', '2024-09-30 20:40:13.423038'),
-(2, 'robin92062574@gmail.com', 'pbkdf2_sha256$720000$XfcR9CBZORnRONaK5we41m$j+hv9QfVo1mODWiDcxZ2UPmkImjGK8kvU/cDWcwyQ0o=', 1, 1, 1, '2024-09-30 20:41:54.102770', '2024-09-30 20:40:36.100570'),
-(3, 'robin92062522@gmail.com', 'pbkdf2_sha256$720000$wALjxWoo0emqcvM06fiarl$hSGnDgHuNLloHAEjnEtgCbWgGqh9SEMGtA6f2bX+Pho=', 1, 1, 1, '2024-09-30 20:41:43.043416', '2024-09-30 20:41:43.043416');
+(1, 'c110156220@nkust.edu.tw', 'pbkdf2_sha256$720000$Ou7mYdXPiLnMZvriIfaBwl$4moZ3Kqr2Luk0pX0pMDgaK2fLoWwP0MWycelkcxYAVA=', 1, 1, 1, '2024-10-19 18:38:59.742165', '2024-10-19 18:38:59.742165'),
+(2, 'kuasmis@gmail.com', 'pbkdf2_sha256$720000$TpnhuhAwjweA53TJoNTfjz$cSvgwOrYqZWZAdpFuXJPbih4b1odXw+R9UbHmbI1I0o=', 1, 1, 1, '2024-10-19 18:43:06.439417', '2024-10-19 18:39:22.735727'),
+(3, 'robin92062574@gmail.com', 'pbkdf2_sha256$720000$YinWnNewHYTBdm86mdwOa2$Mor01AMCZMbCleJHryhKIKdTuj8VMvGYrr3O9ShrIfM=', 1, 1, 1, '2024-10-19 18:41:40.107920', '2024-10-19 18:41:40.107920'),
+(4, 'robin92062544@gmail.com', 'pbkdf2_sha256$720000$FQykFgz7dUkNFXXlaOvFr9$tIDvv2Mngi/QajPuIsZzMSr5x9jaMiKyOQe15yxKp9Q=', 1, 1, 1, '2024-10-19 18:41:51.589571', '2024-10-19 18:41:51.589571'),
+(5, 'robin92062522@gmail.com', 'pbkdf2_sha256$720000$AfLyeDgwkHggKTdidfNKX4$tQ56oVv5xFjHFNU68CYCk4f8fmGx3++aNkH1HKwkOng=', 1, 1, 1, '2024-10-19 18:42:05.043080', '2024-10-19 18:42:05.043080');
 
 -- --------------------------------------------------------
 
@@ -713,15 +675,26 @@ CREATE TABLE `product_product` (
   `company_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- 傾印資料表的資料 `product_product`
+-- 資料表結構 `recruit_contact`
 --
 
-INSERT INTO `product_product` (`id`, `name`, `description`, `photo`, `created_at`, `updated_at`, `company_id`) VALUES
-(1, '商品總攬', '很好吃', 'static/product/123.png', '2024-09-30 21:02:27.128632', '2024-09-30 21:02:27.128632', 1),
-(2, '黃金薯條', '現切馬鈴薯炸至金黃酥脆，外層酥脆、內裡軟綿，搭配鹽調味，簡單又美味。無論單吃還是搭配其他餐點，都是無法抗拒的美食選擇。', 'static/product/123-1.png', '2024-09-30 21:03:20.667280', '2024-09-30 21:03:20.667280', 1),
-(3, '香辣雞米花', '這款香辣雞米花採用新鮮去骨雞腿肉，外層酥脆，裡面多汁，灑上香辣調料，每一口都充滿著濃郁的辛香風味。小巧可口，是聚會或小酌的最佳搭配。', 'static/product/123-2.png', '2024-09-30 21:03:38.908587', '2024-09-30 21:03:38.908587', 1),
-(4, '脆皮花枝圈', '我們的花枝圈選用新鮮的花枝，外層裹上薄脆的麵衣，炸至金黃酥脆，搭配檸檬片和特調醬料，每一口都能感受到海鮮的鮮甜與酥脆的完美融合。', 'static/product/123-3.png', '2024-09-30 21:04:00.202130', '2024-09-30 21:04:00.202130', 1);
+CREATE TABLE `recruit_contact` (
+  `id` bigint(20) NOT NULL,
+  `name` longtext NOT NULL,
+  `phone` longtext NOT NULL,
+  `email` varchar(254) NOT NULL,
+  `recruit_id` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
+
+--
+-- 傾印資料表的資料 `recruit_contact`
+--
+
+INSERT INTO `recruit_contact` (`id`, `name`, `phone`, `email`, `recruit_id`) VALUES
+(1, '楊兆彬', '0966683955', 'c110156220@nkust.edu.tw', 1);
 
 -- --------------------------------------------------------
 
@@ -733,20 +706,19 @@ CREATE TABLE `recruit_recruit` (
   `id` bigint(20) NOT NULL,
   `title` varchar(50) NOT NULL,
   `intro` longtext NOT NULL,
-  `click` int(11) NOT NULL,
+  `info_clicks` int(11) NOT NULL,
   `deadline` date NOT NULL,
   `release_date` date NOT NULL,
-  `company_id` bigint(20) NOT NULL,
-  `active` tinyint(1) NOT NULL
+  `active` tinyint(1) NOT NULL,
+  `company_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
 --
 -- 傾印資料表的資料 `recruit_recruit`
 --
 
-INSERT INTO `recruit_recruit` (`id`, `title`, `intro`, `click`, `deadline`, `release_date`, `company_id`, `active`) VALUES
-(1, '收銀工讀生', '主要負責點餐、傳菜及顧客服務，確保顧客有愉快的用餐體驗。需要擁有良好的溝通能力和親切的服務態度，並能處理顧客需求與問題。\n\n薪水183/時', 0, '2024-10-17', '2024-10-01', 1, 1),
-(2, '協助備料', '負責協助廚房日常運作，包括準備食材、簡單的炸物烹調及清潔工作。需要具備良好的團隊合作精神，能夠在快速的工作環境中保持效率。', 0, '2024-10-25', '2024-10-01', 1, 1);
+INSERT INTO `recruit_recruit` (`id`, `title`, `intro`, `info_clicks`, `deadline`, `release_date`, `active`, `company_id`) VALUES
+(1, '打掃工讀生多位', '<p>協助維持環境乾淨</p>', 0, '2024-12-25', '2024-10-20', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -760,6 +732,13 @@ CREATE TABLE `recruit_recruitimage` (
   `image_type` varchar(5) NOT NULL,
   `recruit_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
+
+--
+-- 傾印資料表的資料 `recruit_recruitimage`
+--
+
+INSERT INTO `recruit_recruitimage` (`id`, `image`, `image_type`, `recruit_id`) VALUES
+(1, 'static/recruit/images.jpg', 'small', 1);
 
 -- --------------------------------------------------------
 
@@ -793,12 +772,7 @@ CREATE TABLE `token_blacklist_outstandingtoken` (
 --
 
 INSERT INTO `token_blacklist_outstandingtoken` (`id`, `token`, `created_at`, `expires_at`, `user_id`, `jti`) VALUES
-(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyODY1NDg4NywiaWF0IjoxNzI4NTY4NDg3LCJqdGkiOiI5NTA5Y2RjNDc1ZWM0NDY1YjkxZWE3NmEwZjJjMmU1NyIsInVzZXJfaWQiOjF9.G6T1buD4l7Yp3hfAqN4m_YpXAA2MPQ_DS5JADsXR9bs', '2024-10-10 13:54:47.270190', '2024-10-11 13:54:47.000000', 1, '9509cdc475ec4465b91ea76a0f2c2e57'),
-(2, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyODY1NDk1OSwiaWF0IjoxNzI4NTY4NTU5LCJqdGkiOiI2OGMyNjMxZWNhMGY0OGU4YTMyMDAyNTU0ZjkyODY1YSIsInVzZXJfaWQiOjF9.QiS4z8sPD9KIMZJOwP9VsUHdZoOtazD0aeAPws-5KBg', '2024-10-10 13:55:59.701023', '2024-10-11 13:55:59.000000', 1, '68c2631eca0f48e8a32002554f92865a'),
-(3, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyODY1NTIwNCwiaWF0IjoxNzI4NTY4ODA0LCJqdGkiOiIxOTAxZWNiM2UxMGQ0NDk5YWVmZTQyODhmOWYxNDllZiIsInVzZXJfaWQiOjF9.zpZTCt-4bx21lhZ0ogl93MRMeQCFlEQWeIi5SLaSvO8', '2024-10-10 14:00:04.158785', '2024-10-11 14:00:04.000000', 1, '1901ecb3e10d4499aefe4288f9f149ef'),
-(4, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTIzNjE3MCwiaWF0IjoxNzI5MTQ5NzcwLCJqdGkiOiI0YmU3MDA2OWNmN2I0Mzg1Yjk2YWViNWIyYTVkMTRhZCIsInVzZXJfaWQiOjF9.Fcq1oiWME8vqsy7WzsDslIxVP9bU7pBmEosewvr7nxg', '2024-10-17 07:22:50.999032', '2024-10-18 07:22:50.000000', 1, '4be70069cf7b4385b96aeb5b2a5d14ad'),
-(5, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTMwMjkyMiwiaWF0IjoxNzI5MjE2NTIyLCJqdGkiOiJkZTdhZWEzMzczZjc0ZDM5YmVhMTkyODc3NGM4ODViNiIsInVzZXJfaWQiOjF9.QVj9VA67W5SOQe5lppgmvOhcWMcEwMLYm-7kM7vTcFM', '2024-10-18 01:55:22.090466', '2024-10-19 01:55:22.000000', 1, 'de7aea3373f74d39bea1928774c885b6'),
-(6, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTMyNzc2MiwiaWF0IjoxNzI5MjQxMzYyLCJqdGkiOiJiZGU1ZjJhYmI3ZTY0NmNlYWRiZDAzNzdlNTBhNTgxOSIsInVzZXJfaWQiOjF9.MAdtEJiPbtdXdMMXEVn5B_jbDg6s-3O62g6eHCCj5mU', '2024-10-18 08:49:22.890048', '2024-10-19 08:49:22.000000', 1, 'bde5f2abb7e646ceadbd0377e50a5819');
+(1, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyOTUzNzUxMSwiaWF0IjoxNzI5NDUxMTExLCJqdGkiOiJkMmI1NTBlZWE4MjM0ZWIzOTcwOTM3NDQ0ZDc2OTFlMyIsInVzZXJfaWQiOjF9.cirlGG1M4e1P0zPvNiQ5JHYpR3Lj2zqlVl_9joyPxWA', '2024-10-20 19:05:11.605779', '2024-10-21 19:05:11.000000', 1, 'd2b550eea8234eb3970937444d7691e3');
 
 --
 -- 已傾印資料表的索引
@@ -893,7 +867,8 @@ ALTER TABLE `member_graduate`
 ALTER TABLE `member_member`
   ADD PRIMARY KEY (`id`),
   ADD KEY `member_member_graduate_id_8879cb6d_fk_member_graduate_id` (`graduate_id`),
-  ADD KEY `member_member_position_id_4ed12437_fk_member_position_id` (`position_id`);
+  ADD KEY `member_member_position_id_4ed12437_fk_member_position_id` (`position_id`),
+  ADD KEY `member_member_private_id_8d31c101_fk_Private_private_id` (`private_id`);
 
 --
 -- 資料表索引 `member_position`
@@ -974,6 +949,13 @@ ALTER TABLE `product_product`
   ADD KEY `product_product_company_id_0965fde9_fk_company_company_id` (`company_id`);
 
 --
+-- 資料表索引 `recruit_contact`
+--
+ALTER TABLE `recruit_contact`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `recruit_contact_recruit_id_6e062e99_fk_recruit_recruit_id` (`recruit_id`);
+
+--
 -- 資料表索引 `recruit_recruit`
 --
 ALTER TABLE `recruit_recruit`
@@ -1010,13 +992,13 @@ ALTER TABLE `token_blacklist_outstandingtoken`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `article_article`
 --
 ALTER TABLE `article_article`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `article_articleimage`
 --
 ALTER TABLE `article_articleimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `auth_group`
@@ -1034,7 +1016,7 @@ ALTER TABLE `auth_group_permissions`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `company_company`
@@ -1046,25 +1028,25 @@ ALTER TABLE `company_company`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `company_industry`
 --
 ALTER TABLE `company_industry`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `member_graduate`
@@ -1076,13 +1058,13 @@ ALTER TABLE `member_graduate`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `member_member`
 --
 ALTER TABLE `member_member`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `member_position`
 --
 ALTER TABLE `member_position`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `notice_notice`
@@ -1094,7 +1076,7 @@ ALTER TABLE `notice_notice`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `picture_companyimage`
 --
 ALTER TABLE `picture_companyimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `picture_productimage`
@@ -1106,25 +1088,25 @@ ALTER TABLE `picture_productimage`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `picture_selfimage`
 --
 ALTER TABLE `picture_selfimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `picture_slideimage`
 --
 ALTER TABLE `picture_slideimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `private_passwordresetcode`
 --
 ALTER TABLE `private_passwordresetcode`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `private_private`
 --
 ALTER TABLE `private_private`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `private_private_groups`
@@ -1142,19 +1124,25 @@ ALTER TABLE `private_private_user_permissions`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `product_product`
 --
 ALTER TABLE `product_product`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `recruit_contact`
+--
+ALTER TABLE `recruit_contact`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `recruit_recruit`
 --
 ALTER TABLE `recruit_recruit`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `recruit_recruitimage`
 --
 ALTER TABLE `recruit_recruitimage`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `token_blacklist_blacklistedtoken`
@@ -1166,7 +1154,7 @@ ALTER TABLE `token_blacklist_blacklistedtoken`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `token_blacklist_outstandingtoken`
 --
 ALTER TABLE `token_blacklist_outstandingtoken`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 已傾印資料表的限制式
@@ -1210,7 +1198,8 @@ ALTER TABLE `django_admin_log`
 --
 ALTER TABLE `member_member`
   ADD CONSTRAINT `member_member_graduate_id_8879cb6d_fk_member_graduate_id` FOREIGN KEY (`graduate_id`) REFERENCES `member_graduate` (`id`),
-  ADD CONSTRAINT `member_member_position_id_4ed12437_fk_member_position_id` FOREIGN KEY (`position_id`) REFERENCES `member_position` (`id`);
+  ADD CONSTRAINT `member_member_position_id_4ed12437_fk_member_position_id` FOREIGN KEY (`position_id`) REFERENCES `member_position` (`id`),
+  ADD CONSTRAINT `member_member_private_id_8d31c101_fk_Private_private_id` FOREIGN KEY (`private_id`) REFERENCES `private_private` (`id`);
 
 --
 -- 資料表的限制式 `notice_notice`
@@ -1261,6 +1250,12 @@ ALTER TABLE `private_private_user_permissions`
 --
 ALTER TABLE `product_product`
   ADD CONSTRAINT `product_product_company_id_0965fde9_fk_company_company_id` FOREIGN KEY (`company_id`) REFERENCES `company_company` (`id`);
+
+--
+-- 資料表的限制式 `recruit_contact`
+--
+ALTER TABLE `recruit_contact`
+  ADD CONSTRAINT `recruit_contact_recruit_id_6e062e99_fk_recruit_recruit_id` FOREIGN KEY (`recruit_id`) REFERENCES `recruit_recruit` (`id`);
 
 --
 -- 資料表的限制式 `recruit_recruit`
