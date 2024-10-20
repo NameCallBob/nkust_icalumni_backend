@@ -35,8 +35,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # 本機端    
-    "127.0.0.1",
+    # 本機端
+    "127.0.0.1","localhost","0.0.0.0",
     # 瓊文伺服器測試用
     os.getenv("TEST_SERVER_IP"),
     # 實際上架伺服器
@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     # for article release
     'ckeditor',
     # CORS
-    'corsheader',
+    'corsheaders',
 
 
 

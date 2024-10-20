@@ -1,10 +1,10 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework import viewsets, status, permissions
+from rest_framework.decorators import action , authentication_classes , permission_classes
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from apps.recruit.models import Recruit
 from apps.recruit.serializer import RecruitSerializer,RecruitSerializer_forTable
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -18,7 +18,8 @@ class RecruitViewSet(viewsets.ViewSet):
     """
     處理 Recruit 的 CRUD 操作，查詢功能支持分頁
     """
-
+    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes=[]
     @swagger_auto_schema(
         operation_description="查詢所有招聘資料，並進行分頁",
         manual_parameters=[
@@ -30,7 +31,8 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def list(self, request):
+    @action(methods=['get'] , detail=False , authentication_classes=[] , permission_classes=[])
+    def all_active(self, request):
         """查詢所有招聘資料，並進行分頁"""
         queryset = Recruit.objects.all().filter(active=True)
         paginator = RecruitPagination()
@@ -42,7 +44,21 @@ class RecruitViewSet(viewsets.ViewSet):
         serializer = RecruitSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    # new 輸出給予表格的查詢
+    @action(methods=['get'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    def all(self, request):
+        """查詢所有招聘資料，並進行分頁"""
+        queryset = Recruit.objects.all()
+        paginator = RecruitPagination()
+        page = paginator.paginate_queryset(queryset, request)
+        if page is not None:
+            serializer = RecruitSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = RecruitSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    @action(methods=['get'] , detail=False , authentication_classes=[] , permission_classes=[])
     def tableOutput(self,request):
         queryset = Recruit.objects.all().filter(active=True)
         paginator = RecruitPagination()
@@ -65,10 +81,11 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def retrieve(self, request):
+    @action(methods=['get'] , detail=False , authentication_classes=[] , permission_classes=[])
+    def getOne(self, request):
         """查詢單一招聘資料"""
         try:
-            pk = request.data.get("id", '')
+            pk = request.query_params.get("id", '')
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
@@ -86,7 +103,8 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def create(self, request):
+    @action(methods=['post'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    def new(self, request):
         """創建招聘資料"""
         serializer = RecruitSerializer(data=request.data)
         if serializer.is_valid():
@@ -106,7 +124,8 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def update(self, request):
+    @action(methods=['put'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    def change(self, request):
         """更新招聘資料"""
         try:
             pk = request.data.get("id")
@@ -133,7 +152,8 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    def destroy(self, request):
+    @action(methods=['delete'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request):
         """刪除招聘資料"""
         try:
             pk = request.data.get("id")

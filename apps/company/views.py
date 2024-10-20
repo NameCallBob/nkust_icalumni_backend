@@ -16,6 +16,8 @@ from drf_yasg import openapi
 class CompanyListView(generics.ListAPIView):
     """For管理端的公司查詢"""
     serializer_class = CompanySerializer
+    authentication_classes=[]
+    permission_classes=[permissions.AllowAny]
 
     @swagger_auto_schema(
         operation_description="查詢公司資料，支持多個查詢參數進行篩選",
@@ -89,7 +91,7 @@ class CompanyViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
-    def create(self, request):
+    def new(self, request):
         request.data['private'] = request.user.id
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
@@ -150,14 +152,14 @@ class CompanyViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         company.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def mostView(self, request):
         # Fetch top 10 companies with the highest click counts
         top_companies = Company.objects.order_by('-clicks')[:10]
         serializer = SimpleCompanySerializer(top_companies,many=True)
         return Response(serializer.data)
-    
+
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def newUpload(self, request):
         # Fetch latest companies ordered by upload time (created_at)
@@ -177,12 +179,13 @@ class IndustryViewSet(viewsets.ViewSet):
     公司類別CRUD
     """
     permission_classes=[permissions.IsAuthenticatedOrReadOnly]
-    
+
     @swagger_auto_schema(
         operation_description="列出所有行業資料",
         responses={200: '成功返回行業列表'}
     )
-    def list(self, request):
+    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def all(self, request):
         queryset = Industry.objects.all()
         serializer = IndustrySerializer(queryset, many=True)
         return Response(serializer.data)

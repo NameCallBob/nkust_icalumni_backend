@@ -6,8 +6,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from apps.member.models import Member
-from apps.member.serializer import MemberSerializer , MemberSimpleSerializer
+from apps.member.models import Member , Graduate , Position
+from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , MemberSimpleDetailSerializer
 from django.shortcuts import get_object_or_404
 
 import random ; import string
@@ -25,8 +25,6 @@ class MemberViewSet(viewsets.ViewSet):
     - 停用登入使用者的帳號
     """
 
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
     @swagger_auto_schema(
         operation_description="取得登入使用者的資料",
@@ -38,6 +36,15 @@ class MemberViewSet(viewsets.ViewSet):
         取得登入使用者的資料
         """
         member = get_object_or_404(Member, private=request.user)
+        serializer = MemberSerializer(member)
+        return Response(serializer.data)
+
+    @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[])
+    def getOne(self, request):
+        """
+        取得登入使用者的資料
+        """
+        member = get_object_or_404(Member, id=request.query_params.get("id",None))
         serializer = MemberSerializer(member)
         return Response(serializer.data)
 
@@ -80,6 +87,63 @@ class MemberViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MemberAnyViewSet(viewsets.ViewSet):
+
+    @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def getOne(self, request):
+        """
+        取得登入使用者的資料
+        """
+        member = get_object_or_404(Member, id=request.query_params.get("id",None))
+        serializer = MemberSimpleDetailSerializer(member)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='get-by-grade', authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def get_by_grade(self, request):
+        """
+        根據grade查詢member。
+        """
+        grade = request.query_params.get('grade')
+        if not grade:
+            return Response({'detail': '缺少 grade 参数'}, status=status.HTTP_400_BAD_REQUEST)
+        if grade == "全部":
+            members = Member.objects.all()
+        else:
+            members = Member.objects.filter(graduate__grade=grade)
+        serializer = MemberSimpleSerializer(members, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='alumni-search', authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def alumni_search(self, request):
+        query = request.query_params.get('q', '')
+        if not query:
+            return Response({"detail": "請提供搜尋關鍵字。"}, status=400)
+
+
+        # 查詢 Member 物件，並通過相關模型（Position、Graduate、Company 等）進行查詢
+        member_results = Member.objects.filter(
+            Q(name__icontains=query) |
+            Q(home_phone__icontains=query) |
+            Q(mobile_phone__icontains=query) |
+            Q(address__icontains=query) |
+            Q(intro__icontains=query) |
+            Q(position__title__icontains=query) |  # 透過 Position 標題搜尋
+            Q(graduate__school__icontains=query) |  # 透過 Graduate 的學校名稱搜尋
+            Q(graduate__grade__icontains=query) |  # 透過 Graduate 的年級搜尋
+            Q(member__name__icontains=query) |  # 透過反向關聯的公司名稱進行搜尋
+            Q(member__positions__icontains=query) |  # 透過公司職位搜尋
+            Q(member__description__icontains=query) |  # 透過公司簡介搜尋
+            Q(member__products__icontains=query) |  # 透過公司產品搜尋
+            Q(member__product_description__icontains=query) |  # 透過產品簡介搜尋
+            Q(member__industry__title__icontains=query) |  # 透過產業名稱搜尋
+            Q(member__industry__intro__icontains=query)  # 透過產業簡介搜尋
+        ).distinct()  # 使用 distinct 來避免重複的結果
+
+        # 將結果序列化並返回
+        serializer = MemberSimpleSerializer(member_results, many=True)
+        return Response(serializer.data)
+
 
 
 class MemberAdminViewSet(viewsets.ViewSet):

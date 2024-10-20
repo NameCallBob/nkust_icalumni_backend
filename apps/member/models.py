@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from apps.private.models import Private
 
 class Position(models.Model):
     """
@@ -20,7 +21,7 @@ class Graduate(models.Model):
     - school: 畢業的學校名稱，使用 TextField 儲存，例如「國立高雄科技大學」。
     - grade: 畢業年級，使用 CharField 儲存，例如「109級 or 112」。
     """
-    school = models.TextField()
+    school = models.TextField(default="國立高雄科技大學智慧商務系")
     grade = models.CharField(max_length=20, null=False)
 
     def __str__(self):
@@ -48,6 +49,7 @@ class Member(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
+    private = models.OneToOneField(Private ,on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     home_phone = models.CharField(max_length=15, blank=True, null=True)
     mobile_phone = models.CharField(max_length=15, blank=True, null=True)
@@ -57,12 +59,12 @@ class Member(models.Model):
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='static/member/', blank=True, null=True)
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
-    graduate = models.ForeignKey(Graduate, on_delete=models.CASCADE, null=True)
+    position = models.OneToOneField(Position, on_delete=models.SET_NULL, null=True)
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.position}"
+        return f"{self.private} - {self.name} - {self.position}"
 
     @staticmethod
     def search_members(name=None, gender=None, school=None, position=None, is_paid=None , intro=None):

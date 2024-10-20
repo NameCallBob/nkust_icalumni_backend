@@ -6,16 +6,27 @@ class IndustrySerializer(serializers.ModelSerializer):
         model = Industry
         fields = ['id', 'title', 'intro']  # 包含所有需要的欄位
 
+
+class CompanySearchSerializer(serializers.ModelSerializer):
+    industry = IndustrySerializer()
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'industry', 'positions', 'description', 'products',
+                  'product_description', 'photo', 'website', 'address', 'email',
+                  'clicks', 'phone_number', 'created_at']
+
 class CompanySerializer(serializers.ModelSerializer):
-    industry = serializers.PrimaryKeyRelatedField(queryset=Industry.objects.all())  # 使用主鍵來關聯行業
+    industry = serializers.CharField(source='industry.title')  # 只序列化 industry 的 title
+    member_name = serializers.SerializerMethodField()
+
+    def get_member_name(self,instance):
+        return instance.member.name
 
     class Meta:
         model = Company
-        fields = [
-            'id', 'name', 'member', 'industry', 'positions', 'description',
-            'products', 'product_description', 'photo', 'website',
-            'address', 'email', 'phone_number'
-        ]
+        fields = ['id', 'name', 'member', 'industry', 'positions', 'description', 'products',
+                  'product_description', 'photo', 'website', 'address', 'email',
+                  'clicks', 'phone_number', 'created_at','member_name']
 
     def create(self, validated_data):
         # industry 已經是通過 ID 關聯，因此可以直接使用
@@ -52,8 +63,8 @@ class SimpleCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = [
-            'id', 'name', 'member_name','photo'
+            'id', 'name', 'member_name','photo','member'
         ]
-        
+
     def get_member_name(self,obj):
         return obj.member.name

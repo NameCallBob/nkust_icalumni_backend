@@ -4,6 +4,9 @@ from apps.notice.models import Notice
 from apps.private.models import Private
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
+# 序列化
+from apps.picture.serializer import SelfImageSerializer , CompanyImageSerializer
+from apps.company.serializer import CompanySearchSerializer
 
 class MemberSerializer(serializers.ModelSerializer):
     """
@@ -92,15 +95,19 @@ class MemberSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise serializers.ValidationError(f"An error occurred during creation: {str(e)}")
 
+
 class MemberSimpleSerializer(serializers.ModelSerializer):
-        position = serializers.SerializerMethodField()
-        graduate = serializers.SerializerMethodField()
+    """
+    一般官網預覽使用
+    """
+    position = serializers.SerializerMethodField()
+    graduate = serializers.SerializerMethodField()
 
-        class Meta:
-            model = Member
-            fields = ['name','gender','intro','photo','position','graduate']
+    class Meta:
+        model = Member
+        fields = ['id','name','gender','intro','photo','position','graduate']
 
-        def get_position(self, instance):
+    def get_position(self, instance):
             position = getattr(instance, 'position', None)
             if position:
                 return {
@@ -108,7 +115,7 @@ class MemberSimpleSerializer(serializers.ModelSerializer):
                 }
             return None
 
-        def get_graduate(self, instance):
+    def get_graduate(self, instance):
             graduate = getattr(instance, 'graduate', None)
             if graduate:
                 return {
@@ -116,3 +123,46 @@ class MemberSimpleSerializer(serializers.ModelSerializer):
                     "grade": graduate.grade
                 }
             return None
+
+
+class MemberSimpleDetailSerializer(serializers.ModelSerializer):
+    """
+    一般官網可看到的詳細頁面
+    """
+    position = serializers.SerializerMethodField()
+    graduate = serializers.SerializerMethodField()
+    self_images = SelfImageSerializer(source='selfimage_set',many=True)  # 假設一個會員可以有多個 SelfImage
+    company = CompanySearchSerializer(source='member')  # 假設一個會員只關聯一家公司
+    company_images = CompanyImageSerializer(source='member.companyimage_set', many=True)
+
+    class Meta:
+        model = Member
+        fields = ['name','gender','intro','photo','position','graduate','company','company_images','self_images']
+
+    def get_position(self, instance):
+            position = getattr(instance, 'position', None)
+            if position:
+                return {
+                    "title": position.title,
+                }
+            return None
+
+    def get_graduate(self, instance):
+            graduate = getattr(instance, 'graduate', None)
+            if graduate:
+                return {
+                    "school": graduate.school,
+                    "grade": graduate.grade
+                }
+            return None
+
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = '__all__'
+
+class GraduateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Graduate
+        fields = '__all__'

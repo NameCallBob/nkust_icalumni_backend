@@ -11,10 +11,16 @@ class Recruit(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     intro = RichTextField()
-    click = models.IntegerField(default=0)
+    info_clicks = models.IntegerField(default=0)
     deadline = models.DateField()
     release_date = models.DateField(auto_now_add=True)
     active = models.BooleanField("是否發布",default=True)
+
+class Contact(models.Model):
+    recruit = models.OneToOneField(Recruit, related_name='contact', on_delete=models.CASCADE)
+    name = models.TextField()
+    phone = models.TextField()
+    email = models.EmailField()
 
 # 圖片資料庫
 class RecruitImage(models.Model):
