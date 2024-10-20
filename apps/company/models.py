@@ -2,7 +2,8 @@
 from apps.member.models import Member
 from django.db import models
 from django.db.models import Q
-from django.utils import timezone
+
+
 class Industry(models.Model):
     title = models.CharField(max_length=50, null=False)
     intro = models.TextField()
@@ -16,8 +17,10 @@ class Industry(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=255, verbose_name="公司名稱")
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    industry = models.ForeignKey(Industry, on_delete=models.CASCADE)
+    # 可能會出問題!關聯問題
+    member = models.OneToOneField(Member ,related_name="member",on_delete=models.CASCADE)
+    
+    industry = models.OneToOneField(Industry,related_name="industry", on_delete=models.CASCADE)
     positions = models.CharField(max_length=255, verbose_name="公司在職職位")
     description = models.TextField(verbose_name="公司簡介")
     products = models.CharField(max_length=255, verbose_name="販售商品")
@@ -28,7 +31,7 @@ class Company(models.Model):
     email = models.EmailField(verbose_name="聯絡信箱", null=True, blank=True)
     clicks = models.BigIntegerField("點擊次數",default=0)
     phone_number = models.CharField(max_length=20, verbose_name="聯絡電話", null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True,default=timezone.now())
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "公司"
@@ -90,4 +93,3 @@ class Company(models.Model):
         )
 
         return cls.objects.filter(query)
-    

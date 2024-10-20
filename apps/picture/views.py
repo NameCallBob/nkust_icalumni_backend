@@ -1,6 +1,5 @@
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets , permissions
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from apps.picture.models import SelfImage, CompanyImage, ProductImage, SlideImage
 from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer, SlideImageSerializer
 
@@ -9,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class SelfImageViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="取得所有的 SelfImage 資料",
@@ -90,7 +89,7 @@ class SelfImageViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CompanyImageViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @swagger_auto_schema(
         operation_description="取得所有的 CompanyImage 資料",
@@ -173,8 +172,8 @@ class CompanyImageViewSet(viewsets.ViewSet):
 
 
 class ProductImageViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
     @swagger_auto_schema(
         operation_description="取得所有的 ProductImage 資料",
         responses={200: ProductImageSerializer(many=True), 401: "未授權的用戶"},

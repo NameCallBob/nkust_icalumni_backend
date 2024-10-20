@@ -14,7 +14,7 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
-    
+
     def create_superuser(self,email,password,**extra_fields):
         """建立管理員或特別權限者"""
         extra_fields.setdefault("is_staff", True)
@@ -47,9 +47,6 @@ class Private(AbstractBaseUser , PermissionsMixin):
     def is_anonymous(self):
         return False
 
-    def __str__(self):
-        return f"帳號:{self.account}"
-    
 
 
 import random
@@ -58,7 +55,7 @@ from django.utils import timezone
 
 class PasswordResetCode(models.Model):
     private = models.ForeignKey(Private, on_delete=models.CASCADE)
-    code = models.CharField(max_length=6, editable=False, unique=True)    
+    code = models.CharField(max_length=6, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     expires_at = models.DateTimeField()

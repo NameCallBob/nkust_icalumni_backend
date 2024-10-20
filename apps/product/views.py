@@ -44,14 +44,14 @@ class ProductListView(generics.ListAPIView):
             query &= Q(updated_at=updated_at)
 
         return queryset.filter(query)
-    
+
 
 class ProductViewSet(viewsets.ViewSet):
     """
     一個用於列出、檢索、創建、更新和刪除產品的 ViewSet。
     僅允許對當前用戶所屬的公司的產品進行操作。
     """
-
+    
     @swagger_auto_schema(
         operation_summary="列出產品",
         operation_description="列出當前用戶所屬公司中的所有產品。",
@@ -133,4 +133,4 @@ class ProductViewSet(viewsets.ViewSet):
         id = request.query_params.get("id", 0)
         product = get_object_or_404(self.get_queryset(), id=id)
         product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
+        return Response(status=status.HTTP_204_NO_CONTENT)

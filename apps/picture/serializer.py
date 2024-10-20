@@ -13,7 +13,7 @@ class CompanyImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyImage
-        fields = '__all__'
+        fields = ['id', 'image', 'title', 'description', 'priority', 'active', 'created_at']
 
 class ProductImageSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
