@@ -169,8 +169,6 @@ class CompanyImageViewSet(viewsets.ViewSet):
         company_image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-
 class ProductImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
@@ -251,3 +249,5 @@ class ProductImageViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         product_image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
