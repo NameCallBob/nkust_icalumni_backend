@@ -13,6 +13,7 @@ from django.core.files.base import ContentFile
 import base64
 import uuid
 
+# 會員序列化
 class MemberSerializer(serializers.ModelSerializer):
     """
     系友會會員的序列化器
@@ -110,11 +111,9 @@ class MemberSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise serializers.ValidationError(f"An error occurred during creation: {str(e)}")
 
-
-
 class MemberSimpleSerializer(serializers.ModelSerializer):
     """
-    一般官網預覽使用
+    系友會資訊＿一般官網預覽使用
     """
     position = serializers.SerializerMethodField()
     graduate = serializers.SerializerMethodField()
@@ -140,6 +139,35 @@ class MemberSimpleSerializer(serializers.ModelSerializer):
                 }
             return None
 
+class MemberSimpleAdminSerializer(serializers.ModelSerializer):
+    """
+    給予管理端的預覽輸出
+    """
+    position = serializers.SerializerMethodField()
+    graduate = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    isActive = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Member
+        fields = ['id','name','gender','photo','position','graduate','email','is_paid','isActive']
+
+    def get_email(self,obj):
+        return obj.private.email
+    def get_isActive(self,obj):
+        return obj.private.is_active
+    
+    def get_position(self, instance):
+            position = getattr(instance, 'position', None)
+            if position:
+                return position.title
+            return None
+
+    def get_graduate(self, instance):
+            graduate = getattr(instance, 'graduate', None)
+            if graduate:
+                return graduate.grade
+            return None
 
 class MemberSimpleDetailSerializer(serializers.ModelSerializer):
     """
@@ -172,7 +200,7 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
                 }
             return None
 
-
+# 會員其他序列化
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position

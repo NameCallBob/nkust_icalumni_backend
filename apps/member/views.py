@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from apps.member.models import Member , Graduate , Position
-from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , MemberSimpleDetailSerializer
+from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , MemberSimpleDetailSerializer , MemberSimpleAdminSerializer
 from django.shortcuts import get_object_or_404
 
 import random ; import string
@@ -150,6 +150,12 @@ class MemberAdminViewSet(viewsets.ViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
+    @action(detail=False,methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def tableOutput_all(self,request):
+        ob = Member.objects.all()
+        serializer = MemberSimpleAdminSerializer(ob,many=True)
+        return Response(serializer.data)
+    
     @action(detail=False, methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def getOne(self, request):
         """查詢單一使用者"""
