@@ -156,17 +156,22 @@ class MemberSimpleAdminSerializer(serializers.ModelSerializer):
         return obj.private.email
     def get_isActive(self,obj):
         return obj.private.is_active
-    
+
     def get_position(self, instance):
             position = getattr(instance, 'position', None)
             if position:
-                return position.title
+                return {
+                    "title": position.title,
+                }
             return None
 
     def get_graduate(self, instance):
             graduate = getattr(instance, 'graduate', None)
             if graduate:
-                return graduate.grade
+                return {
+                    "school": graduate.school,
+                    "grade": graduate.grade
+                }
             return None
 
 class MemberSimpleDetailSerializer(serializers.ModelSerializer):
