@@ -155,7 +155,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         ob = Member.objects.all()
         serializer = MemberSimpleAdminSerializer(ob,many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def getOne(self, request):
         """查詢單一使用者"""
@@ -230,8 +230,10 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
         # 創建新使用者
         user = Private.objects.create_user(email=user_email, password=password)
+        from threading import Thread
+        Thread(target=email.member_account_created,args=(user_email,password)).start()
 
-        email.member_account_created(email,password)
+        return Response("已為使用者建立帳號")
 
 
     @action(detail=False, methods=['delete'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
@@ -309,7 +311,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
 class MemberListView(ListAPIView):
     """查詢會員使用"""
     serializer_class = MemberSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
     authentication_classes = [JWTAuthentication]
 
     @swagger_auto_schema(
@@ -320,6 +322,7 @@ class MemberListView(ListAPIView):
             openapi.Parameter('school', openapi.IN_QUERY, description="畢業學校", type=openapi.TYPE_STRING),
             openapi.Parameter('position', openapi.IN_QUERY, description="職位", type=openapi.TYPE_STRING),
             openapi.Parameter('is_paid', openapi.IN_QUERY, description="是否已繳費", type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter('search', openapi.IN_QUERY, description="全域搜尋關鍵字", type=openapi.TYPE_STRING),
         ],
         responses={200: '成功返回會員資料'}
     )
@@ -327,14 +330,36 @@ class MemberListView(ListAPIView):
         # 若為ＩＤ查詢
         id = self.request.query_params.get('id', None)
         if id:
-            return Member.objects.get(id=id)
+            return Member.objects.filter(id=id)
+
+        # 獲取查詢參數
         name = self.request.query_params.get('name', None)
         gender = self.request.query_params.get('gender', None)
         school = self.request.query_params.get('school', None)
         position = self.request.query_params.get('position', None)
         is_paid = self.request.query_params.get('is_paid', None)
-
-        return Member.search_members(name=name, gender=gender, school=school, position=position, is_paid=is_paid)
+        search = self.request.query_params.get('search', None)
+        is_active = self.request.query_params.get('is_active', None)
+        # 將 is_paid 字串轉換成布林值
+        if is_paid is not None:
+            if is_paid.lower() == 'true':
+                is_paid = True
+            elif is_paid.lower() == 'false':
+                is_paid = False
+            else:
+                is_paid = None
+        # 將 is_active 字串轉換成布林值
+        if is_active is not None:
+            if is_active.lower() == 'true':
+                is_active = True
+            elif is_active.lower() == 'false':
+                is_active = False
+            else:
+                is_active = None
+        # 執行搜尋，包含search和其他條件的聯合篩選
+        return Member.search_members(name=name, gender=gender, school=school,
+                                     position=position, is_paid=is_paid, search=search ,
+                                     is_active=is_active)
 
 
 class MemberListViewForAll(ListAPIView):

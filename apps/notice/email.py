@@ -49,6 +49,7 @@ def send_order_email(user_email, context, subject_template, html_template):
     except Exception as e:
         logger = logging.getLogger('django')
         logger.error(f"An error occurred-寄信問題: {e}")
+        print("error:",e)
         return False
 
 
@@ -57,10 +58,9 @@ class email:
     def member_account_created(user_email,password):
         """帳號已被創造通知"""
         subject_template = f"『 歡迎加入智慧商務系 系友會！ 』帳號已創建"
-        context ={
-            "current_year":datetime.now().year,
-            "password":password
-        }
+        context = {}
+        context['current_year'] = datetime.now().year
+        context['password'] = password
         html_template = "welcome.html"
         return send_order_email(user_email, context, subject_template, html_template)
 
