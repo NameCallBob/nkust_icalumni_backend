@@ -54,11 +54,12 @@ def send_order_email(user_email, context, subject_template, html_template):
 
 class email:
 
-    def member_account_created(user_email):
+    def member_account_created(user_email,password):
         """帳號已被創造通知"""
         subject_template = f"『 歡迎加入智慧商務系 系友會！ 』帳號已創建"
         context ={
-            "current_year":datetime.now().year
+            "current_year":datetime.now().year,
+            "password":password
         }
         html_template = "welcome.html"
         return send_order_email(user_email, context, subject_template, html_template)
