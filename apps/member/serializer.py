@@ -4,9 +4,14 @@ from apps.notice.models import Notice
 from apps.private.models import Private
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
+from apps.deal_base64 import Base64ImageField
 # 序列化
 from apps.picture.serializer import SelfImageSerializer , CompanyImageSerializer
 from apps.company.serializer import CompanySearchSerializer
+
+from django.core.files.base import ContentFile
+import base64
+import uuid
 
 class MemberSerializer(serializers.ModelSerializer):
     """
@@ -17,12 +22,13 @@ class MemberSerializer(serializers.ModelSerializer):
     notice_type = serializers.SerializerMethodField()
     position = serializers.SerializerMethodField()
     graduate = serializers.SerializerMethodField()
+    photo = Base64ImageField()
 
     class Meta:
         model = Member
         fields = '__all__'
 
-    def get_email(self,instance):
+    def get_email(self, instance):
         private = getattr(instance, 'private', None)
         return private.email
 
@@ -67,6 +73,15 @@ class MemberSerializer(serializers.ModelSerializer):
                     grade=validated_data.get('grade')
                 )
 
+                # 處理 base64 照片
+                photo_data = validated_data.get('photo')
+                if photo_data:
+                    format, imgstr = photo_data.split(';base64,')  # 提取圖片格式和 base64 資料
+                    ext = format.split('/')[-1]  # 獲取圖片的擴展名
+                    photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')  # 解碼並創建 ContentFile
+                else:
+                    photo = None
+
                 member_instance = Member.objects.create(
                     private=private_instance,
                     name=validated_data['name'],
@@ -77,13 +92,13 @@ class MemberSerializer(serializers.ModelSerializer):
                     is_paid=False,
                     intro=validated_data.get('intro'),
                     birth_date=validated_data.get('birth_date'),
-                    photo=None,
+                    photo=photo,  # 儲存處理後的照片
                     position=Position.objects.get(id=1),
                     graduate=graduate_instance,
                 )
 
                 notice_instance = Notice.objects.create(
-                    member = member_instance,
+                    member=member_instance,
                     email_notifications=True,
                     sms_notifications=False,
                     news_notifications=True,
@@ -94,6 +109,7 @@ class MemberSerializer(serializers.ModelSerializer):
 
         except Exception as e:
             raise serializers.ValidationError(f"An error occurred during creation: {str(e)}")
+
 
 
 class MemberSimpleSerializer(serializers.ModelSerializer):

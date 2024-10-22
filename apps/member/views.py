@@ -161,7 +161,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def partial_change(self, request):
         """修改部分使用者資料"""
         member_id = request.data.get('member_id')
@@ -175,7 +175,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['put'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['put'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def change(self, request):
         """修改使用者資料"""
         member_id = request.data.get('member_id')
@@ -189,7 +189,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         except Member.DoesNotExist:
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def newUser_basic(self, request):
         """建立新使用者（全部都填）"""
         serializer = MemberSerializer(data=request.data)
@@ -198,7 +198,37 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['delete'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+
+
+    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def newUser_email(self, request):
+        """建立新使用者（僅輸入電子郵件）"""
+        from apps.private.models import Private
+        from apps.notice.email import email
+        def generate_random_password(length=8):
+            """生成8位隨機密碼"""
+            characters = string.ascii_letters + string.digits
+            return ''.join(random.choice(characters) for _ in range(length))
+
+        user_email = request.data.get("email")
+
+        if not user_email:
+            return Response({"error": "Email is required."}, status=400)
+
+        # 生成8碼隨機密碼
+        password = generate_random_password()
+
+        # 檢查使用者是否已存在
+        if Private.objects.filter(email=user_email).exists():
+            return Response({"error": "User with this email already exists."}, status=400)
+
+        # 創建新使用者
+        user = Private.objects.create_user(email=user_email, password=password)
+
+        email.member_account_created(email,password)
+
+
+    @action(detail=False, methods=['delete'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def delete(self, request):
         """刪除使用者"""
         member_id = request.data.get('member_id')
