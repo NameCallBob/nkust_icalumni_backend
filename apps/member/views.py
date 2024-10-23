@@ -271,6 +271,8 @@ class MemberAdminViewSet(viewsets.ViewSet):
             ob = Member.objects.get(id=member_id)
             ob.private.is_active = not ob.private.is_active
             ob.save()
+            ob.private.save()
+            return Response("ok")
         except Member.DoesNotExist:
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:
@@ -301,12 +303,31 @@ class MemberAdminViewSet(viewsets.ViewSet):
             ob.is_paid = not ob.is_paid
             ob.private.is_active = not ob.private.is_active
             ob.save()
+            ob.private.save()
+            
             return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:
             return Response({"message": f"未知錯誤: {e}"}, status=500)
-
+        
+    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    def update_password(self, request):
+        """
+        因未繳費關閉帳號及記錄
+        """
+        try:
+            member_id = request.data.get("member_id")
+            password =request.data.get("password")
+            ob = Member.objects.get(id=member_id)
+            ob.private.password = ob.private.set_password(password)
+            ob.save()
+            ob.private.save()
+            return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
+        except Member.DoesNotExist:
+            return Response({"message": "未知使用者"}, status=404)
+        except Exception as e:
+            return Response({"message": f"未知錯誤: {e}"}, status=500)
 
 class MemberListView(ListAPIView):
     """查詢會員使用"""
