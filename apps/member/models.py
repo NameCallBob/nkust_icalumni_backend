@@ -59,8 +59,8 @@ class Member(models.Model):
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='static/member/', blank=True, null=True)
-    position = models.OneToOneField(Position, on_delete=models.SET_NULL, null=True)
-    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
+    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
+    graduate = models.ForeignKey(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
