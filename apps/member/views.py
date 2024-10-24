@@ -11,6 +11,10 @@ from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , M
 from django.shortcuts import get_object_or_404
 
 import random ; import string
+# jwt
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from django.db import transaction
 
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
@@ -261,18 +265,28 @@ class MemberAdminViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def switch_active(self, request):
         """
         停用登入使用者的帳號 (將 is_active 設為 False)
+        並註銷該用戶的所有 Token
         """
         try:
             member_id = request.data.get("member_id")
-            ob = Member.objects.get(id=member_id)
-            ob.private.is_active = not ob.private.is_active
-            ob.save()
-            ob.private.save()
-            return Response("ok")
+            with transaction.atomic():  # 使用事務來包裹多個操作
+                ob = Member.objects.select_for_update().get(id=member_id)
+
+                # 切換 is_active 狀態
+                ob.private.is_active = not ob.private.is_active
+                ob.private.save()
+
+                # 找到該用戶的所有 Outstanding Tokens 並將它們加入黑名單
+                tokens = OutstandingToken.objects.filter(user=ob.private)
+                for token in tokens:
+                    # 將每個 Token 加入黑名單
+                    BlacklistedToken.objects.get_or_create(token=token)
+
+            return Response("帳號狀態已切換並登出所有 token", status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:
@@ -292,20 +306,29 @@ class MemberAdminViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def switch_paid(self, request):
         """
         因未繳費關閉帳號及記錄
+        並註銷該會員所有 Token
         """
         try:
             member_id = request.data.get("member_id")
-            ob = Member.objects.get(id=member_id)
-            ob.is_paid = not ob.is_paid
-            ob.private.is_active = not ob.private.is_active
-            ob.save()
-            ob.private.save()
-            
-            return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
+            with transaction.atomic():  # 使用事務來包裹多個操作，保證數據一致性
+                ob = Member.objects.select_for_update().get(id=member_id)
+                
+                # 切換 is_paid 和 is_active 狀態
+                ob.is_paid = not ob.is_paid
+                ob.private.is_active = not ob.private.is_active
+                ob.private.save()
+                ob.save()
+
+                # 找到該用戶的所有 Outstanding Tokens 並將它們加入黑名單
+                tokens = OutstandingToken.objects.filter(user=ob.private)
+                for token in tokens:
+                    BlacklistedToken.objects.get_or_create(token=token)
+
+            return Response({'status': 'account deactivated and all tokens blacklisted'}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:
@@ -321,7 +344,6 @@ class MemberAdminViewSet(viewsets.ViewSet):
             password =request.data.get("password")
             ob = Member.objects.get(id=member_id)
             ob.private.password = ob.private.set_password(password)
-            ob.save()
             ob.private.save()
             return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:

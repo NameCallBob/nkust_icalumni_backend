@@ -78,6 +78,7 @@ INSTALLED_APPS = [
 
 
 
+
 ]
 
 MIDDLEWARE = [
@@ -127,6 +128,8 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     'SIGNING_KEY': SECRET_KEY,
     'USER_ID_FIELD': 'id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'BLACKLIST_AFTER_ROTATION': True,
     # 設定
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
     "TOKEN_OBTAIN_SERIALIZER": "data_maintenance.serializers.Member_TokenObtainPairSerializer",

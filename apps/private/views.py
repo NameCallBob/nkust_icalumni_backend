@@ -52,23 +52,29 @@ class LoginView(APIView):
     )
     def post(self, request):
         """登入"""
-        userEmail = request.data.get('email')
-        password = request.data.get('password')
-        user = authenticate(email=userEmail, password=password)
-        if user:
-            refresh = RefreshToken.for_user(user)
-            login_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-            ip_address = request.META.get('REMOTE_ADDR')
-            device_info = request.META.get('HTTP_USER_AGENT', 'Unknown Device')
-            context = {
-                'login_time': login_time,
-                'ip_address': ip_address,
-                'device_info': device_info,
-            }
-            threading.Thread(target=email.login, args=(userEmail, context,)).start()
-            return Response({'message': "OK", 'token': str(refresh.access_token)}, status=200)
-        else:
+        try:
+            userEmail = request.data.get('email')
+            password = request.data.get('password')
+            user = authenticate(email=userEmail, password=password)
+            if not Private.objects.get(email=userEmail).is_active :
+                return Response({'msg':"已被停用"},status=403)
+            if user:
+                refresh = RefreshToken.for_user(user)
+                login_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                ip_address = request.META.get('REMOTE_ADDR')
+                device_info = request.META.get('HTTP_USER_AGENT', 'Unknown Device')
+                context = {
+                    'login_time': login_time,
+                    'ip_address': ip_address,
+                    'device_info': device_info,
+                }
+                threading.Thread(target=email.login, args=(userEmail, context,)).start()
+                return Response({'message': "OK", 'token': str(refresh.access_token)}, status=200)
+            else:
+                return Response({'error': 'failed'}, status=400)
+        except Private.DoesNotExist:
             return Response({'error': 'failed'}, status=400)
+            
 
 class PasswordResetRequestView(APIView):
     """程式碼重置需求"""
