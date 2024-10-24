@@ -93,6 +93,7 @@ class CompanyViewSet(viewsets.ViewSet):
     @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def new(self, request):
         request.data['private'] = request.user.id
+        request.data['member'] = Member.objects.get(private=request.user).id
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -125,12 +126,12 @@ class CompanyViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
-    def selfChagne(self, request):
+    def selfChange(self, request):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CompanySerializer(company, data=request.data)
+        serializer = CompanySerializer(company, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
