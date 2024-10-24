@@ -9,7 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class PositionViewSet(viewsets.ViewSet):
     """
-    
+
     """
 
     @action(detail=False, methods=['get'], url_path='get-all' ,authentication_classes=[],permission_classes=[permissions.AllowAny])
@@ -36,7 +36,7 @@ class PositionViewSet(viewsets.ViewSet):
         serializer = PositionSerializer(position)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'], url_path='replace',authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['put'], url_path='replace',authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def replace(self, request):
         # 不使用 pk，而是从请求数据中获取 id
         id = request.data.get('id')
@@ -50,7 +50,7 @@ class PositionViewSet(viewsets.ViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['post'], url_path='modify',authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], url_path='modify',authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def modify(self, request):
         id = request.data.get('id')
         if not id:

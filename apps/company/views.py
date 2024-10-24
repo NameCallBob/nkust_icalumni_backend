@@ -198,7 +198,7 @@ class IndustryViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAdminUser])
     def new(self, request):
         serializer = IndustrySerializer(data=request.data)
         if serializer.is_valid():
@@ -237,7 +237,7 @@ class IndustryViewSet(viewsets.ViewSet):
             404: '行業不存在'
         }
     )
-    @action(methods=['put'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['put'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAdminUser])
     def change(self, request):
         try:
             if request.data.get("id", '') == '':
@@ -259,7 +259,7 @@ class IndustryViewSet(viewsets.ViewSet):
             404: '行業不存在'
         }
     )
-    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAdminUser])
     def delete(self, request):
         try:
             if request.data.get("id", '') == '':
