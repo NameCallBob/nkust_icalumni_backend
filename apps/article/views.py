@@ -107,7 +107,7 @@ class ArticleViewSet(viewsets.ViewSet):
         except Article.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ArticleSerializer(article, data=request.data)
+        serializer = ArticleSerializer(article, data=request.data,partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

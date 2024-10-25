@@ -38,6 +38,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
         return article
 
+    # 更新文章時，處理圖片數據
     def update(self, instance, validated_data):
         images_data = validated_data.pop('images', [])
 
@@ -51,10 +52,16 @@ class ArticleSerializer(serializers.ModelSerializer):
         instance.link = validated_data.get('link', instance.link)
         instance.save()
 
-        # 清除現有圖片並重新創建圖片
-        instance.images.all().delete()  # 清除舊圖片
+        # 更新圖片：不刪除所有圖片，而是更新圖片數據
+        existing_image_ids = [img.id for img in instance.images.all()]
         for image_data in images_data:
-            ArticleImageSerializer().create({**image_data, 'article': instance})
+            image_id = image_data.get('id', None)
+            if image_id and image_id in existing_image_ids:
+                # 如果圖片已經存在，則更新該圖片
+                ArticleImage.objects.filter(id=image_id).update(**image_data)
+            else:
+                # 如果圖片不存在，則創建新圖片
+                ArticleImage.objects.create(article=instance, **image_data)
 
         return instance
 
