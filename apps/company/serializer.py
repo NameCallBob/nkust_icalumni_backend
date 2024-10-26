@@ -11,8 +11,8 @@ class CompanySearchSerializer(serializers.ModelSerializer):
     industry = IndustrySerializer()
     class Meta:
         model = Company
-        fields = ['id', 'name', 'industry', 'positions', 'description', 'products',
-                  'product_description', 'photo', 'website', 'address', 'email',
+        fields = [ 'name', 'industry', 'positions', 'products',
+                  'product_description', 'photo', 'address', 'email',
                   'clicks', 'phone_number', 'created_at']
 
 import base64
