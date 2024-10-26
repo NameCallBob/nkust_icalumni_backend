@@ -154,13 +154,13 @@ class MemberAdminViewSet(viewsets.ViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
-    @action(detail=False,methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False,methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def tableOutput_all(self,request):
         ob = Member.objects.all()
         serializer = MemberSimpleAdminSerializer(ob,many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['get'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def getOne(self, request):
         """查詢單一使用者"""
         member_id = request.query_params.get('member_id')
@@ -233,7 +233,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return Response({"error": "User with this email already exists."}, status=400)
 
         # 創建新使用者
-        user = Private.objects.create_user(email=user_email, password=password)
+        user = Private.objects.create_user(email=user_email, password=password,)
         from threading import Thread
         Thread(target=email.member_account_created,args=(user_email,password)).start()
 
@@ -265,7 +265,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def switch_active(self, request):
         """
         停用登入使用者的帳號 (將 is_active 設為 False)
@@ -306,7 +306,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
             404: '使用者不存在'
         }
     )
-    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def switch_paid(self, request):
         """
         因未繳費關閉帳號及記錄
@@ -316,7 +316,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
             member_id = request.data.get("member_id")
             with transaction.atomic():  # 使用事務來包裹多個操作，保證數據一致性
                 ob = Member.objects.select_for_update().get(id=member_id)
-                
+
                 # 切換 is_paid 和 is_active 狀態
                 ob.is_paid = not ob.is_paid
                 ob.private.is_active = not ob.private.is_active
@@ -333,8 +333,8 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:
             return Response({"message": f"未知錯誤: {e}"}, status=500)
-        
-    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+
+    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def update_password(self, request):
         """
         因未繳費關閉帳號及記錄

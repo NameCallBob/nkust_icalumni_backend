@@ -3,7 +3,7 @@ from rest_framework.decorators import action , authentication_classes , permissi
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from apps.recruit.models import Recruit
-from apps.recruit.serializer import RecruitSerializer,RecruitSerializer_forTable
+from apps.recruit.serializer import RecruitSerializer,RecruitSerializer_forTable,RecruitAdminSerializer_forTable
 from rest_framework_simplejwt.authentication import JWTAuthentication
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
@@ -70,6 +70,35 @@ class RecruitViewSet(viewsets.ViewSet):
         serializer = RecruitSerializer_forTable(queryset, many=True)
         return Response(serializer.data)
 
+    @action(methods=['get'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    def tableOutput_admin(self, request):
+        from apps.member.models import Member
+        from apps.company.models import Company
+        from rest_framework.generics import get_object_or_404
+        from rest_framework.exceptions import NotFound
+        # 確認使用者的會員對象是否存在，否則回傳404
+        member = get_object_or_404(Member, private=request.user)
+
+        # 確認使用者所屬的公司是否存在，否則回傳404
+        company = Company.objects.filter(member=member).first()
+        if not company:
+            raise NotFound("Company not found for the user.")
+
+        # 查詢啟用的招聘信息
+        queryset = Recruit.objects.filter(active=True, company=company)
+
+        # 分頁處理
+        paginator = RecruitPagination()
+        page = paginator.paginate_queryset(queryset, request)
+
+        # 序列化數據
+        if page is not None:
+            serializer = RecruitAdminSerializer_forTable(page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = RecruitAdminSerializer_forTable(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @swagger_auto_schema(
         operation_description="查詢單一招聘資料",
         manual_parameters=[
@@ -103,10 +132,13 @@ class RecruitViewSet(viewsets.ViewSet):
             400: '請求無效'
         }
     )
-    @action(methods=['post'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def new(self, request):
         """創建招聘資料"""
-        serializer = RecruitSerializer(data=request.data)
+        from apps.company.models import Company
+        tmp = request.data.copy()  # 確保 data 可變動
+        tmp['company'] = Company.objects.get(member=request.user.member).id
+        serializer = RecruitSerializer(data=tmp, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
