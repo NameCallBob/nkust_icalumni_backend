@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action , authentication_classes , permission_classes
 from apps.member.models import Member
 from apps.company.models import Company , Industry
-from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer
+from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework import generics
@@ -15,7 +15,7 @@ from drf_yasg import openapi
 
 class CompanyListView(generics.ListAPIView):
     """For管理端的公司查詢"""
-    serializer_class = CompanySerializer
+    serializer_class = CompanySearchSerializer
     authentication_classes=[]
     permission_classes=[permissions.AllowAny]
 
