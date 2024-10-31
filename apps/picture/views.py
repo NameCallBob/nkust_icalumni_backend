@@ -1,5 +1,7 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action ,authentication_classes,permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.picture.models import SelfImage, CompanyImage, ProductImage
 from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer
 from drf_yasg.utils import swagger_auto_schema
@@ -12,15 +14,17 @@ class SelfImageViewSet(viewsets.ViewSet):
         operation_description="取得所有 SelfImage 資料",
         responses={200: SelfImageSerializer(many=True), 401: "未授權的用戶"}
     )
+    @action(detail=False, methods=['get'], url_path='all',permission_classes=[permissions.IsAdminUser],authentication_classes=[JWTAuthentication])
     def all(self, request):
         queryset = SelfImage.objects.all()
         serializer = SelfImageSerializer(queryset, many=True)
         return Response(serializer.data)
-    
+
     @swagger_auto_schema(
         operation_description="取得當前使用者的 SelfImage 資料",
         responses={200: SelfImageSerializer(many=True), 401: "未授權的用戶"}
     )
+    @action(detail=False, methods=['get'],permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def selfInfo(self, request):
         queryset = SelfImage.objects.filter(member=request.user.member.id)
         serializer = SelfImageSerializer(queryset, many=True)
@@ -31,8 +35,12 @@ class SelfImageViewSet(viewsets.ViewSet):
         request_body=SelfImageSerializer,
         responses={201: openapi.Response('成功創建', SelfImageSerializer), 400: '格式錯誤', 401: '未授權'}
     )
+    @action(detail=False, methods=['post'], url_path='new', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def new(self, request):
-        serializer = SelfImageSerializer(data=request.data)
+        data = request.data.copy()
+        data['member'] = request.user.member.id  # 自動抓取 member 的 ID
+
+        serializer = SelfImageSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -43,6 +51,7 @@ class SelfImageViewSet(viewsets.ViewSet):
         request_body=SelfImageSerializer,
         responses={200: '成功更新', 400: '格式錯誤', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['put'], url_path='change',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
             image = SelfImage.objects.get(id=request.data.get("id"))
@@ -58,6 +67,7 @@ class SelfImageViewSet(viewsets.ViewSet):
         operation_description="刪除 SelfImage",
         responses={204: '成功刪除', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['delete'], url_path='delete',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
             image = SelfImage.objects.get(id=request.data.get("id"))
@@ -66,6 +76,28 @@ class SelfImageViewSet(viewsets.ViewSet):
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @swagger_auto_schema(
+        operation_description="切換 SelfImage 的 active 狀態",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Image ID')
+            },
+            required=['id']
+        ),
+        responses={200: "切換成功", 404: "找不到", 401: "未授權"}
+    )
+    @action(detail=False, methods=['post'], url_path='switch_active', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
+    def switch_active(self, request):
+        image_id = request.data.get("id")
+        try:
+            image = SelfImage.objects.get(id=image_id)
+            image.active = not image.active
+            image.save()
+            return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
+        except SelfImage.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 class CompanyImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -73,17 +105,20 @@ class CompanyImageViewSet(viewsets.ViewSet):
         operation_description="取得所有 CompanyImage 資料",
         responses={200: CompanyImageSerializer(many=True), 401: "未授權"}
     )
+    @action(detail=False, methods=['get'], url_path='all',permission_classes=[permissions.IsAdminUser],authentication_classes=[JWTAuthentication])
     def all(self, request):
         queryset = CompanyImage.objects.all()
         serializer = CompanyImageSerializer(queryset, many=True)
         return Response(serializer.data)
-    
+
     @swagger_auto_schema(
         operation_description="取得當前公司成員的 CompanyImage 資料",
         responses={200: CompanyImageSerializer(many=True), 401: "未授權"}
     )
+    @action(detail=False, methods=['get'],permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def selfInfo(self, request):
-        queryset = CompanyImage.objects.filter(company=request.user.member.company.id)
+        from apps.company.models import Company
+        queryset = CompanyImage.objects.filter(company=Company.objects.get(member=request.user.member))
         serializer = CompanyImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -92,8 +127,12 @@ class CompanyImageViewSet(viewsets.ViewSet):
         request_body=CompanyImageSerializer,
         responses={201: openapi.Response('成功創建', CompanyImageSerializer), 400: '格式錯誤', 401: '未授權'}
     )
+    @action(detail=False, methods=['post'], url_path='new', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def new(self, request):
-        serializer = CompanyImageSerializer(data=request.data)
+        from apps.company.models import Company
+        data = request.data.copy()
+        data['company'] = Company.objects.get(member=request.user.member).id  # 自動抓取 company 的 ID
+        serializer = CompanyImageSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -104,6 +143,7 @@ class CompanyImageViewSet(viewsets.ViewSet):
         request_body=CompanyImageSerializer,
         responses={200: '成功更新', 400: '格式錯誤', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['put'], url_path='change',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
             image = CompanyImage.objects.get(id=request.data.get("id"))
@@ -119,6 +159,7 @@ class CompanyImageViewSet(viewsets.ViewSet):
         operation_description="刪除 CompanyImage",
         responses={204: '成功刪除', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['delete'], url_path='delete',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
             image = CompanyImage.objects.get(id=request.data.get("id"))
@@ -127,6 +168,28 @@ class CompanyImageViewSet(viewsets.ViewSet):
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @swagger_auto_schema(
+        operation_description="切換 CompanyImage 的 active 狀態",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Image ID')
+            },
+            required=['id']
+        ),
+        responses={200: "切換成功", 404: "找不到", 401: "未授權"}
+    )
+    @action(detail=False, methods=['post'], url_path='switch_active', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
+    def switch_active(self, request):
+        image_id = request.data.get("id")
+        try:
+            image = CompanyImage.objects.get(id=image_id)
+            image.active = not image.active
+            image.save()
+            return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
+        except CompanyImage.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
 class ProductImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -134,8 +197,20 @@ class ProductImageViewSet(viewsets.ViewSet):
         operation_description="取得所有 ProductImage 資料",
         responses={200: ProductImageSerializer(many=True), 401: "未授權"}
     )
+    @action(detail=False, methods=['get'], url_path='all',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def all(self, request):
         queryset = ProductImage.objects.all()
+        serializer = ProductImageSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        operation_description="取得當前公司成員的 ProdcutImage 資料",
+        responses={200: CompanyImageSerializer(many=True), 401: "未授權"}
+    )
+    @action(detail=False, methods=['get'],permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
+    def selfInfo(self, request):
+        from apps.company.models import Company
+        queryset = ProductImage.objects.filter(company=Company.objects.get(member=request.user.member))
         serializer = ProductImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -144,8 +219,12 @@ class ProductImageViewSet(viewsets.ViewSet):
         request_body=ProductImageSerializer,
         responses={201: openapi.Response('成功創建', ProductImageSerializer), 400: '格式錯誤', 401: '未授權'}
     )
+    @action(detail=False, methods=['post'], url_path='new', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def new(self, request):
-        serializer = ProductImageSerializer(data=request.data)
+        data = request.data.copy()
+        data['product'] = request.data.get('product_id')  # 假設前端傳遞的產品 ID 使用 `product_id`
+        print(data['product'])
+        serializer = ProductImageSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -156,6 +235,7 @@ class ProductImageViewSet(viewsets.ViewSet):
         request_body=ProductImageSerializer,
         responses={200: '成功更新', 400: '格式錯誤', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['put'], url_path='change',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
             image = ProductImage.objects.get(id=request.data.get("id"))
@@ -171,6 +251,7 @@ class ProductImageViewSet(viewsets.ViewSet):
         operation_description="刪除 ProductImage",
         responses={204: '成功刪除', 404: '找不到', 401: '未授權'}
     )
+    @action(detail=False, methods=['delete'], url_path='delete',permission_classes=[permissions.IsAuthenticated],authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
             image = ProductImage.objects.get(id=request.data.get("id"))
@@ -178,3 +259,25 @@ class ProductImageViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @swagger_auto_schema(
+        operation_description="切換 ProductImage 的 active 狀態",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Image ID')
+            },
+            required=['id']
+        ),
+        responses={200: "切換成功", 404: "找不到", 401: "未授權"}
+    )
+    @action(detail=False, methods=['post'], url_path='switch_active', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
+    def switch_active(self, request):
+        image_id = request.data.get("id")
+        try:
+            image = ProductImage.objects.get(id=image_id)
+            image.active = not image.active
+            image.save()
+            return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
+        except ProductImage.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
