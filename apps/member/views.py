@@ -334,18 +334,20 @@ class MemberAdminViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"message": f"未知錯誤: {e}"}, status=500)
 
-    @action(detail=False, methods=['patch'] , authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
+    @action(detail=False, methods=['patch'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def update_password(self, request):
         """
         因未繳費關閉帳號及記錄
         """
         try:
             member_id = request.data.get("member_id")
-            password =request.data.get("password")
+            password = request.data.get("password")
             ob = Member.objects.get(id=member_id)
-            ob.private.password = ob.private.set_password(password)
-            ob.private.save()
-            return Response({'status': 'account deactivated'}, status=status.HTTP_200_OK)
+
+            ob.private.set_password(password)  # Properly set the hashed password
+            ob.private.save()  # Save the private object
+
+            return Response({'status': 'password updated'}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"message": "未知使用者"}, status=404)
         except Exception as e:

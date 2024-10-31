@@ -13,7 +13,7 @@ class CompanySearchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = [ 'name', 'industry', 'positions', 'products',
+        fields = [ 'id','member','name', 'industry', 'positions', 'products',
                   'product_description', 'photo', 'address', 'email',
                   'phone_number', 'created_at','member_name']
 
