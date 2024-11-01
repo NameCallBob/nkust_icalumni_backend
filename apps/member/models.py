@@ -9,6 +9,7 @@ class Position(models.Model):
     - priority: 優先級，使用 IntegerField 儲存，用來表示職位的重要性或排序，數字越小表示優先級越高。
     """
     title = models.TextField()
+    student_id = models.TextField()
     priority = models.IntegerField()
 
     def __str__(self):

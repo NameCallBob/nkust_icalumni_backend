@@ -10,16 +10,17 @@ class IndustrySerializer(serializers.ModelSerializer):
 class CompanySearchSerializer(serializers.ModelSerializer):
     industry = IndustrySerializer()
     member_name = serializers.SerializerMethodField()
-
+    graduate_grade = serializers.SerializerMethodField()
     class Meta:
         model = Company
         fields = [ 'id','member','name', 'industry', 'positions', 'products',
                   'product_description', 'photo', 'address', 'email',
-                  'phone_number', 'created_at','member_name']
+                  'phone_number', 'graduate_grade','member_name']
 
     def get_member_name(self, instance):
         return instance.member.name
-
+    def get_graduate_grade(self,obj):
+        return obj.member.graduate.grade
 import base64
 from django.core.files.base import ContentFile
 
@@ -85,12 +86,14 @@ class CompanySerializer(serializers.ModelSerializer):
 
 class SimpleCompanySerializer(serializers.ModelSerializer):
     member_name = serializers.SerializerMethodField()
-
+    graduate_grade = serializers.SerializerMethodField()
     class Meta:
         model = Company
         fields = [
-            'id', 'name', 'member_name','photo','member','products'
+            'id', 'name', 'member_name','photo','member','products','graduate_grade'
         ]
 
     def get_member_name(self,obj):
         return obj.member.name
+    def get_graduate_grade(self,obj):
+        return obj.member.graduate.grade
