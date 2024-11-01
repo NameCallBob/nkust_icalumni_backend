@@ -20,6 +20,9 @@ from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.contrib.auth.hashers import check_password
+
+
 class MemberViewSet(viewsets.ViewSet):
     """
     系友會「自身」會員的 ViewSet
@@ -91,7 +94,43 @@ class MemberViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @swagger_auto_schema(
+        operation_description="更新登入使用者的密碼",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'old_password': openapi.Schema(type=openapi.TYPE_STRING, description='舊密碼'),
+                'new_password': openapi.Schema(type=openapi.TYPE_STRING, description='新密碼'),
+            },
+            required=['old_password', 'new_password']
+        ),
+        responses={
+            200: '密碼更新成功',
+            400: '請求無效',
+            403: '舊密碼不正確'
+        }
+    )
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def update_password(self, request):
+        """
+        更新登入使用者的密碼
+        """
+        user = request.user
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
 
+        if not check_password(old_password, user.password):
+            return Response({'error': '舊密碼不正確'}, status=status.HTTP_403_FORBIDDEN)
+        
+        if old_password == new_password:
+            return Response({'error': '新密碼不可與舊密碼相同'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({'message': '密碼更新成功'}, status=status.HTTP_200_OK)
+    
 class MemberAnyViewSet(viewsets.ViewSet):
 
     @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[permissions.AllowAny])
