@@ -188,10 +188,12 @@ class RecruitViewSet(viewsets.ViewSet):
     def delete(self, request):
         """刪除招聘資料"""
         try:
-            pk = request.data.get("id")
+            pk = request.GET["id"]
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
+        except KeyError:
+            return Response("id?",status=400)
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
