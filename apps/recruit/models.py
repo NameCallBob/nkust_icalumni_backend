@@ -18,6 +18,7 @@ class Recruit(models.Model):
 
 class Contact(models.Model):
     recruit = models.OneToOneField(Recruit, related_name='contact', on_delete=models.CASCADE)
+    company_name = models.TextField(default="公司名稱?")
     name = models.TextField()
     phone = models.TextField()
     email = models.EmailField()

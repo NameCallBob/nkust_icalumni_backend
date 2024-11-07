@@ -59,7 +59,7 @@ class MemberSerializer(serializers.ModelSerializer):
         """
         檢查 position 條件並設置/取消 superuser 權限
         """
-        if position_instance.title == "管理員" or (position_instance.priority and position_instance.priority < 3):
+        if position_instance.title == "管理員" or (position_instance.priority and position_instance.priority <= 3):
             member_instance.private.is_superuser = True
         else:
             member_instance.private.is_superuser = False
@@ -143,7 +143,9 @@ class MemberSerializer(serializers.ModelSerializer):
         if graduate_data:
             if instance.graduate:
                 # 檢查是否需要更新或創建新 graduate
-                if instance.graduate.school != graduate_data.get("school") or instance.graduate.grade != graduate_data.get("grade"):
+                if instance.graduate.school != graduate_data.get("school") \
+                     or instance.graduate.grade != graduate_data.get("grade") \
+                     or instance.graduate.student_id != graduate_data.get("student_id"):
                     # 如果現有 graduate 被多個成員共享，則創建新的實例
                     graduate_instance = Graduate.objects.create(**graduate_data)
                     instance.graduate = graduate_instance

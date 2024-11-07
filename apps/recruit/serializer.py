@@ -35,10 +35,11 @@ class RecruitSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # 提取聯絡人及圖片資料
+        print(validated_data)
         contact_data = validated_data.pop('contact', None)
         images_data = validated_data.pop('images', [])
-        is_contact_self = validated_data.pop('is_contact_self', False)
-        is_owner_self = validated_data.pop('is_owner_self', False)
+        is_contact_self = validated_data.pop('isPersonalContact', False)
+        is_owner_self = validated_data.pop('isPersonalCompany', False)
 
         # 設置聯絡人及公司資料
         user = self.context['request'].user  # 從 context 中獲取使用者
@@ -49,10 +50,11 @@ class RecruitSerializer(serializers.ModelSerializer):
                 'email': user.email,
             }
         if is_owner_self:
-            validated_data['company'] = user.member.company
-        elif 'company' not in validated_data:
-            raise serializers.ValidationError({"company": ["此為必需欄位。"]})
+            contact_data['company_name'] = user.member.company.name
+        elif 'company_name' not in validated_data:
+            raise serializers.ValidationError({"company_name": ["請輸入公司名稱!"]})
 
+        validated_data['company'] = user.member.company
         # 建立 Recruit
         recruit = Recruit.objects.create(**validated_data)
 
@@ -70,8 +72,8 @@ class RecruitSerializer(serializers.ModelSerializer):
         # 提取聯絡人及圖片資料
         contact_data = validated_data.pop('contact', None)
         images_data = validated_data.pop('images', [])
-        is_contact_self = validated_data.pop('is_contact_self', False)
-        is_owner_self = validated_data.pop('is_owner_self', False)
+        is_contact_self = validated_data.pop('isPersonalContact', False)
+        is_owner_self = validated_data.pop('isPersonalCompany', False)
 
         # 設置聯絡人為本人和公司為本人公司邏輯
         user = self.context['request'].user  # 從 context 中獲取使用者
@@ -82,7 +84,9 @@ class RecruitSerializer(serializers.ModelSerializer):
                 'email': user.email,
             }
         if is_owner_self:
-            validated_data['company'] = user.member.company
+            contact_data['company_name'] = user.member.company.name
+
+        validated_data['company'] = user.member.company
 
         # 更新 Recruit 的字段
         instance.company = validated_data.get('company', instance.company)
@@ -100,6 +104,7 @@ class RecruitSerializer(serializers.ModelSerializer):
             contact.name = contact_data.get('name', contact.name)
             contact.phone = contact_data.get('phone', contact.phone)
             contact.email = contact_data.get('email', contact.email)
+            contact.company_name = contact_data.get('company_name', contact.company_name)
             contact.save()
 
         # 清除並重新建立 RecruitImage 信息
@@ -108,7 +113,7 @@ class RecruitSerializer(serializers.ModelSerializer):
             RecruitImage.objects.create(recruit=instance, **image_data)
 
         return instance
-    
+
 class RecruitSerializer_forTable(serializers.ModelSerializer):
     company_name = serializers.SerializerMethodField()
 

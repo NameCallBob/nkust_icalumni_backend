@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Q
 from apps.private.models import Private
 
+
 class Position(models.Model):
     """
     系友會職位
@@ -9,7 +10,6 @@ class Position(models.Model):
     - priority: 優先級，使用 IntegerField 儲存，用來表示職位的重要性或排序，數字越小表示優先級越高。
     """
     title = models.TextField()
-    student_id = models.TextField()
     priority = models.IntegerField()
 
     def __str__(self):
@@ -24,6 +24,7 @@ class Graduate(models.Model):
     """
     school = models.TextField(default="國立高雄科技大學智慧商務系")
     grade = models.CharField(max_length=20, null=False)
+    student_id = models.TextField(default="000000000")
 
     def __str__(self):
         return f"{self.school} - {self.grade}"
@@ -50,7 +51,7 @@ class Member(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
-    private = models.OneToOneField(Private ,on_delete=models.CASCADE)
+    private = models.OneToOneField(Private, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     home_phone = models.CharField(max_length=15, blank=True, null=True)
     mobile_phone = models.CharField(max_length=15, blank=True, null=True)
@@ -59,16 +60,18 @@ class Member(models.Model):
     is_paid = models.BooleanField(default=False)
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-    photo = models.ImageField(upload_to='static/member/', blank=True, null=True)
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
-    graduate = models.ForeignKey(Graduate, on_delete=models.CASCADE, null=True)
+    photo = models.ImageField(
+        upload_to='static/member/', blank=True, null=True)
+    position = models.ForeignKey(
+        Position, on_delete=models.SET_NULL, null=True)
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.private} - {self.name} - {self.position}"
 
     @staticmethod
-    def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None , is_active=None):
+    def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None, is_active=None):
         """
         搜尋會員資料，可以根據名字、性別、學校、職位、是否繳費進行篩選，或根據 search 參數進行全域搜尋。
 
