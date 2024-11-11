@@ -33,9 +33,14 @@ class MemberSerializer(serializers.ModelSerializer):
     """
     email = serializers.SerializerMethodField()
     notice_type = serializers.SerializerMethodField()
-    position = PositionSerializer()  # 嵌套序列化器，支援查詢和寫入
-    graduate = GraduateSerializer()  # 同樣使用嵌套序列化器
-    photo = Base64ImageField()
+    position = PositionSerializer(required=False)  
+    graduate = GraduateSerializer(required=False)  
+    photo = Base64ImageField(required=False)  
+
+    # 用於序列化輸出的 private 資料
+    private = serializers.SerializerMethodField()
+    # 用於接收反序列化資料（支援 id 或嵌套資料）
+    private_input = serializers.DictField(write_only=True, required=False)
 
     class Meta:
         model = Member
@@ -45,6 +50,42 @@ class MemberSerializer(serializers.ModelSerializer):
         private = getattr(instance, 'private', None)
         return private.email if private else None
 
+    def get_private(self, obj):
+        """
+        序列化時返回 private 資料
+        """
+        if obj.private:
+            return {
+                "email": obj.private.email
+            }
+        return None
+
+    def to_internal_value(self, data):
+            """
+            重寫以支援嵌套處理 `private_input` 資料
+            """
+            private_data = data.pop('private_input', None)
+            if private_data:
+                if isinstance(private_data, dict):
+                    # 檢查嵌套資料的完整性
+                    email = private_data.get('email')
+                    password = private_data.get('password')
+                    if not email :
+                        raise serializers.ValidationError({
+                            "private_input": "沒有提供電子郵件作為帳號，無法建立"
+                        })
+                elif isinstance(private_data, int):
+                    # 如果是主鍵，檢查是否存在
+                    if not Private.objects.filter(pk=private_data).exists():
+                        raise serializers.ValidationError({
+                            "private_input": "無此會員"
+                        })
+
+                # 將處理後的 private 資料放回 data
+                data['private_input'] = private_data
+
+            return super().to_internal_value(data)
+    
     def get_notice_type(self, instance):
         notice = getattr(instance, 'notice', None)
         if notice:
@@ -66,29 +107,45 @@ class MemberSerializer(serializers.ModelSerializer):
         member_instance.private.save()  # 保存更改到 private 模型
 
     def create(self, validated_data):
+        print(validated_data)
         position_data = validated_data.pop('position', None)
         graduate_data = validated_data.pop('graduate', None)
+        private_data = validated_data.pop('private_input', None)  # 處理 private_input 資料
 
+        private_instance = None  # 初始化 private_instance
         try:
-            with transaction.atomic():
-                # 創建 Private 和 Graduate 實例
-                private_instance = Private.objects.create(
-                    email=validated_data['email'],
-                    password=make_password(validated_data['password']),
-                    is_active=False
+            # 驗證 Private 輸入資料
+            if not private_data or not isinstance(private_data, (dict, int)):
+                raise serializers.ValidationError(
+                    {"private_input": "Invalid or missing private data for account creation."}
                 )
 
-                graduate_instance = Graduate.objects.create(**graduate_data) if graduate_data else None
-                position_instance = Position.objects.create(**position_data) if position_data else None
+            # 驗證其他資料
+            graduate_instance = Graduate.objects.create(**graduate_data) if graduate_data else None
+            position_instance = Position.objects.create(**position_data) if position_data else None
 
-                # 處理 base64 照片
-                photo_data = validated_data.get('photo')
-                if photo_data:
-                    format, imgstr = photo_data.split(';base64,')  # 提取圖片格式和 base64 資料
-                    ext = format.split('/')[-1]  # 獲取圖片的擴展名
-                    photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')  # 解碼並創建 ContentFile
-                else:
-                    photo = None
+            # 處理 base64 照片
+            photo = None
+            photo_data = validated_data.get('photo')
+            if photo_data and isinstance(photo_data, str):
+                try:
+                    format, imgstr = photo_data.split(';base64,')
+                    ext = format.split('/')[-1]
+                    photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')
+                except Exception as e:
+                    raise serializers.ValidationError({"photo": f"Invalid photo format: {str(e)}"})
+
+            # 到此為止，確認所有資料有效且可創建，開始執行 Private 實例創建
+            with transaction.atomic():
+                if isinstance(private_data, dict):
+                    # 使用 CustomUserManager 創建 Private 實例
+                    private_instance = Private.objects.create_user(
+                        email=private_data['email'],
+                        password=private_data['password'],
+                    )
+                elif isinstance(private_data, int):
+                    # 查詢已存在的 Private
+                    private_instance = Private.objects.get(pk=private_data)
 
                 # 創建 Member 實例
                 member_instance = Member.objects.create(
@@ -98,6 +155,7 @@ class MemberSerializer(serializers.ModelSerializer):
                     photo=photo,
                     **validated_data
                 )
+
                 # 設置 superuser 權限
                 self.check_and_set_superuser(member_instance, position_instance)
 
@@ -112,8 +170,12 @@ class MemberSerializer(serializers.ModelSerializer):
 
                 return member_instance
 
+        except serializers.ValidationError as e:
+            raise e  # 傳遞序列化錯誤
         except Exception as e:
-            raise serializers.ValidationError(f"An error occurred during creation: {str(e)}")
+            raise serializers.ValidationError(
+                {"detail": f"An unexpected error occurred during creation: {str(e)}"}
+            )
 
     def update(self, instance, validated_data):
         # 移除根層的 school 和 grade，避免衝突
@@ -158,6 +220,14 @@ class MemberSerializer(serializers.ModelSerializer):
                 # 如果沒有關聯的 graduate，則創建新的 Graduate 並關聯
                 graduate_instance = Graduate.objects.create(**graduate_data)
                 instance.graduate = graduate_instance
+
+        private_data = validated_data.pop('private_input', None)  # 處理 private_input 資料
+
+        if private_data:
+            # 更新當前成員的 Private 屬性
+            for attr, value in private_data.items():
+                setattr(instance.private, attr, value)
+                instance.private.save()
 
         # 更新其他非嵌套字段
         for attr, value in validated_data.items():

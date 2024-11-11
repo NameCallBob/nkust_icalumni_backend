@@ -13,6 +13,48 @@ from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+class CompanyListView_forAnyone(generics.ListAPIView):
+    """For遊客的公司查詢"""
+    serializer_class = CompanySearchSerializer
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(
+        operation_description="查詢公司資料，支持單一輸入值篩選多個欄位",
+        manual_parameters=[
+            openapi.Parameter('search', openapi.IN_QUERY, description="全局搜尋關鍵字", type=openapi.TYPE_STRING),
+            openapi.Parameter('industry', openapi.IN_QUERY, description="產業類別", type=openapi.TYPE_STRING),
+        ],
+        responses={200: CompanySerializer(many=True)}
+    )
+    def get_queryset(self):
+        """
+        根據單一查詢參數過濾公司資料。
+        使用 `search` 進行多欄位查詢，並可額外根據產業篩選。
+        """
+        queryset = Company.objects.all()
+        search = self.request.query_params.get('search', None)
+        industry = self.request.query_params.get('industry', None)
+        
+        if industry and int(industry) != 0:
+            queryset = queryset.filter(industry=industry)
+            
+        if search:
+            query = (
+            Q(name__icontains=search) |  # 公司名稱
+            Q(member__name__icontains=search) |  # 系友名稱
+            Q(member__position__title__icontains=search) |  # 職位標題
+            Q(products__icontains=search) |  # 產品描述
+            Q(description__icontains=search) | 
+            Q(address__icontains=search) |  # 地址
+            Q(email__icontains=search) |  # 電子郵件
+            Q(phone_number__icontains=search)  # 電話號碼
+            )
+            queryset = queryset.filter(query)
+
+        return queryset
+
+
 class CompanyListView(generics.ListAPIView):
     """For管理端的公司查詢"""
     serializer_class = CompanySearchSerializer

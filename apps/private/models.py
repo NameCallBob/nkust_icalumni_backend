@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
-
+from apps.notice.email import email as notice_email
 #  自定義使用者之相關設定
 class CustomUserManager(BaseUserManager):
     def create_user(self,email,password,**extra_fields):
@@ -13,6 +13,10 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
+
+        from threading import Thread
+        Thread(target=notice_email.member_account_created,args=(email,password,)).start()
+
         return user
 
     def create_superuser(self,email,password,**extra_fields):
@@ -24,6 +28,10 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(("Superuser must have is_staff=True."))
         if extra_fields.get("is_superuser") is not True:
             raise ValueError(("Superuser must have is_superuser=True."))
+        
+        from threading import Thread
+        Thread(target=notice_email.member_account_created,args=(email,password,)).start()
+
         return self.create_user(email, password,**extra_fields)
 
 # 實際 自定義 Model
