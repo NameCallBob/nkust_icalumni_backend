@@ -21,7 +21,7 @@ class ArticleViewSet(viewsets.ViewSet):
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def all_active(self, request):
-        queryset = Article.objects.filter(active=True)
+        queryset = Article.objects.filter(active=True).order_by('-created_at')
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -31,7 +31,7 @@ class ArticleViewSet(viewsets.ViewSet):
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def tableOutput(self, request):
-        queryset = Article.objects.filter(active=True)
+        queryset = Article.objects.filter(active=True).order_by('-created_at')
         serializer = ArticleSerializer_TableOutput(queryset, many=True)
         return Response(serializer.data)
 
@@ -41,7 +41,7 @@ class ArticleViewSet(viewsets.ViewSet):
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def all(self, request):
-        queryset = Article.objects.all()
+        queryset = Article.objects.all().order_by('-created_at')
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
 

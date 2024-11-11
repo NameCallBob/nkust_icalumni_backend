@@ -244,7 +244,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         serializer = MemberSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response("ok", status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -284,8 +284,10 @@ class MemberAdminViewSet(viewsets.ViewSet):
         """刪除使用者"""
         member_id = request.data.get('member_id')
         try:
-            member = Member.objects.get(id=member_id)
-            member.delete()
+            from apps.private.models import Private
+            private_id = Member.objects.get(id=member_id).private
+            private_ob = Private.objects.get(id=private_id)
+            private_ob.delete()
             return Response({"message": "Member deleted"}, status=status.HTTP_200_OK)
         except Member.DoesNotExist:
             return Response({"error": "Member not found"}, status=status.HTTP_404_NOT_FOUND)
