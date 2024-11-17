@@ -19,15 +19,15 @@ class RecruitSerializer(serializers.ModelSerializer):
     company_name = serializers.SerializerMethodField()
     contact = ContactSerializer(required=False)  # 聯絡人為選填
     images = RecruitImageSerializer(many=True, required=False)  # 多張圖片為選填
-    is_contact_self = serializers.BooleanField(required=False, default=False)
-    is_owner_self = serializers.BooleanField(required=False, default=False)
+    isPersonalContact = serializers.BooleanField(required=False, default=False)
+    isPersonalCompany = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = Recruit
         fields = [
             'id', 'company', 'title', 'intro', 'info_clicks', 'deadline',
             'release_date', 'active', 'company_name', 'contact', 'images',
-            'is_contact_self', 'is_owner_self'
+            'isPersonalContact', 'isPersonalCompany'
         ]
 
     def get_company_name(self, obj):
@@ -35,26 +35,31 @@ class RecruitSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # 提取聯絡人及圖片資料
-        print(validated_data)
+        from apps.company.models import Company
         contact_data = validated_data.pop('contact', None)
         images_data = validated_data.pop('images', [])
         is_contact_self = validated_data.pop('isPersonalContact', False)
         is_owner_self = validated_data.pop('isPersonalCompany', False)
-
+        
         # 設置聯絡人及公司資料
         user = self.context['request'].user  # 從 context 中獲取使用者
+        company_ob = Company.objects.get(member = user.member)
+
         if is_contact_self:
             contact_data = {
                 'name': user.member.name,
                 'phone': user.member.mobile_phone,
                 'email': user.email,
             }
+            print(contact_data)
+        
         if is_owner_self:
-            contact_data['company_name'] = user.member.company.name
+            contact_data['company_name'] = company_ob.name
+
         elif 'company_name' not in validated_data:
             raise serializers.ValidationError({"company_name": ["請輸入公司名稱!"]})
 
-        validated_data['company'] = user.member.company
+        validated_data['company'] = company_ob
         # 建立 Recruit
         recruit = Recruit.objects.create(**validated_data)
 

@@ -90,7 +90,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     # 照片
     'IC_alumni.middleware.CORSMiddlewareForStaticFiles',
-
+    # 錯誤寄信
+    "middleware.ErrorMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -262,3 +263,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'
+
+# 管理員收到信
+ADMINS = [
+    (os.getenv('ADMIN_NAME'),os.getenv('ADMIN_EMAIL'))
+]
