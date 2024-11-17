@@ -11,7 +11,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.private.serializer import PasswordResetRequestSerializer
 from apps.member.serializer import MemberSerializer
 
+# time
 from django.utils import timezone
+import pytz
+
 from apps.notice.email import email
 # model
 from apps.private.models import PasswordResetCode,Private
@@ -60,7 +63,7 @@ class LoginView(APIView):
                 return Response({'msg':"已被停用"},status=403)
             if user:
                 refresh = RefreshToken.for_user(user)
-                login_time = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+                login_time = timezone.now().astimezone(pytz.timezone('Asia/Taipei')).strftime('%Y-%m-%d %H:%M:%S')
                 ip_address = request.META.get('REMOTE_ADDR')
                 device_info = request.META.get('HTTP_USER_AGENT', 'Unknown Device')
                 context = {
@@ -163,3 +166,5 @@ class MemberRegisterView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    

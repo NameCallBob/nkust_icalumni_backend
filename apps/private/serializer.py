@@ -14,3 +14,11 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     def create_reset_code(self, user):
         reset_code = PasswordResetCode.objects.create(private=user)
         return reset_code
+    
+
+
+# for管理員使用
+class PrivateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Private
+        fields = ['id', 'email', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined']
