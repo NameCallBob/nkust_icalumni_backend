@@ -1,142 +1,120 @@
-from rest_framework import viewsets, status , permissions
-from rest_framework.decorators import action , authentication_classes , permission_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.response import Response
-from apps.article.models import Article
-from apps.article.serializer import ArticleSerializer,ArticleSerializer_TableOutput
-
-# drf_yasg
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from django.db import models
 
 
-class ArticleViewSet(viewsets.ViewSet):
-    """
-    處理文章的 CRUD 操作，同時處理文章圖片
-    """
+class AlumniAssociation(models.Model):
+    """系友會基本資料"""
+    name = models.CharField(max_length=255, verbose_name="系友會名稱")
+    description = models.TextField(verbose_name="簡介", help_text="支援 HTML 標籤")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
-    @swagger_auto_schema(
-        operation_description="查詢所有文章_已發布",
-        responses={200: '成功返回所有文章'}
+    def __str__(self):
+        return self.name
+
+
+class AlumniAssociationImage(models.Model):
+    """系友會相關圖片"""
+    IMAGE_TYPE_CHOICES = (
+        ('large', '大圖'),
+        ('small', '小圖'),
     )
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    def all_active(self, request):
-        queryset = Article.objects.filter(active=True).order_by('-created_at')
-        serializer = ArticleSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        operation_description="查詢所有文章_已發布",
-        responses={200: '成功返回所有文章'}
+    alumni_association = models.ForeignKey(
+        AlumniAssociation, on_delete=models.CASCADE, related_name="images", verbose_name="系友會"
     )
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    def tableOutput(self, request):
-        queryset = Article.objects.filter(active=True).order_by('-created_at')
-        serializer = ArticleSerializer_TableOutput(queryset, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        operation_description="查詢所有文章",
-        responses={200: '成功返回所有文章'}
+    image_type = models.CharField(
+        max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    def all(self, request):
-        queryset = Article.objects.all().order_by('-created_at')
-        serializer = ArticleSerializer(queryset, many=True)
-        return Response(serializer.data)
+    file = models.ImageField(upload_to="alumni_association_images/", verbose_name="圖片檔案")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
 
-    @swagger_auto_schema(
-        operation_description="查詢單一文章",
-        responses={
-            200: '成功返回文章',
-            404: '文章不存在',
-            400: '資料鍵錯誤'
-        },
-        manual_parameters=[
-            openapi.Parameter('id', openapi.IN_QUERY, description="文章ID", type=openapi.TYPE_INTEGER)
-        ]
+    def __str__(self):
+        return f"{self.alumni_association.name} - {self.get_image_type_display()}"
+
+
+class Constitution(models.Model):
+    """系友會章程（PDF格式）"""
+    title = models.CharField(max_length=255, verbose_name="章程標題")
+    pdf_file = models.FileField(upload_to="constitutions/", verbose_name="章程 PDF 檔案")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
+
+    def __str__(self):
+        return self.title
+
+
+class ConstitutionImage(models.Model):
+    """章程相關圖片"""
+    IMAGE_TYPE_CHOICES = (
+        ('large', '大圖'),
+        ('small', '小圖'),
     )
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    def get_one(self, request):
-        try:
-            pk = request.GET['id']
-            article = Article.objects.get(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        except KeyError:
-            return Response({'msg': "datakey not correct!"}, status=status.HTTP_400_BAD_REQUEST)
-
-        article.view_count += 1
-        article.save()
-
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        operation_description="創建新文章並上傳圖片",
-        request_body=ArticleSerializer,
-        responses={
-            201: '創建成功',
-            400: '資料無效'
-        }
+    constitution = models.ForeignKey(
+        Constitution, on_delete=models.CASCADE, related_name="images", verbose_name="章程"
     )
-    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    def new(self, request):
-        serializer = ArticleSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @swagger_auto_schema(
-        operation_description="更新文章和圖片",
-        request_body=ArticleSerializer,
-        responses={
-            200: '更新成功',
-            404: '文章不存在',
-            400: '資料無效'
-        }
+    image_type = models.CharField(
+        max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    @action(methods=['patch'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    def change(self, request):
-        try:
-            pk = request.data.get("id", '')
-            if pk == "":
-                return Response({"msg": "id not given"}, status=status.HTTP_400_BAD_REQUEST)
-            article = Article.objects.get(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    file = models.ImageField(upload_to="constitution_images/", verbose_name="圖片檔案")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
 
-        serializer = ArticleSerializer(article, data=request.data,partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def __str__(self):
+        return f"{self.constitution.title} - {self.get_image_type_display()}"
 
-    @swagger_auto_schema(
-        operation_description="刪除文章",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description="文章ID")
-            },
-            required=['id']
-        ),
-        responses={
-            204: '刪除成功',
-            404: '文章不存在',
-            400: '資料無效'
-        }
+
+class OrganizationalStructure(models.Model):
+    """系友會組織架構"""
+    role_name = models.CharField(max_length=255, verbose_name="角色名稱")
+    responsibilities = models.TextField(verbose_name="職責描述", help_text="支援 HTML 標籤")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
+
+    def __str__(self):
+        return self.role_name
+
+
+class OrganizationalStructureImage(models.Model):
+    """組織架構相關圖片"""
+    IMAGE_TYPE_CHOICES = (
+        ('large', '大圖'),
+        ('small', '小圖'),
     )
-    @action(methods=['delete'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    def delete(self, request):
-        try:
-            pk = request.data.get("id", '')
-            if pk == "":
-                return Response({"msg": "id not given"}, status=status.HTTP_400_BAD_REQUEST)
-            article = Article.objects.get(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    organizational_structure = models.ForeignKey(
+        OrganizationalStructure, on_delete=models.CASCADE, related_name="images", verbose_name="組織架構"
+    )
+    image_type = models.CharField(
+        max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
+    )
+    file = models.ImageField(upload_to="organizational_structure_images/", verbose_name="圖片檔案")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
 
-        article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def __str__(self):
+        return f"{self.organizational_structure.role_name} - {self.get_image_type_display()}"
+
+
+class MembershipRequirement(models.Model):
+    """系友會入會方式"""
+    requirement = models.TextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
+
+    def __str__(self):
+        return f"入會條件 ID: {self.id}"
+
+
+class MembershipRequirementImage(models.Model):
+    """入會條件相關圖片"""
+    IMAGE_TYPE_CHOICES = (
+        ('large', '大圖'),
+        ('small', '小圖'),
+    )
+    membership_requirement = models.ForeignKey(
+        MembershipRequirement, on_delete=models.CASCADE, related_name="images", verbose_name="入會條件"
+    )
+    image_type = models.CharField(
+        max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
+    )
+    file = models.ImageField(upload_to="membership_requirement_images/", verbose_name="圖片檔案")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
+
+    def __str__(self):
+        return f"入會條件 {self.membership_requirement.id} - {self.get_image_type_display()}"
