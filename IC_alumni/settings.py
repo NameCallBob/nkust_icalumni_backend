@@ -89,9 +89,9 @@ MIDDLEWARE = [
     # CORS
     'corsheaders.middleware.CorsMiddleware',
     # 照片
-    'IC_alumni.middleware.CORSMiddlewareForStaticFiles',
+    'IC_alumni.middlewares.corsMiddleForStatic.CORSMiddlewareForStaticFiles',
     # 錯誤寄信
-    "middleware.ErrorMiddleware",
+    "IC_alumni.middlewares.ErrorMiddleware.ExceptionEmailMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

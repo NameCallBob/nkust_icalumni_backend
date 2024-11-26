@@ -6,7 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from apps.member.models import Member , Graduate , Position
+from apps.member.models import Member
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , MemberSimpleDetailSerializer , MemberSimpleAdminSerializer
 from django.shortcuts import get_object_or_404
 
@@ -260,9 +260,10 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return ''.join(random.choice(characters) for _ in range(length))
 
         user_email = request.data.get("email")
+        user_type = request.data.get("is_superuser")
 
-        if not user_email:
-            return Response({"error": "Email is required."}, status=400)
+        if not user_email or not user_type:
+            return Response({"error": "電子郵件沒有提供或沒說身份組"}, status=400)
 
         # 生成8碼隨機密碼
         password = generate_random_password()
@@ -272,7 +273,11 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return Response({"error": "User with this email already exists."}, status=400)
 
         # 創建新使用者
-        user = Private.objects.create_user(email=user_email, password=password,)
+        if user_type == "Y":
+            user = Private.objects.create_superuser(email=user_email, password=password,)
+        else:
+            user = Private.objects.create_user(email=user_email, password=password,)
+
         from threading import Thread
         Thread(target=email.member_account_created,args=(user_email,password)).start()
 

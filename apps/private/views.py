@@ -72,7 +72,7 @@ class LoginView(APIView):
                     'device_info': device_info,
                 }
                 threading.Thread(target=email.login, args=(userEmail, context,)).start()
-                return Response({'message': "OK", 'token': str(refresh.access_token)}, status=200)
+                return Response({'message': "OK", 'token': str(refresh.access_token),'is_super':user.is_superuser}, status=200)
             else:
                 return Response({'error': 'failed'}, status=400)
         except Private.DoesNotExist:

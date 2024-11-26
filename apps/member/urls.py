@@ -1,5 +1,5 @@
 from rest_framework.routers import SimpleRouter
-from apps.member import views , other_views
+from apps.member import views , other_views , deal_files
 from django.urls import path
 
 router = SimpleRouter()
@@ -12,6 +12,6 @@ urlpatterns = router.urls
 
 urlpatterns += [
     path("search/", views.MemberListView.as_view(), name="member_search"),
-    path("search_user/", views.MemberListViewForAll.as_view(), name="member_search_notLogined function")
-
+    path("search_user/", views.MemberListViewForAll.as_view(), name="member_search_notLogined function"),
+    path("user_add_byExcel", deal_files.UploadExcelView.as_view(), name="member_simple_add_by_Excel")
 ]
