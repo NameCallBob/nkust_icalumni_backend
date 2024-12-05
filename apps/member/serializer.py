@@ -33,9 +33,9 @@ class MemberSerializer(serializers.ModelSerializer):
     """
     email = serializers.SerializerMethodField()
     notice_type = serializers.SerializerMethodField()
-    position = PositionSerializer(required=False)  
-    graduate = GraduateSerializer(required=False)  
-    photo = Base64ImageField(required=False)  
+    position = PositionSerializer(required=False)
+    graduate = GraduateSerializer(required=False)
+    photo = Base64ImageField(required=False)
 
     # 用於序列化輸出的 private 資料
     private = serializers.SerializerMethodField()
@@ -85,7 +85,7 @@ class MemberSerializer(serializers.ModelSerializer):
                 data['private_input'] = private_data
 
             return super().to_internal_value(data)
-    
+
     def get_notice_type(self, instance):
         notice = getattr(instance, 'notice', None)
         if notice:
@@ -239,6 +239,14 @@ class MemberSerializer(serializers.ModelSerializer):
         self.check_and_set_superuser(instance, position_instance)
 
         return instance  # 返回更新後的實例
+    
+class MyListSerializer(serializers.ListSerializer):
+    """
+    自定義 ListSerializer，過濾掉 null 值
+    """
+    def to_representation(self, data):
+        # 調用原生邏輯，過濾掉 None
+        return [item for item in super().to_representation(data) if item is not None]
 
 class MemberSimpleSerializer(serializers.ModelSerializer):
     """
@@ -250,7 +258,7 @@ class MemberSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['id','name','gender','intro','photo','position','graduate']
-
+        list_serializer_class = MyListSerializer
     def get_position(self, instance):
             position = getattr(instance, 'position', None)
             if position:
@@ -267,6 +275,16 @@ class MemberSimpleSerializer(serializers.ModelSerializer):
                     "grade": graduate.grade
                 }
             return None
+    def to_representation(self, instance):
+        """
+        自定義輸出邏輯，當 is_show 為 False 時，過濾該物件
+        """
+        if not instance.is_show:
+            return None  # 如果 is_show 為 False，直接返回 None，表示不輸出該資料
+
+        # 調用原始的序列化過程
+        representation = super().to_representation(instance)
+        return representation
 
 class MemberSimpleAdminSerializer(serializers.ModelSerializer):
     """
@@ -333,3 +351,14 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
                     "grade": graduate.grade
                 }
             return None
+
+    def to_representation(self, instance):
+        """
+        自定義輸出邏輯，當 is_show 為 False 時，過濾該物件
+        """
+        if not instance.is_show:
+            return None  # 如果 is_show 為 False，直接返回 None，表示不輸出該資料
+
+        # 調用原始的序列化過程
+        representation = super().to_representation(instance)
+        return representation

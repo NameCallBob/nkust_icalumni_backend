@@ -13,5 +13,6 @@ urlpatterns = router.urls
 urlpatterns += [
     path("search/", views.MemberListView.as_view(), name="member_search"),
     path("search_user/", views.MemberListViewForAll.as_view(), name="member_search_notLogined function"),
-    path("user_add_byExcel", deal_files.UploadExcelView.as_view(), name="member_simple_add_by_Excel")
+    path("Add_byExcel/", deal_files. UploadExcelPreviewView.as_view(), name="member_simple_add_by_Excel"),
+    path("Add_byExcel_checked/", deal_files.ConfirmAndCreateAccountsView.as_view(), name="member_simple_add_by_Excel_confirmed"),
 ]
