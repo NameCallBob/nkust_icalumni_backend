@@ -94,7 +94,7 @@ class MemberViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @swagger_auto_schema(
         operation_description="更新登入使用者的密碼",
         request_body=openapi.Schema(
@@ -122,15 +122,15 @@ class MemberViewSet(viewsets.ViewSet):
 
         if not check_password(old_password, user.password):
             return Response({'error': '舊密碼不正確'}, status=status.HTTP_403_FORBIDDEN)
-        
+
         if old_password == new_password:
             return Response({'error': '新密碼不可與舊密碼相同'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         user.set_password(new_password)
         user.save()
-        
+
         return Response({'message': '密碼更新成功'}, status=status.HTTP_200_OK)
-    
+
 class MemberAnyViewSet(viewsets.ViewSet):
 
     @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[permissions.AllowAny])
@@ -153,7 +153,7 @@ class MemberAnyViewSet(viewsets.ViewSet):
         if grade == "全部":
             members = Member.objects.all()
         else:
-            members = Member.objects.filter(graduate__grade=grade)
+            members = Member.objects.filter(graduate__grade=grade,is_show=True)
         serializer = MemberSimpleSerializer(members, many=True)
         return Response(serializer.data)
 
@@ -181,8 +181,8 @@ class MemberAnyViewSet(viewsets.ViewSet):
             Q(member__product_description__icontains=query) |  # 透過產品簡介搜尋
             Q(member__industry__title__icontains=query) |  # 透過產業名稱搜尋
             Q(member__industry__intro__icontains=query)  # 透過產業簡介搜尋
-        ).distinct()  # 使用 distinct 來避免重複的結果
-
+        )  # 使用 distinct 來避免重複的結果
+        member_results.filter(is_show=True).distinct()
         # 將結果序列化並返回
         serializer = MemberSimpleSerializer(member_results, many=True)
         return Response(serializer.data)

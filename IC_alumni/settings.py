@@ -63,11 +63,13 @@ INSTALLED_APPS = [
     "apps.member.apps.MemberConfig",
     "apps.company.apps.CompanyConfig",
     "apps.product.apps.ProductConfig",
+    
     # 功能
     "apps.article.apps.ArticleConfig",
     "apps.picture.apps.PictureConfig",
     "apps.recruit.apps.RecruitConfig",
     "apps.notice.apps.NoticeConfig",
+    "apps.Info.apps.InfoConfig",
 
     # swagger or redoc
     "drf_yasg",

@@ -66,12 +66,13 @@ class Member(models.Model):
         Position, on_delete=models.SET_NULL, null=True)
     graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
+    is_show = models.BooleanField("是否要展示於官網",default=False)
 
     def __str__(self):
         return f"{self.private} - {self.name} - {self.position}"
 
     @staticmethod
-    def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None, is_active=None):
+    def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None, is_active=None,is_show=None):
         """
         搜尋會員資料，可以根據名字、性別、學校、職位、是否繳費進行篩選，或根據 search 參數進行全域搜尋。
 
@@ -110,5 +111,7 @@ class Member(models.Model):
             query &= Q(is_paid=is_paid)
         if is_active is not None:
             query &= Q(private__is_active=is_active)
+        if is_show is not None:
+            query &= Q(is_show=is_active)
 
         return Member.objects.filter(query)
