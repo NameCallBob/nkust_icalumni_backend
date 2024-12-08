@@ -1,13 +1,16 @@
 from rest_framework import viewsets, status , permissions
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
+from rest_framework.viewsets import ModelViewSet
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from apps.member.models import Member
-from apps.member.serializer import MemberSerializer , MemberSimpleSerializer , MemberSimpleDetailSerializer , MemberSimpleAdminSerializer
+from apps.member.models import Member  ,OutstandingAlumni
+from apps.member.serializer import MemberSerializer , MemberSimpleSerializer ,\
+      MemberSimpleDetailSerializer , MemberSimpleAdminSerializer\
+      ,OutstandingAlumniSerializer
 from django.shortcuts import get_object_or_404
 
 import random ; import string
@@ -474,3 +477,22 @@ class MemberListViewForAll(ListAPIView):
         position = self.request.query_params.get('position', None)
 
         return Member.search_members(name=name, intro=intro, position=position)
+    
+
+class OutstandingAlumniViewSet(ModelViewSet):
+    """
+    傑出系友 API
+    - 提供 CRUD 操作。
+    - 僅管理員可操作此資源。
+    """
+    queryset = OutstandingAlumni.objects.select_related('member').all()
+    serializer_class = OutstandingAlumniSerializer
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+    def get_queryset(self):
+        """
+        篩選已標註為展示於官網的傑出系友。
+        """
+        if self.request.method == 'GET' and not self.request.user.is_staff:
+            return self.queryset.filter(is_featured=True)
+        return self.queryset

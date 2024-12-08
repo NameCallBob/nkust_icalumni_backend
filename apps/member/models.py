@@ -115,3 +115,25 @@ class Member(models.Model):
             query &= Q(is_show=is_active)
 
         return Member.objects.filter(query)
+    
+class OutstandingAlumni(models.Model):
+    """
+    傑出系友
+    - member: 關聯的會員，使用 OneToOneField 連結 Member 模型。
+    - achievements: 傑出成就，使用 TextField 儲存，允許為空值。
+    - is_featured: 是否展示於官網，使用 BooleanField 儲存，默認為 False。
+    - highlight: 傑出事蹟摘要，使用 CharField 儲存。
+    - date_awarded: 授予日期，使用 DateField 儲存，允許為空值。
+    """
+    member = models.OneToOneField(
+        'Member', 
+        on_delete=models.CASCADE, 
+        related_name='outstanding_alumni'
+    )
+    achievements = models.TextField("傑出成就", blank=True, null=True)
+    is_featured = models.BooleanField("是否展示於官網", default=False)
+    highlight = models.CharField("傑出事蹟摘要", max_length=100)
+    date_awarded = models.DateField("授予日期", blank=True, null=True)
+
+    def __str__(self):
+        return f"傑出系友 - {self.member.name}"

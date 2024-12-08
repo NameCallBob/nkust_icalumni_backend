@@ -228,9 +228,10 @@ STATIC_ROOT = BASE_DIR / 'static_files'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS setting_開發完後要打開
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000/"
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://nkusticalumni.org"
+]
 
 CORS_ALLOW_METHODS = [
     'GET',

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action,authentication_classes,permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser , AllowAny
 from django.shortcuts import get_object_or_404
 from apps.Info.models import (
     AlumniAssociationImage,
@@ -16,24 +16,32 @@ from apps.Info.serializer import (
     MembershipRequirementImageSerializer,
 )
 
+class BaseImageViewSet(viewsets.ViewSet):
+    """基礎圖片 ViewSet"""
+    model = None
+    serializer_class = None
 
-# 系友會圖片 ViewSet
-class AlumniAssociationImageViewSet(viewsets.ViewSet):
-    """系友會圖片 ViewSet"""
+    def get_queryset(self):
+        return self.model.objects.all()
 
-    def query_images(self, request):
-        """查詢所有圖片或啟用圖片"""
-        queryset = AlumniAssociationImage.objects.all()
-        filters = request.query_params
-        if "is_active" in filters and filters["is_active"].lower() == "true":
-            queryset = queryset.filter(is_active=True)
-        serializer = AlumniAssociationImageSerializer(queryset, many=True)
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser])
+    def query_all_images(self, request):
+        """查詢所有圖片（僅管理員）"""
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny], authentication_classes=[])
+    def query_active_images(self, request):
+        """查詢啟用圖片（任何人）"""
+        queryset = self.get_queryset().filter(is_active=True)
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
     def create_image(self, request):
-        """新增系友會圖片（限管理員）"""
-        serializer = AlumniAssociationImageSerializer(data=request.data)
+        """新增圖片（僅管理員）"""
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -41,160 +49,58 @@ class AlumniAssociationImageViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
     def update_image(self, request):
-        """更新系友會圖片（限管理員）"""
+        """更新圖片（僅管理員）"""
         image_id = request.data.get("id")
         if not image_id:
             return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(AlumniAssociationImage, id=image_id)
-        serializer = AlumniAssociationImageSerializer(instance, data=request.data, partial=True)
+        instance = get_object_or_404(self.model, id=image_id)
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_image(self, request):
-        """刪除系友會圖片（限管理員）"""
-        image_id = request.data.get("id")
-        if not image_id:
-            return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(AlumniAssociationImage, id=image_id)
-        instance.delete()
-        return Response({"detail": "圖片已刪除"}, status=status.HTTP_204_NO_CONTENT)
-
-# 系友會圖片 ViewSet
-class ConstitutionImageViewSet(viewsets.ViewSet):
-    """系友會圖片 ViewSet"""
-
-    def query_images(self, request):
-        """查詢所有圖片或啟用圖片"""
-        queryset = ConstitutionImage.objects.all()
-        filters = request.query_params
-        if "is_active" in filters and filters["is_active"].lower() == "true":
-            queryset = queryset.filter(is_active=True)
-        serializer = ConstitutionImageSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_image(self, request):
-        """新增系友會圖片（限管理員）"""
-        serializer = ConstitutionImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_image(self, request):
-        """更新系友會圖片（限管理員）"""
+    def toggle_status(self, request):
+        """更新圖片（僅管理員）"""
         image_id = request.data.get("id")
         if not image_id:
             return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(ConstitutionImage, id=image_id)
-        serializer = ConstitutionImageSerializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        instance = get_object_or_404(self.model, id=image_id)
+        instance.is_active = not instance.is_active
+        instance.save()
+        return Response(status=200,data="ok")
 
     @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
     def delete_image(self, request):
-        """刪除系友會圖片（限管理員）"""
+        """刪除圖片（僅管理員）"""
         image_id = request.data.get("id")
         if not image_id:
             return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(ConstitutionImage, id=image_id)
+        instance = get_object_or_404(self.model, id=image_id)
         instance.delete()
         return Response({"detail": "圖片已刪除"}, status=status.HTTP_204_NO_CONTENT)
 
 
-# 系友會圖片 ViewSet
-class OrganizationalStructureImageViewSet(viewsets.ViewSet):
+class AlumniAssociationImageViewSet(BaseImageViewSet):
     """系友會圖片 ViewSet"""
-
-    def query_images(self, request):
-        """查詢所有圖片或啟用圖片"""
-        queryset = OrganizationalStructureImage.objects.all()
-        filters = request.query_params
-        if "is_active" in filters and filters["is_active"].lower() == "true":
-            queryset = queryset.filter(is_active=True)
-        serializer = OrganizationalStructureImageSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_image(self, request):
-        """新增系友會圖片（限管理員）"""
-        serializer = OrganizationalStructureImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_image(self, request):
-        """更新系友會圖片（限管理員）"""
-        image_id = request.data.get("id")
-        if not image_id:
-            return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(OrganizationalStructureImage, id=image_id)
-        serializer = OrganizationalStructureImageSerializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_image(self, request):
-        """刪除系友會圖片（限管理員）"""
-        image_id = request.data.get("id")
-        if not image_id:
-            return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(OrganizationalStructureImage, id=image_id)
-        instance.delete()
-        return Response({"detail": "圖片已刪除"}, status=status.HTTP_204_NO_CONTENT)
+    model = AlumniAssociationImage
+    serializer_class = AlumniAssociationImageSerializer
 
 
-# 系友會圖片 ViewSet
-class MembershipRequirementImageViewSet(viewsets.ViewSet):
-    """系友會圖片 ViewSet"""
+class ConstitutionImageViewSet(BaseImageViewSet):
+    """章程圖片 ViewSet"""
+    model = ConstitutionImage
+    serializer_class = ConstitutionImageSerializer
 
-    def query_images(self, request):
-        """查詢所有圖片或啟用圖片"""
-        queryset = MembershipRequirementImage.objects.all()
-        filters = request.query_params
-        if "is_active" in filters and filters["is_active"].lower() == "true":
-            queryset = queryset.filter(is_active=True)
-        serializer = MembershipRequirementImageSerializer(queryset, many=True)
-        return Response(serializer.data)
 
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_image(self, request):
-        """新增系友會圖片（限管理員）"""
-        serializer = MembershipRequirementImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class OrganizationalStructureImageViewSet(BaseImageViewSet):
+    """組織架構圖片 ViewSet"""
+    model = OrganizationalStructureImage
+    serializer_class = OrganizationalStructureImageSerializer
 
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_image(self, request):
-        """更新系友會圖片（限管理員）"""
-        image_id = request.data.get("id")
-        if not image_id:
-            return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(MembershipRequirementImage, id=image_id)
-        serializer = MembershipRequirementImageSerializer(instance, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_image(self, request):
-        """刪除系友會圖片（限管理員）"""
-        image_id = request.data.get("id")
-        if not image_id:
-            return Response({"detail": "缺少 id"}, status=status.HTTP_400_BAD_REQUEST)
-        instance = get_object_or_404(MembershipRequirementImage, id=image_id)
-        instance.delete()
-        return Response({"detail": "圖片已刪除"}, status=status.HTTP_204_NO_CONTENT)
+class MembershipRequirementImageViewSet(BaseImageViewSet):
+    """會員資格圖片 ViewSet"""
+    model = MembershipRequirementImage
+    serializer_class = MembershipRequirementImageSerializer

@@ -65,6 +65,8 @@ urlpatterns = [
     path("picture/",include('apps.picture.urls')),
     # 文章
     path("article/",include('apps.article.urls')),
+    # 系友會簡介
+    path("info/", include('apps.Info.urls')),
 
     # API LIST
     path('server/api/swagger/', schema_view.with_ui('swagger',

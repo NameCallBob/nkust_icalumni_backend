@@ -29,7 +29,7 @@ class AlumniAssociationImage(models.Model):
 
 class Constitution(models.Model):
     """系友會章程（PDF格式）"""
-    intro = RichTextField()
+    description = RichTextField()
     pdf_file = models.FileField(upload_to="static/info/constitutions/", verbose_name="章程 PDF 檔案")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
@@ -56,7 +56,7 @@ class ConstitutionImage(models.Model):
 
 class OrganizationalStructure(models.Model):
     """系友會組織架構"""
-    content = RichTextField(verbose_name="職責描述", help_text="支援 HTML 標籤")
+    description = RichTextField(verbose_name="職責描述", help_text="支援 HTML 標籤")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
@@ -82,7 +82,7 @@ class OrganizationalStructureImage(models.Model):
 
 class MembershipRequirement(models.Model):
     """系友會入會方式"""
-    requirement = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
+    description = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
