@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.member.models import Member, Position, Graduate
+from apps.member.models import Member, Position, Graduate , OutstandingAlumni
 from apps.notice.models import Notice
 from apps.private.models import Private
 from django.db import transaction
@@ -362,3 +362,16 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
         # 調用原始的序列化過程
         representation = super().to_representation(instance)
         return representation
+    
+
+class OutstandingAlumniSerializer(serializers.ModelSerializer):
+    member_name = serializers.CharField(source='member.name', read_only=True)
+    photo = serializers.ImageField(source='member.photo', read_only=True)
+
+    class Meta:
+        model = OutstandingAlumni
+        fields = [
+            'id', 'member', 'member_name', 'photo',
+            'achievements', 'is_featured', 'highlight', 'date_awarded'
+        ]
+        read_only_fields = ['id', 'member_name', 'photo']

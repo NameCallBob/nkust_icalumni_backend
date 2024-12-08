@@ -8,11 +8,14 @@ router.register(r'position', other_views.PositionViewSet,basename="member_positi
 router.register(r'any', views.MemberAnyViewSet,basename="member_anymous_func")
 router.register(r'logined', views.MemberViewSet,basename="member_func")
 router.register(r'admin' ,views.MemberAdminViewSet,basename="member_admin_func")
+router.register(r'outstanding-alumni', views.OutstandingAlumniViewSet, basename='outstanding-alumni')
+
 urlpatterns = router.urls
 
 urlpatterns += [
     path("search/", views.MemberListView.as_view(), name="member_search"),
     path("search_user/", views.MemberListViewForAll.as_view(), name="member_search_notLogined function"),
     path("Add_byExcel/", deal_files. UploadExcelPreviewView.as_view(), name="member_simple_add_by_Excel"),
-    path("Add_byExcel_checked/", deal_files.ConfirmAndCreateAccountsView.as_view(), name="member_simple_add_by_Excel_confirmed"),
+    path("Add_byExcel_checked/", deal_files.ConfirmAndCreateAccountsView.as_view(), name="member_simple_add_by_Excel_confirmed")
+    
 ]

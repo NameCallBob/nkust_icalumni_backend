@@ -1,9 +1,10 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action , authentication_classes , permission_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser , AllowAny
 from django.shortcuts import get_object_or_404
-from .models import (
+from apps.Info.models import (
     AlumniAssociation,
     AlumniAssociationImage,
     Constitution,
@@ -13,7 +14,7 @@ from .models import (
     MembershipRequirement,
     MembershipRequirementImage,
 )
-from .serializers import (
+from apps.Info.serializer import (
     AlumniAssociationSerializer,
     AlumniAssociationImageSerializer,
     ConstitutionSerializer,
@@ -28,17 +29,26 @@ from .serializers import (
 # 系友會 ViewSet
 class AlumniAssociationViewSet(viewsets.ViewSet):
     """系友會 ViewSet"""
-
-    def latest_association(self, request):
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny] , authentication_classes=[])
+    def latest(self, request):
         """查詢最近更新的系友會資料"""
         instance = AlumniAssociation.objects.order_by("-updated_at").first()
         if instance:
             serializer = AlumniAssociationSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_association(self, request):
+    
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
+    def all(self, request):
+        """查詢最近更新的系友會資料"""
+        instance = AlumniAssociation.objects.order_by("-updated_at").all()
+        if instance:
+            serializer = AlumniAssociationSerializer(instance,many=True)
+            return Response(serializer.data)
+        return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def new(self, request):
         """新增系友會資料（限管理員）"""
         serializer = AlumniAssociationSerializer(data=request.data)
         if serializer.is_valid():
@@ -46,8 +56,8 @@ class AlumniAssociationViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_association(self, request):
+    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def change(self, request):
         """更新系友會資料（限管理員）"""
         association_id = request.data.get("id")
         if not association_id:
@@ -59,8 +69,8 @@ class AlumniAssociationViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_association(self, request):
+    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def remove(self, request):
         """刪除系友會資料（限管理員）"""
         association_id = request.data.get("id")
         if not association_id:
@@ -71,21 +81,33 @@ class AlumniAssociationViewSet(viewsets.ViewSet):
 
 
 
+from rest_framework.parsers import MultiPartParser, FormParser , JSONParser
 
 # 章程 ViewSet
 class ConstitutionViewSet(viewsets.ViewSet):
     """章程 ViewSet"""
-
-    def latest_constitution(self, request):
-        """查詢最近更新的章程"""
+    parser_classes = [MultiPartParser, FormParser , JSONParser]
+    
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny] , authentication_classes=[])
+    def latest(self, request):
+        """查詢最近更新的系友會資料"""
         instance = Constitution.objects.order_by("-updated_at").first()
         if instance:
             serializer = ConstitutionSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
+    def all(self, request):
+        """查詢最近更新的系友會資料"""
+        instance = Constitution.objects.all().order_by("-updated_at")
+        if instance:
+            serializer = ConstitutionSerializer(instance,many=True)
+            return Response(serializer.data)
+        return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_constitution(self, request):
+    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def new(self, request):
         """新增章程（限管理員）"""
         serializer = ConstitutionSerializer(data=request.data)
         if serializer.is_valid():
@@ -93,8 +115,8 @@ class ConstitutionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_constitution(self, request):
+    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def change(self, request):
         """更新章程資料（限管理員）"""
         constitution_id = request.data.get("id")
         if not constitution_id:
@@ -106,8 +128,8 @@ class ConstitutionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_constitution(self, request):
+    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def remove(self, request):
         """刪除章程資料（限管理員）"""
         id = request.data.get("id")
         if not id:
@@ -120,16 +142,26 @@ class ConstitutionViewSet(viewsets.ViewSet):
 class OrganizationalStructureViewSet(viewsets.ViewSet):
     """系友會 ViewSet"""
 
-    def latest_association(self, request):
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny] , authentication_classes=[])
+    def latest(self, request):
         """查詢最近更新的系友會資料"""
         instance = OrganizationalStructure.objects.order_by("-updated_at").first()
         if instance:
             serializer = OrganizationalStructureSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
+    def all(self, request):
+        """查詢最近更新的系友會資料"""
+        instance = OrganizationalStructure.objects.order_by("-updated_at").all()
+        if instance:
+            serializer = OrganizationalStructureSerializer(instance,many=True)
+            return Response(serializer.data)
+        return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_association(self, request):
+    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def new(self, request):
         """新增系友會資料（限管理員）"""
         serializer = OrganizationalStructureSerializer(data=request.data)
         if serializer.is_valid():
@@ -137,8 +169,8 @@ class OrganizationalStructureViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_association(self, request):
+    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def change(self, request):
         """更新系友會資料（限管理員）"""
         id = request.data.get("id")
         if not id:
@@ -150,8 +182,8 @@ class OrganizationalStructureViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_association(self, request):
+    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def remove(self, request):
         """刪除系友會資料（限管理員）"""
         id = request.data.get("id")
         if not id:
@@ -164,19 +196,30 @@ class OrganizationalStructureViewSet(viewsets.ViewSet):
 
 
 # 章程 ViewSet
-class ConstitutionViewSet(viewsets.ViewSet):
+class MembershipRequirementViewSet(viewsets.ViewSet):
     """章程 ViewSet"""
 
-    def latest_constitution(self, request):
-        """查詢最近更新的章程"""
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny] , authentication_classes=[])
+    def latest(self, request):
+        """查詢最近更新的系友會資料"""
         instance = MembershipRequirement.objects.order_by("-updated_at").first()
         if instance:
             serializer = MembershipRequirementSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
+    def all(self, request):
+        """查詢最近更新的系友會資料"""
+        instance = MembershipRequirement.objects.all().order_by("-updated_at")
+        if instance:
+            serializer = MembershipRequirementSerializer(instance,many=True)
+            return Response(serializer.data)
+        return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser])
-    def create_constitution(self, request):
+
+    @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def new(self, request):
         """新增章程（限管理員）"""
         serializer = MembershipRequirementSerializer(data=request.data)
         if serializer.is_valid():
@@ -184,8 +227,8 @@ class ConstitutionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser])
-    def update_constitution(self, request):
+    @action(detail=False, methods=["put"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def change(self, request):
         """更新章程資料（限管理員）"""
         id = request.data.get("id")
         if not id:
@@ -197,8 +240,8 @@ class ConstitutionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser])
-    def delete_constitution(self, request):
+    @action(detail=False, methods=["delete"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
+    def remove(self, request):
         """刪除章程資料（限管理員）"""
         id = request.data.get("id")
         if not id:

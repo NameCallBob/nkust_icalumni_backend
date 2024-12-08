@@ -138,9 +138,9 @@ class AlumniAssociationSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         if images_data:
-            instance.images.all().delete()
+            AlumniAssociationImage.objects.filter(alumni_association=instance).delete()
             for image_data in images_data:
-                AlumniAssociationImage.objects.create(alumni_association=instance, **image_data)
+                AlumniAssociationImage.objects.create(image_data)
         return instance
 
 
@@ -149,7 +149,7 @@ class AlumniAssociationSerializer(serializers.ModelSerializer):
 class ConstitutionSerializer(serializers.ModelSerializer):
     images = ConstitutionImageSerializer(many=True, read_only=True)
     images_data = serializers.ListField(
-        child=serializers.DictField(), write_only=True, required=False
+        child=serializers.DictField(), required=False
     )
 
     class Meta:
