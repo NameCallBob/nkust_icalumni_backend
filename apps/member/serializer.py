@@ -365,13 +365,32 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
     
 
 class OutstandingAlumniSerializer(serializers.ModelSerializer):
-    member_name = serializers.CharField(source='member.name', read_only=True)
+    name = serializers.CharField(source='member.name', read_only=True)
     photo = serializers.ImageField(source='member.photo', read_only=True)
+    position = serializers.SerializerMethodField()
+    graduate = serializers.SerializerMethodField()
 
     class Meta:
         model = OutstandingAlumni
         fields = [
-            'id', 'member', 'member_name', 'photo',
-            'achievements', 'is_featured', 'highlight', 'date_awarded'
+            'id', 'member', 'name', 'photo',
+            'achievements', 'is_featured', 'highlight', 'date_awarded','position','graduate'
         ]
         read_only_fields = ['id', 'member_name', 'photo']
+
+    def get_position(self, instance):
+            position = getattr(instance, 'position', None)
+            if position:
+                return {
+                    "title": position.title,
+                }
+            return None
+
+    def get_graduate(self, instance):
+            graduate = getattr(instance, 'graduate', None)
+            if graduate:
+                return {
+                    "school": graduate.school,
+                    "grade": graduate.grade
+                }
+            return None

@@ -19,7 +19,8 @@ daily_debug.*
 *.png
 *.jpg
 *.jpeg
-
+*.pdf
+*.sql
 # python 存取
 __pycache__/
 *.pyc
