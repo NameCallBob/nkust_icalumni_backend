@@ -15,7 +15,7 @@ class CompanySearchSerializer(serializers.ModelSerializer):
         model = Company
         fields = [ 'id','member','name', 'industry', 'positions', 'products',
                   'product_description', 'photo', 'address', 'email',
-                  'phone_number', 'graduate_grade','member_name']
+                  'phone_number', 'graduate_grade','member_name','website']
 
     def get_member_name(self, instance):
         return instance.member.name
