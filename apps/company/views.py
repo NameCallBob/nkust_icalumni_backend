@@ -307,6 +307,10 @@ class IndustryViewSet(viewsets.ViewSet):
         try:
             if request.data.get("id", '') == '':
                 return Response(status=400, data="無參數")
+            
+            if request.data.get('id')=='1':
+                return Response(status=400,data="此為預設值，無法刪除")
+            
             industry = Industry.objects.get(id=request.data.get('id'))
         except Industry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)

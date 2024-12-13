@@ -2,7 +2,8 @@ import base64
 import uuid
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from .models import (
+
+from apps.Info.models import (
     AlumniAssociation,
     AlumniAssociationImage,
     Constitution,
@@ -12,28 +13,47 @@ from .models import (
     MembershipRequirement,
     MembershipRequirementImage,
 )
+from rest_framework.exceptions import ValidationError
 
 
 class Base64ImageField(serializers.ImageField):
     """自定義序列化器欄位，用於處理 Base64 格式的圖片"""
 
     def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith("data:image"):
-            # 提取圖片格式和內容
-            format, imgstr = data.split(";base64,")
-            ext = format.split("/")[-1]
-            # 解碼圖片並生成文件名
-            file_name = f"{uuid.uuid4()}.{ext}"
-            data = ContentFile(base64.b64decode(imgstr), name=file_name)
-        return super().to_internal_value(data)
+        try:
+            if isinstance(data, str) and data.startswith("data:image"):
+                # 提取圖片格式和內容
+                format, imgstr = data.split(";base64,")
+                ext = format.split("/")[-1]
+                
+                if not ext or not imgstr:
+                    raise ValidationError("無效的圖片格式或內容缺失。")
+
+                # 解碼圖片並生成文件名
+                try:
+                    file_name = f"{uuid.uuid4()}.{ext}"
+                    data = ContentFile(base64.b64decode(imgstr), name=file_name)
+                except (TypeError, base64.binascii.Error) as decode_error:
+                    raise ValidationError(f"圖片解碼失敗: {str(decode_error)}")
+
+            return super().to_internal_value(data)
+        except (ValueError, IndexError) as parse_error:
+            raise ValidationError(f"無效的圖片數據: {str(parse_error)}")
+        except Exception as e:
+            raise ValidationError(f"圖片處理時發生未預期錯誤: {str(e)}")
 
     def to_representation(self, value):
-        if value:
-            with open(value.path, "rb") as image_file:
-                base64_data = base64.b64encode(image_file.read()).decode("utf-8")
-                return f"data:image/{value.name.split('.')[-1]};base64,{base64_data}"
-        return None
-
+        try:
+            if value:
+                with open(value.path, "rb") as image_file:
+                    base64_data = base64.b64encode(image_file.read()).decode("utf-8")
+                    return f"data:image/{value.name.split('.')[-1]};base64,{base64_data}"
+            return None
+        except FileNotFoundError:
+            raise ValidationError("圖片文件未找到或無法訪問。")
+        except Exception as e:
+            raise ValidationError(f"圖片轉換 Base64 時發生錯誤: {str(e)}")
+        
 # 照片區
 
 class AlumniAssociationImageSerializer(serializers.ModelSerializer):

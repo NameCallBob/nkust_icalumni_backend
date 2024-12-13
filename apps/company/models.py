@@ -19,8 +19,7 @@ class Company(models.Model):
     name = models.CharField(max_length=255, verbose_name="公司名稱")
     # 可能會出問題!關聯問題
     member = models.OneToOneField(Member ,related_name="member",on_delete=models.CASCADE)
-
-    industry = models.ForeignKey(Industry,related_name="industry", on_delete=models.CASCADE)
+    industry = models.ForeignKey(Industry,related_name="industry",on_delete=models.SET_DEFAULT,default=1)
     positions = models.CharField(max_length=255, verbose_name="公司在職職位")
     description = models.TextField(verbose_name="公司簡介")
     products = models.CharField(max_length=255, verbose_name="販售商品")

@@ -118,6 +118,8 @@ class RecruitViewSet(viewsets.ViewSet):
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
+            recruit.info_clicks = recruit.info_clicks + 1 
+            recruit.save()
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -138,6 +140,7 @@ class RecruitViewSet(viewsets.ViewSet):
         from apps.company.models import Company
         tmp = request.data.copy()  # 確保 data 可變動
         tmp['company'] = Company.objects.get(member=request.user.member).id
+        print(tmp)
         serializer = RecruitSerializer(data=tmp, context={'request': request})
         if serializer.is_valid():
             serializer.save()
@@ -167,7 +170,7 @@ class RecruitViewSet(viewsets.ViewSet):
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = RecruitSerializer(recruit, data=request.data)
+        serializer = RecruitSerializer(recruit, data=request.data ,context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
