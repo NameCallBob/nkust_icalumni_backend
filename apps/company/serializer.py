@@ -21,6 +21,8 @@ class CompanySearchSerializer(serializers.ModelSerializer):
         return instance.member.name
     def get_graduate_grade(self,obj):
         return obj.member.graduate.grade
+    
+    
 import base64
 from django.core.files.base import ContentFile
 
@@ -53,14 +55,14 @@ class CompanySerializer(serializers.ModelSerializer):
 
         # 建立公司
         # NOTE:由於只序列化 industry 的 title，所以industry型態會為{'title':'1'}
-        company = Company.objects.create(industry=Industry.objects.get(id=industry['title']), photo=photo, **validated_data)
+        company = Company.objects.create(industry=Industry.objects.get(title = industry['title']), photo=photo, **validated_data)
         return company
 
     def update(self, instance, validated_data):
         # 處理 industry 的修改
         industry = validated_data.get('industry', None)
         if industry:
-            instance.industry = industry['title']
+            instance.industry = Industry.objects.get(title=industry['title'])
 
         # 處理圖片的 Base64 解碼更新
         photo_data = validated_data.get('photo', None)
