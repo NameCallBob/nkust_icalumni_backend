@@ -133,6 +133,19 @@ class MemberViewSet(viewsets.ViewSet):
         user.save()
 
         return Response({'message': '密碼更新成功'}, status=status.HTTP_200_OK)
+    
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def new(self, request):
+        """
+        新增會員資料
+        """
+        data = request.data.copy()
+        data['private_input'] = request.user.id
+        serializer = MemberSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MemberAnyViewSet(viewsets.ViewSet):
 
