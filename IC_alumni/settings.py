@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "apps.recruit.apps.RecruitConfig",
     "apps.notice.apps.NoticeConfig",
     "apps.Info.apps.InfoConfig",
+    "apps.record.apps.RecordConfig",
 
     # swagger or redoc
     "drf_yasg",
