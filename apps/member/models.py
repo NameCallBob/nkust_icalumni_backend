@@ -57,7 +57,7 @@ class Member(models.Model):
     mobile_phone = models.CharField(max_length=15, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     address = models.TextField(blank=True, null=True)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=True)
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     photo = models.ImageField(

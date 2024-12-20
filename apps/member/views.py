@@ -10,8 +10,10 @@ from rest_framework.decorators import action
 from apps.member.models import Member  ,OutstandingAlumni
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer ,\
       MemberSimpleDetailSerializer , MemberSimpleAdminSerializer\
-      ,OutstandingAlumniSerializer
+      ,OutstandingAlumniSerializer , MemberCreateSerializer 
 from django.shortcuts import get_object_or_404
+
+from IC_alumni.permission.admin import IsAdminOrReadOnly
 
 import random ; import string
 # jwt
@@ -141,7 +143,7 @@ class MemberViewSet(viewsets.ViewSet):
         """
         data = request.data.copy()
         data['private_input'] = request.user.id
-        serializer = MemberSerializer(data=data)
+        serializer = MemberCreateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -496,16 +498,19 @@ class OutstandingAlumniViewSet(ModelViewSet):
     """
     傑出系友 API
     - 提供 CRUD 操作。
-    - 僅管理員可操作此資源。
+    - 所有人可查詢 `is_featured=True` 的資料。
+    - 僅管理員可進行修改操作。
     """
     queryset = OutstandingAlumni.objects.select_related('member').all()
     serializer_class = OutstandingAlumniSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
 
     def get_queryset(self):
         """
-        篩選已標註為展示於官網的傑出系友。
+        依使用者角色篩選資料：
+        - 非管理員僅能看到 `is_featured=True` 的資料。
+        - 管理員可看到所有資料。
         """
-        if self.request.method == 'GET' and not self.request.user.is_staff:
+        if not self.request.user.is_staff:  # 非管理員
             return self.queryset.filter(is_featured=True)
-        return self.queryset
+        return self.queryset  # 管理員
