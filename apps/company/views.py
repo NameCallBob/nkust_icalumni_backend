@@ -5,6 +5,7 @@ from apps.member.models import Member
 from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from asgiref.sync import sync_to_async
 
 from rest_framework import generics
 from django.db.models import Q
@@ -218,34 +219,19 @@ class CompanyViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class IndustryViewSet(viewsets.ViewSet):
-    """
-    公司類別CRUD
-    """
-    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    @swagger_auto_schema(
-        operation_description="列出所有行業資料",
-        responses={200: '成功返回行業列表'}
-    )
-    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
-    def all(self, request):
-        queryset = Industry.objects.all()
+    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
+    async def all(self, request):
+        queryset = await sync_to_async(Industry.objects.all)()
         serializer = IndustrySerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(
-        operation_description="建立新行業",
-        request_body=IndustrySerializer,
-        responses={
-            201: '行業創建成功',
-            400: '請求無效'
-        }
-    )
-    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAdminUser])
-    def new(self, request):
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
+    async def new(self, request):
         serializer = IndustrySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            await sync_to_async(serializer.save)()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
