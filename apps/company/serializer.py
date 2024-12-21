@@ -22,14 +22,14 @@ class CompanySearchSerializer(serializers.ModelSerializer):
             'phone_number', 'graduate_grade', 'member_name', 'website'
         ]
 
-    async def get_member_name(self, instance):
+    def get_member_name(self, instance):
         return instance.member.name
 
-    async def get_graduate_grade(self, instance):
+    def get_graduate_grade(self, instance):
         graduate = instance.member.graduate
         return graduate.grade if graduate else None
-    
-    
+
+
 import base64
 from django.core.files.base import ContentFile
 
@@ -46,10 +46,10 @@ class CompanySerializer(serializers.ModelSerializer):
             'clicks', 'phone_number', 'created_at', 'member_name'
         ]
 
-    async def get_member_name(self, instance):
+    def get_member_name(self, instance):
         return instance.member.name
 
-    async def create(self, validated_data):
+    def create(self, validated_data):
         industry = validated_data.pop('industry', None)
         photo_data = validated_data.pop('photo', None)
 
@@ -59,17 +59,17 @@ class CompanySerializer(serializers.ModelSerializer):
             ext = format.split('/')[-1]
             photo = ContentFile(base64.b64decode(imgstr), name=f"company_photo.{ext}")
 
-        async with transaction.atomic():
-            industry_instance = await Industry.objects.aget(title=industry['title'])
-            company = await Company.objects.acreate(
+        with transaction.atomic():
+            industry_instance = Industry.objects.get(title=industry['title'])
+            company = Company.objects.create(
                 industry=industry_instance, photo=photo, **validated_data
             )
         return company
 
-    async def update(self, instance, validated_data):
+    def update(self, instance, validated_data):
         industry = validated_data.get('industry', None)
         if industry:
-            instance.industry = await Industry.objects.aget(title=industry['title'])
+            instance.industry = Industry.objects.get(title=industry['title'])
 
         photo_data = validated_data.get('photo', None)
         if photo_data:
@@ -87,9 +87,9 @@ class CompanySerializer(serializers.ModelSerializer):
         instance.email = validated_data.get('email', instance.email)
         instance.phone_number = validated_data.get('phone_number', instance.phone_number)
 
-        await sync_to_async(instance.save)()
+        instance.save()
         return instance
-    
+
 class SimpleCompanySerializer(serializers.ModelSerializer):
     member_name = serializers.SerializerMethodField()
     graduate_grade = serializers.SerializerMethodField()
@@ -100,9 +100,9 @@ class SimpleCompanySerializer(serializers.ModelSerializer):
             'id', 'name', 'member_name', 'photo', 'member', 'products', 'graduate_grade'
         ]
 
-    async def get_member_name(self, obj):
+    def get_member_name(self, obj):
         return obj.member.name
 
-    async def get_graduate_grade(self, obj):
+    def get_graduate_grade(self, obj):
         graduate = obj.member.graduate
         return graduate.grade if graduate else None

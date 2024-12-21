@@ -2,6 +2,8 @@ from rest_framework import viewsets, status , permissions
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
+from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
@@ -10,7 +12,7 @@ from rest_framework.decorators import action
 from apps.member.models import Member  ,OutstandingAlumni
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer ,\
       MemberSimpleDetailSerializer , MemberSimpleAdminSerializer\
-      ,OutstandingAlumniSerializer , MemberCreateSerializer 
+      ,OutstandingAlumniSerializer , MemberCreateSerializer
 from django.shortcuts import get_object_or_404
 
 from IC_alumni.permission.admin import IsAdminOrReadOnly
@@ -135,7 +137,7 @@ class MemberViewSet(viewsets.ViewSet):
         user.save()
 
         return Response({'message': '密碼更新成功'}, status=status.HTTP_200_OK)
-    
+
     @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
     def new(self, request):
         """
@@ -267,7 +269,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
 
 
-    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def newUser_email(self, request):
         """建立新使用者（僅輸入電子郵件）"""
         from apps.private.models import Private
@@ -279,7 +281,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
         user_email = request.data.get("email")
         user_type = request.data.get("is_superuser")
-
+        print(user_email) ; print(user_type)
         if not user_email or not user_type:
             return Response({"error": "電子郵件沒有提供或沒說身份組"}, status=400)
 
@@ -288,7 +290,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
         # 檢查使用者是否已存在
         if Private.objects.filter(email=user_email).exists():
-            return Response({"error": "User with this email already exists."}, status=400)
+            return Response({"error": "此帳號已建立過了"}, status=400)
 
         # 創建新使用者
         if user_type == "Y":
@@ -308,7 +310,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         member_id = request.data.get('member_id')
         try:
             from apps.private.models import Private
-            private_id = Member.objects.get(id=member_id).private
+            private_id = Member.objects.get(id=member_id).private.id
             private_ob = Private.objects.get(id=private_id)
             private_ob.delete()
             return Response({"message": "Member deleted"}, status=status.HTTP_200_OK)
@@ -492,7 +494,7 @@ class MemberListViewForAll(ListAPIView):
         position = self.request.query_params.get('position', None)
 
         return Member.search_members(name=name, intro=intro, position=position)
-    
+
 
 class OutstandingAlumniViewSet(ModelViewSet):
     """

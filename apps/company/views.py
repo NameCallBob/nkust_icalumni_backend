@@ -36,17 +36,17 @@ class CompanyListView_forAnyone(generics.ListAPIView):
         queryset = Company.objects.all()
         search = self.request.query_params.get('search', None)
         industry = self.request.query_params.get('industry', None)
-        
+
         if industry and int(industry) != 0:
             queryset = queryset.filter(industry=industry)
-            
+
         if search:
             query = (
             Q(name__icontains=search) |  # 公司名稱
             Q(member__name__icontains=search) |  # 系友名稱
             Q(member__position__title__icontains=search) |  # 職位標題
             Q(products__icontains=search) |  # 產品描述
-            Q(description__icontains=search) | 
+            Q(description__icontains=search) |
             Q(address__icontains=search) |  # 地址
             Q(email__icontains=search) |  # 電子郵件
             Q(phone_number__icontains=search)  # 電話號碼
@@ -219,19 +219,34 @@ class CompanyViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class IndustryViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    """
+    公司類別CRUD
+    """
+    permission_classes=[permissions.IsAuthenticatedOrReadOnly]
 
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    async def all(self, request):
-        queryset = await sync_to_async(Industry.objects.all)()
+    @swagger_auto_schema(
+        operation_description="列出所有行業資料",
+        responses={200: '成功返回行業列表'}
+    )
+    @action(methods=['get'],detail=False,authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def all(self, request):
+        queryset = Industry.objects.all()
         serializer = IndustrySerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
-    async def new(self, request):
+    @swagger_auto_schema(
+        operation_description="建立新行業",
+        request_body=IndustrySerializer,
+        responses={
+            201: '行業創建成功',
+            400: '請求無效'
+        }
+    )
+    @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAdminUser])
+    def new(self, request):
         serializer = IndustrySerializer(data=request.data)
         if serializer.is_valid():
-            await sync_to_async(serializer.save)()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -293,10 +308,10 @@ class IndustryViewSet(viewsets.ViewSet):
         try:
             if request.data.get("id", '') == '':
                 return Response(status=400, data="無參數")
-            
+
             if request.data.get('id')=='1':
                 return Response(status=400,data="此為預設值，無法刪除")
-            
+
             industry = Industry.objects.get(id=request.data.get('id'))
         except Industry.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
