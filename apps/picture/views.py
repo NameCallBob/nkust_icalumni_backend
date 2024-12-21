@@ -2,8 +2,8 @@ from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action ,authentication_classes,permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from apps.picture.models import SelfImage, CompanyImage, ProductImage
-from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer
+from apps.picture.models import SelfImage, CompanyImage, ProductImage , PopupAd
+from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer , PopupAdSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -281,3 +281,24 @@ class ProductImageViewSet(viewsets.ViewSet):
             return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
         except ProductImage.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class PopupAdViewSet(viewsets.ModelViewSet):
+    queryset = PopupAd.objects.all()
+    serializer_class = PopupAdSerializer
+
+    # 支援過濾 `active` 狀態的廣告
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        active = self.request.query_params.get('active')  # 從查詢參數中獲取 `active`
+        if active is not None:
+            queryset = queryset.filter(active=active.lower() == 'true')
+        return queryset
+
+    # 自訂操作來啟用/停用廣告
+    @action(detail=True, methods=['patch'])
+    def toggle_active(self, request, pk=None):
+        popup_ad = self.get_object()
+        popup_ad.active = not popup_ad.active
+        popup_ad.save()
+        serializer = self.get_serializer(popup_ad)
+        return Response(serializer.data)

@@ -38,3 +38,13 @@ class SlideImage(models.Model):
     description = models.TextField(blank=True, null=True)
     active = models.BooleanField("是否使用")
     created_at = models.DateTimeField(auto_now_add=True)
+
+class PopupAd(models.Model):
+    image =  models.ImageField(upload_to='static/popup/')
+    active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"PopupAd (Active: {self.active})"

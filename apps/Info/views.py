@@ -37,7 +37,7 @@ class AlumniAssociationViewSet(viewsets.ViewSet):
             serializer = AlumniAssociationSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
     def all(self, request):
         """查詢最近更新的系友會資料"""
@@ -46,7 +46,7 @@ class AlumniAssociationViewSet(viewsets.ViewSet):
             serializer = AlumniAssociationSerializer(instance,many=True)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=False, methods=["post"], permission_classes=[IsAdminUser], authentication_classes=[JWTAuthentication])
     def new(self, request):
         """新增系友會資料（限管理員）"""
@@ -87,7 +87,7 @@ from rest_framework.parsers import MultiPartParser, FormParser , JSONParser
 class ConstitutionViewSet(viewsets.ViewSet):
     """章程 ViewSet"""
     parser_classes = [MultiPartParser, FormParser , JSONParser]
-    
+
     @action(detail=False, methods=["get"], permission_classes=[AllowAny] , authentication_classes=[])
     def latest(self, request):
         """查詢最近更新的系友會資料"""
@@ -96,7 +96,7 @@ class ConstitutionViewSet(viewsets.ViewSet):
             serializer = ConstitutionSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
     def all(self, request):
         """查詢最近更新的系友會資料"""
@@ -150,7 +150,7 @@ class OrganizationalStructureViewSet(viewsets.ViewSet):
             serializer = OrganizationalStructureSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
     def all(self, request):
         """查詢最近更新的系友會資料"""
@@ -207,7 +207,7 @@ class MembershipRequirementViewSet(viewsets.ViewSet):
             serializer = MembershipRequirementSerializer(instance)
             return Response(serializer.data)
         return Response({"detail": "無資料"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=False, methods=["get"], permission_classes=[IsAdminUser] , authentication_classes=[JWTAuthentication])
     def all(self, request):
         """查詢最近更新的系友會資料"""

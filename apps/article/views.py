@@ -6,6 +6,7 @@ from apps.article.models import Article
 from apps.article.serializer import ArticleSerializer,ArticleSerializer_TableOutput
 from asgiref.sync import sync_to_async
 from django.db import transaction
+import asyncio
 
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
@@ -23,38 +24,33 @@ class ArticleViewSet(viewsets.ViewSet):
         responses={200: '成功返回所有文章'}
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    async def all_active(self, request):
-        current_time = timezone.now()
-        queryset = await sync_to_async(Article.objects.filter)(
-            active=True,
-            publish_at__lte=current_time,
-            expire_at__gte=current_time
-        )
-        queryset = await sync_to_async(queryset.order_by)('-created_at')
-        serializer = ArticleSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def all_active(self, request):
+        async def fetch_data():
+            current_time = timezone.now()
+            queryset = await sync_to_async(list)(
+                Article.objects.filter(
+                    active=True,
+                    publish_at__lte=current_time,
+                    expire_at__gte=current_time
+                ).order_by('-created_at')
+            )
+            return ArticleSerializer(queryset, many=True).data
 
-    @swagger_auto_schema(
-        operation_description="查詢所有文章_已發布",
-        responses={200: '成功返回所有文章'}
-    )
-    @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    async def tableOutput(self, request):
-        queryset = await sync_to_async(Article.objects.filter)(active=True)
-        queryset = await sync_to_async(queryset.order_by)('-created_at')
-        serializer = ArticleSerializer_TableOutput(queryset, many=True)
-        return Response(serializer.data)
+        data = asyncio.run(fetch_data())
+        return Response(data)
 
     @swagger_auto_schema(
         operation_description="查詢所有文章",
         responses={200: '成功返回所有文章'}
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    async def all(self, request):
-        queryset = await sync_to_async(Article.objects.all)()
-        queryset = await sync_to_async(queryset.order_by)('-created_at')
-        serializer = ArticleSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def tableOutput(self, request):
+        async def fetch_data():
+            queryset = await sync_to_async(list)(Article.objects.filter(active=True).order_by('-created_at'))
+            return ArticleSerializer_TableOutput(queryset, many=True).data
+
+        data = asyncio.run(fetch_data())
+        return Response(data)
 
     @swagger_auto_schema(
         operation_description="查詢單一文章",
@@ -68,19 +64,23 @@ class ArticleViewSet(viewsets.ViewSet):
         ]
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
-    async def get_one(self, request):
-        try:
-            pk = request.GET['id']
-            article = await sync_to_async(Article.objects.get)(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        except KeyError:
-            return Response({'msg': "datakey not correct!"}, status=status.HTTP_400_BAD_REQUEST)
+    def get_one(self, request):
+        async def fetch_data():
+            try:
+                pk = request.GET['id']
+                article = await sync_to_async(Article.objects.get)(pk=pk)
+                article.view_count += 1
+                await sync_to_async(article.save)()
+                return ArticleSerializer(article).data
+            except Article.DoesNotExist:
+                return {'error': 'Not found'}, status.HTTP_404_NOT_FOUND
+            except KeyError:
+                return {'error': 'datakey not correct!'}, status.HTTP_400_BAD_REQUEST
 
-        article.view_count += 1
-        await sync_to_async(article.save)()
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+        data = asyncio.run(fetch_data())
+        if isinstance(data, tuple):
+            return Response(data[0], status=data[1])
+        return Response(data)
 
     @swagger_auto_schema(
         operation_description="創建新文章並上傳圖片",
@@ -91,13 +91,17 @@ class ArticleViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    async def new(self, request):
-        serializer = ArticleSerializer(data=request.data)
-        if serializer.is_valid():
-            async with transaction.atomic():
-                await sync_to_async(serializer.save)()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def new(self, request):
+        async def create_article():
+            serializer = ArticleSerializer(data=request.data)
+            if serializer.is_valid():
+                async with transaction.atomic():
+                    await sync_to_async(serializer.save)()
+                return serializer.data, status.HTTP_201_CREATED
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
+
+        data, status_code = asyncio.run(create_article())
+        return Response(data, status=status_code)
 
     @swagger_auto_schema(
         operation_description="更新文章和圖片",
@@ -109,21 +113,25 @@ class ArticleViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['patch'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    async def change(self, request):
-        try:
-            pk = request.data.get("id", '')
-            if pk == "":
-                return Response({"msg": "id not given"}, status=status.HTTP_400_BAD_REQUEST)
-            article = await sync_to_async(Article.objects.get)(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    def change(self, request):
+        async def update_article():
+            try:
+                pk = request.data.get("id", '')
+                if pk == "":
+                    return {'error': 'id not given'}, status.HTTP_400_BAD_REQUEST
+                article = await sync_to_async(Article.objects.get)(pk=pk)
+            except Article.DoesNotExist:
+                return {'error': 'Not found'}, status.HTTP_404_NOT_FOUND
 
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
-        if serializer.is_valid():
-            async with transaction.atomic():
-                await sync_to_async(serializer.save)()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = ArticleSerializer(article, data=request.data, partial=True)
+            if serializer.is_valid():
+                async with transaction.atomic():
+                    await sync_to_async(serializer.save)()
+                return serializer.data, status.HTTP_200_OK
+            return serializer.errors, status.HTTP_400_BAD_REQUEST
+
+        data, status_code = asyncio.run(update_article())
+        return Response(data, status=status_code)
 
     @swagger_auto_schema(
         operation_description="刪除文章",
@@ -141,14 +149,20 @@ class ArticleViewSet(viewsets.ViewSet):
         }
     )
     @action(methods=['delete'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
-    async def delete(self, request):
-        try:
-            pk = request.data.get("id", '')
-            if pk == "":
-                return Response({"msg": "id not given"}, status=status.HTTP_400_BAD_REQUEST)
-            article = await sync_to_async(Article.objects.get)(pk=pk)
-        except Article.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    def delete(self, request):
+        async def delete_article():
+            try:
+                pk = request.data.get("id", '')
+                if pk == "":
+                    return {'error': 'id not given'}, status.HTTP_400_BAD_REQUEST
+                article = await sync_to_async(Article.objects.get)(pk=pk)
+            except Article.DoesNotExist:
+                return {'error': 'Not found'}, status.HTTP_404_NOT_FOUND
 
-        await sync_to_async(article.delete)()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            await sync_to_async(article.delete)()
+            return {}, status.HTTP_204_NO_CONTENT
+
+        data, status_code = asyncio.run(delete_article())
+        if status_code == status.HTTP_204_NO_CONTENT:
+            return Response(status=status_code)
+        return Response(data, status=status_code)

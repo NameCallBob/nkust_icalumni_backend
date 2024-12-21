@@ -108,7 +108,7 @@ class SlideImageViewSet(viewsets.ViewSet):
     )
     @action(methods=['put'],detail=False,
             authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
-    def change(self, request):  # 'update' 改名為 'change'
+    def change(self, request):
         if not request.user.is_authenticated:
             return Response({"detail": "無權限更新"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -148,3 +148,14 @@ class SlideImageViewSet(viewsets.ViewSet):
 
         slide_image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='switch_active', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
+    def switch_active(self, request):
+        image_id = request.data.get("id")
+        try:
+            image = SlideImage.objects.get(id=image_id)
+            image.active = not image.active
+            image.save()
+            return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
+        except SlideImage.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
