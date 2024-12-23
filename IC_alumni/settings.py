@@ -32,7 +32,7 @@ AUTH_USER_MODEL = 'Private.Private'
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     # 本機端
@@ -272,3 +272,78 @@ DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'
 ADMINS = [
     (os.getenv('ADMIN_NAME'),os.getenv('ADMIN_EMAIL'))
 ]
+
+# 日誌文件目錄
+LOG_DIR = '../log'
+
+# 確保日誌目錄存在
+os.makedirs(LOG_DIR, exist_ok=True)
+
+# LOGGING 配置
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # 保留現有日誌
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'json': {
+            '()': 'django.utils.log.JSONFormatter',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'app.log'),  # 普通日誌文件
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'error.log'),  # 錯誤日誌文件
+            'formatter': 'verbose',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],  # 一般日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['error_file', 'mail_admins'],  # 錯誤日誌
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file'],  # 資料庫錯誤
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'myapp': {
+            'handlers': ['file'],  # 應用程序自訂日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
