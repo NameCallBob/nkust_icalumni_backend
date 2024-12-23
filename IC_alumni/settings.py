@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "apps.member.apps.MemberConfig",
     "apps.company.apps.CompanyConfig",
     "apps.product.apps.ProductConfig",
-    
+
     # 功能
     "apps.article.apps.ArticleConfig",
     "apps.picture.apps.PictureConfig",
@@ -104,7 +104,7 @@ ROOT_URLCONF = 'IC_alumni.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status , mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
@@ -6,10 +6,32 @@ from apps.private.models import Private
 from apps.private.serializer import PrivateSerializer
 from django.db.models import Q
 
+from rest_framework.pagination import PageNumberPagination
+
 # 自訂權限：僅允許管理員操作
 class IsAdminUser(BasePermission):
     def has_permission(self, request, view):
         return request.user and (request.user.is_staff or request.user.is_superuser)
+
+class PrivatePagination(PageNumberPagination):
+    page_size = 10  # 每頁顯示的數量，可以根據需求調整
+    page_size_query_param = 'page_size'  # 前端可透過該參數自定義每頁大小
+
+class PrivateSearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    ViewSet for querying Private objects.
+    Only admin users can access this view.
+    """
+    serializer_class = PrivateSerializer
+    permission_classes = [IsAdminUser]
+    pagination_class = PrivatePagination
+
+    def get_queryset(self):
+        queryset = Private.objects.all()
+        order_by_param = self.request.query_params.get('order_by', '-last_login')
+        if order_by_param in ['last_login', '-last_login']:
+            queryset = queryset.order_by(order_by_param)
+        return queryset
 
 class PrivateViewSet(viewsets.ViewSet):
     permission_classes = [IsAdminUser]
@@ -23,11 +45,11 @@ class PrivateViewSet(viewsets.ViewSet):
     # 根據自訂參數查詢單一 Private
     @action(detail=False, methods=['get'], url_path='query')
     def get_account(self, request):
-        email = request.query_params.get('email')
-        if not email:
-            return Response({"detail": "請提供 email 作為查詢參數。"}, status=status.HTTP_400_BAD_REQUEST)
+        id = request.query_params.get('id')
+        if not id:
+            return Response({"detail": "請提供 id 作為查詢參數。"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            private_user = Private.objects.get(email=email)
+            private_user = Private.objects.get(id = id)
             serializer = PrivateSerializer(private_user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Private.DoesNotExist:
@@ -36,11 +58,11 @@ class PrivateViewSet(viewsets.ViewSet):
     # 更新現有的 Private
     @action(detail=False, methods=['put'], url_path='update')
     def update_private(self, request):
-        email = request.data.get('email')
-        if not email:
+        id = request.data.get('id')
+        if not id:
             return Response({"detail": "請提供 email 作為更新參數。"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            private_user = Private.objects.get(email=email)
+            private_user = Private.objects.get(id = id)
             serializer = PrivateSerializer(private_user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -52,16 +74,16 @@ class PrivateViewSet(viewsets.ViewSet):
     # 刪除指定的 Private
     @action(detail=False, methods=['delete'], url_path='delete')
     def remove(self, request):
-        email = request.data.get('email')
-        if not email:
-            return Response({"detail": "請提供 email 作為刪除參數。"}, status=status.HTTP_400_BAD_REQUEST)
+        id = request.data.get('id')
+        if not id:
+            return Response({"detail": "請提供 id 作為刪除參數。"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            private_user = Private.objects.get(email=email)
+            private_user = Private.objects.get(id=id)
             private_user.delete()
-            return Response({"detail": f"已成功刪除 email 為 {email} 的使用者。"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": f"已成功刪除 id 為 {id} 的使用者。"}, status=status.HTTP_204_NO_CONTENT)
         except Private.DoesNotExist:
             return Response({"detail": "找不到對應的使用者。"}, status=status.HTTP_404_NOT_FOUND)
-        
+
     # 單一條件查詢
     @action(detail=False, methods=['get'], url_path='filter')
     def filter_private(self, request):
@@ -89,7 +111,7 @@ class PrivateViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 帳號啟用/停用
-    @action(detail=False, methods=['post'], url_path='toggle-active')
+    @action(detail=False, methods=['patch'], url_path='toggle-active')
     def toggle_active(self, request):
         email = request.data.get('email')
         if not email:
@@ -123,3 +145,22 @@ class PrivateViewSet(viewsets.ViewSet):
             return Response({"detail": "帳號權限已更新。"}, status=status.HTTP_200_OK)
         except Private.DoesNotExist:
             return Response({"detail": "找不到對應的使用者。"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['patch'])
+    def update_password(self, request):
+        """
+        因未繳費關閉帳號及記錄
+        """
+        try:
+            id = request.data.get("id")
+            password = request.data.get("password")
+            ob = Private.objects.get(id=id)
+
+            ob.set_password(password)  # Properly set the hashed password
+            ob.save()  # Save the private object
+
+            return Response({'status': 'password updated'}, status=status.HTTP_200_OK)
+        except Private.DoesNotExist:
+            return Response({"message": "未知使用者"}, status=404)
+        except Exception as e:
+            return Response({"message": f"未知錯誤: {e}"}, status=500)
