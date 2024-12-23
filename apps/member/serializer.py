@@ -118,12 +118,20 @@ class MemberSerializer(serializers.ModelSerializer):
             # 驗證 Private 輸入資料
             if not private_data or not isinstance(private_data, (dict, int)):
                 raise serializers.ValidationError(
-                    {"private_input": "Invalid or missing private data for account creation."}
+                    {"private_input": "缺少帳號密碼的資料，請確認是否填寫"}
                 )
 
             # 驗證其他資料
             graduate_instance = Graduate.objects.create(**graduate_data) if graduate_data else None
-            position_instance = Position.objects.create(**position_data) if position_data else None
+            position_instance = None
+            if position_data:
+                position_title = position_data.get('title')  # 確認唯一屬性
+                if position_title:
+                    # 嘗試從資料庫查詢已存在的 Position
+                    position_instance = Position.objects.filter(title=position_title).first()
+                if not position_instance:
+                    # 找不到時，創建新的 Position
+                    position_instance = Position.objects.create(**position_data)
 
             # 處理 base64 照片
             photo = None
@@ -134,7 +142,7 @@ class MemberSerializer(serializers.ModelSerializer):
                     ext = format.split('/')[-1]
                     photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')
                 except Exception as e:
-                    raise serializers.ValidationError({"photo": f"Invalid photo format: {str(e)}"})
+                    raise serializers.ValidationError({"photo": f"照片非可轉為base64的格式: {str(e)}"})
 
             # 到此為止，確認所有資料有效且可創建，開始執行 Private 實例創建
             with transaction.atomic():
@@ -183,23 +191,26 @@ class MemberSerializer(serializers.ModelSerializer):
         validated_data.pop('school', None)
         validated_data.pop('grade', None)
 
+        position_instance = None
         # 處理 position 更新或創建
         position_data = validated_data.pop('position', None)
         if position_data:
-            position_id = position_data.get('id')
-            if position_id:
-                # 獲取特定的 Position 實例並逐一更新字段
-                position_instance = Position.objects.get(id=position_id)
-                for attr, value in position_data.items():
-                    setattr(position_instance, attr, value)
-                position_instance.save()
-                instance.position = position_instance
+            position_title = position_data.get('title')  # 確認唯一屬性
+            if position_title:
+                # 嘗試從資料庫查詢已存在的 Position
+                position_instance = Position.objects.filter(title=position_title).first()
+                if position_instance:
+                    # 更新已有的 Position
+                    for attr, value in position_data.items():
+                        setattr(position_instance, attr, value)
+                    position_instance.save()
+                else:
+                    # 找不到時，創建新的 Position
+                    position_instance = Position.objects.create(**position_data)
             else:
-                # 創建新的 Position 實例並關聯
-                position_instance = Position.objects.create(**position_data)
-                instance.position = position_instance
-        else:
-            position_instance = instance.position  # 若未傳入 position，使用當前 position
+                raise serializers.ValidationError({"position": "選擇的職位未知，請重整網頁查看職位是否有被修改"})
+            self.check_and_set_superuser(instance, position_instance)
+            instance.position = position_instance
 
         # 處理 graduate 更新或創建，避免批量影響
         graduate_data = validated_data.pop('graduate', None)
@@ -237,7 +248,7 @@ class MemberSerializer(serializers.ModelSerializer):
         instance.save()  # 保存所有變更
 
         # 更新 superuser 權限
-        self.check_and_set_superuser(instance, position_instance)
+
 
         return instance  # 返回更新後的實例
 

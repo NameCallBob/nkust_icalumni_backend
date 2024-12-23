@@ -9,6 +9,6 @@ router.register(r'self-images', SelfImageViewSet, basename='selfimage')
 router.register(r'company-images', CompanyImageViewSet, basename='companyimage')
 router.register(r'product-images', ProductImageViewSet, basename='productimage')
 router.register(r'slide-images', SlideImageViewSet, basename='slideimage')
-router.register(r'popup-ads', PopupAdViewSet)
+router.register(r'popup-ads', PopupAdViewSet, basename='popup_image')
 
 urlpatterns = router.urls
