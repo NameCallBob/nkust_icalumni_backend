@@ -279,27 +279,11 @@ LOG_DIR = '../log'
 # 確保日誌目錄存在
 os.makedirs(LOG_DIR, exist_ok=True)
 
+from pythonjsonlogger import jsonlogger
 
 # 伺服器運行相關記錄
 
 import logging
-from logging.handlers import TimedRotatingFileHandler
-
-# 自定義壓縮處理器
-class CompressedTimedRotatingFileHandler(TimedRotatingFileHandler):
-    def doRollover(self):
-        super().doRollover()
-        # 自動壓縮舊日誌
-        for log_file in self.getFilesToDelete():
-            self.compress_log_file(log_file)
-
-    def compress_log_file(self, log_file):
-        if not log_file.endswith('.gz'):  # 防止重複壓縮
-            import gzip
-            with open(log_file, 'rb') as f_in:
-                with gzip.open(f"{log_file}.gz", 'wb') as f_out:
-                    f_out.writelines(f_in)
-            os.remove(log_file)  # 刪除未壓縮的日誌文件
 
 LOGGING = {
     'version': 1,
@@ -310,7 +294,8 @@ LOGGING = {
             'style': '{',
         },
         'json': {
-            '()': 'django.utils.log.JSONFormatter',
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',  # 使用 JsonFormatter
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s',  # 定義 JSON 格式
         },
         'simple': {
             'format': '{levelname} {message}',
@@ -329,7 +314,7 @@ LOGGING = {
         },
         'file': {
             'level': 'INFO',
-            'class': '__main__.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
             'filename': os.path.join(LOG_DIR, 'app.log'),  # 普通日誌文件
             'when': 'midnight',  # 每天午夜輪替
             'interval': 1,
@@ -338,27 +323,31 @@ LOGGING = {
         },
         'error_file': {
             'level': 'ERROR',
-            'class': '__main__.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
             'filename': os.path.join(LOG_DIR, 'error.log'),  # 錯誤日誌文件
             'when': 'midnight',  # 每天午夜輪替
             'interval': 1,
             'backupCount': 365,  # 保留最近 365 天
             'formatter': 'verbose',
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler',
+        'json_file': {
+            'level': 'INFO',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'json.log'),  # JSON 格式日誌
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 365,
+            'formatter': 'json',  # 使用 JSON 格式
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],  # 一般日誌
+            'handlers': ['console', 'file', 'json_file'],  # 一般日誌
             'level': 'INFO',
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['error_file', 'mail_admins'],  # 錯誤日誌
+            'handlers': ['error_file'],  # 錯誤日誌
             'level': 'ERROR',
             'propagate': False,
         },
