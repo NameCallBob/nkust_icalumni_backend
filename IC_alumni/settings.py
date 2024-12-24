@@ -279,7 +279,28 @@ LOG_DIR = '../log'
 # 確保日誌目錄存在
 os.makedirs(LOG_DIR, exist_ok=True)
 
-# LOGGING 配置
+
+# 伺服器運行相關記錄
+
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
+# 自定義壓縮處理器
+class CompressedTimedRotatingFileHandler(TimedRotatingFileHandler):
+    def doRollover(self):
+        super().doRollover()
+        # 自動壓縮舊日誌
+        for log_file in self.getFilesToDelete():
+            self.compress_log_file(log_file)
+
+    def compress_log_file(self, log_file):
+        if not log_file.endswith('.gz'):  # 防止重複壓縮
+            import gzip
+            with open(log_file, 'rb') as f_in:
+                with gzip.open(f"{log_file}.gz", 'wb') as f_out:
+                    f_out.writelines(f_in)
+            os.remove(log_file)  # 刪除未壓縮的日誌文件
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,  # 保留現有日誌
@@ -308,14 +329,20 @@ LOGGING = {
         },
         'file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': '__main__.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
             'filename': os.path.join(LOG_DIR, 'app.log'),  # 普通日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
             'formatter': 'verbose',
         },
         'error_file': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
+            'class': '__main__.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
             'filename': os.path.join(LOG_DIR, 'error.log'),  # 錯誤日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
             'formatter': 'verbose',
         },
         'mail_admins': {
@@ -340,7 +367,7 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'myapp': {
+        'nkust_ic_alumni': {
             'handlers': ['file'],  # 應用程序自訂日誌
             'level': 'INFO',
             'propagate': True,
