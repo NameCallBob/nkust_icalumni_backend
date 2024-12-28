@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.product.models import Product, ProductImage
+from apps.product.models import Product, ProductImage , ProductCate
 import base64
 from django.core.files.base import ContentFile
 
@@ -54,3 +54,10 @@ class ProductSerializer(serializers.ModelSerializer):
                 ProductImage.objects.create(product=product, image=image_file)
             except Exception as e:
                 continue
+
+
+class ProductCateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductCate
+        fields = ['id', 'name', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
