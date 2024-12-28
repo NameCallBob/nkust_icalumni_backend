@@ -16,16 +16,20 @@ product_cate_schema = openapi.Schema(
 
 # 產品類別模型
 class ProductCate(models.Model):
-    name = models.CharField(max_length=255, unique=True, verbose_name="類別名稱")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="product_cate", verbose_name="所屬公司")
+    name = models.CharField(max_length=255, verbose_name="類別名稱")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立日期")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新日期")
 
     class Meta:
         verbose_name = "產品類別"
         verbose_name_plural = "產品類別"
+        unique_together = ('company', 'name')  # 公司內名稱唯一
+        indexes = [models.Index(fields=['company', 'name'])]  # 加速查詢
 
     def __str__(self):
         return self.name
+
     
 
 product_schema = openapi.Schema(
@@ -42,7 +46,14 @@ product_schema = openapi.Schema(
     required=['company', 'name', 'description'],
 )
 class Product(models.Model):
-    category = models.ForeignKey(ProductCate, on_delete=models.SET_NULL, null=True, blank=True, related_name="products", verbose_name="所屬類別")
+    category = models.ForeignKey(
+        ProductCate,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="products",
+        verbose_name="所屬類別"
+    )    
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="product_set", verbose_name="所屬公司")
     name = models.CharField(max_length=255, verbose_name="產品名稱")
     description = models.TextField(verbose_name="產品簡介")
