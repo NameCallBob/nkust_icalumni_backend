@@ -274,7 +274,7 @@ ADMINS = [
 ]
 
 # 日誌文件目錄
-LOG_DIR = '/log'
+LOG_DIR = './log/'
 
 # 確保日誌目錄存在
 os.makedirs(LOG_DIR, exist_ok=True)

@@ -1,12 +1,12 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action , permission_classes , authentication_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny , IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 
-from apps.product.models import Product, ProductImage
-from apps.product.serializer import ProductSerializer
+from apps.product.models import Product, ProductImage , ProductCate
+from apps.product.serializer import ProductSerializer , ProductCateSerializer
 from apps.company.models import Company
 
 class ProductViewSet(ViewSet):
@@ -134,3 +134,15 @@ class ProductViewSet(ViewSet):
             return Response({"success": "產品已刪除"}, status=status.HTTP_200_OK)
         except Product.DoesNotExist:
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
+
+from rest_framework import viewsets
+
+
+class ProductCateViewSet(viewsets.ModelViewSet):
+    """
+    產品類別的視圖集
+    提供依使用者 Token 或公司 ID 查詢功能
+    """
+    queryset = ProductCate.objects.all()
+    serializer_class = ProductCateSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
