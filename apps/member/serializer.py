@@ -14,7 +14,6 @@ import base64
 import uuid
 from asgiref.sync import sync_to_async
 
-# 會員序列化
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
@@ -62,30 +61,30 @@ class MemberSerializer(serializers.ModelSerializer):
         return None
 
     def to_internal_value(self, data):
-            """
-            重寫以支援嵌套處理 `private_input` 資料
-            """
-            private_data = data.pop('private_input', None)
-            if private_data:
-                if isinstance(private_data, dict):
-                    # 檢查嵌套資料的完整性
-                    email = private_data.get('email')
-                    password = private_data.get('password')
-                    if not email :
-                        raise serializers.ValidationError({
-                            "private_input": "沒有提供電子郵件作為帳號，無法建立"
-                        })
-                elif isinstance(private_data, int):
-                    # 如果是主鍵，檢查是否存在
-                    if not Private.objects.filter(pk=private_data).exists():
-                        raise serializers.ValidationError({
-                            "private_input": "無此會員"
-                        })
+        """
+        重寫以支援嵌套處理 `private_input` 資料
+        """
+        private_data = data.pop('private_input', None)
+        if private_data:
+            if isinstance(private_data, dict):
+                # 檢查嵌套資料的完整性
+                email = private_data.get('email')
+                password = private_data.get('password')
+                if not email:
+                    raise serializers.ValidationError({
+                        "private_input": "沒有提供電子郵件作為帳號，無法建立"
+                    })
+            elif isinstance(private_data, int):
+                # 如果是主鍵，檢查是否存在
+                if not Private.objects.filter(pk=private_data).exists():
+                    raise serializers.ValidationError({
+                        "private_input": "無此會員"
+                    })
 
-                # 將處理後的 private 資料放回 data
-                data['private_input'] = private_data
+            # 將處理後的 private 資料放回 data
+            data['private_input'] = private_data
 
-            return super().to_internal_value(data)
+        return super().to_internal_value(data)
 
     def get_notice_type(self, instance):
         notice = getattr(instance, 'notice', None)
@@ -101,14 +100,13 @@ class MemberSerializer(serializers.ModelSerializer):
         """
         檢查 position 條件並設置/取消 superuser 權限
         """
-        if position_instance.title == "管理員" or (position_instance.priority and position_instance.priority <= 3):
+        if position_instance and (position_instance.title == "管理員" or (position_instance.priority and position_instance.priority <= 3)):
             member_instance.private.is_superuser = True
         else:
             member_instance.private.is_superuser = False
         member_instance.private.save()  # 保存更改到 private 模型
 
     def create(self, validated_data):
-        print(validated_data)
         position_data = validated_data.pop('position', None)
         graduate_data = validated_data.pop('graduate', None)
         private_data = validated_data.pop('private_input', None)  # 處理 private_input 資料
@@ -117,23 +115,17 @@ class MemberSerializer(serializers.ModelSerializer):
         try:
             # 驗證 Private 輸入資料
             if not private_data or not isinstance(private_data, (dict, int)):
-                raise serializers.ValidationError(
-                    {"private_input": "缺少帳號密碼的資料，請確認是否填寫"}
-                )
+                raise serializers.ValidationError({"private_input": "缺少帳號密碼的資料，請確認是否填寫"})
 
-            # 驗證其他資料
             graduate_instance = Graduate.objects.create(**graduate_data) if graduate_data else None
             position_instance = None
             if position_data:
-                position_title = position_data.get('title')  # 確認唯一屬性
+                position_title = position_data.get('title')
                 if position_title:
-                    # 嘗試從資料庫查詢已存在的 Position
                     position_instance = Position.objects.filter(title=position_title).first()
                 if not position_instance:
-                    # 找不到時，創建新的 Position
                     position_instance = Position.objects.create(**position_data)
 
-            # 處理 base64 照片
             photo = None
             photo_data = validated_data.get('photo')
             if photo_data and isinstance(photo_data, str):
@@ -144,19 +136,15 @@ class MemberSerializer(serializers.ModelSerializer):
                 except Exception as e:
                     raise serializers.ValidationError({"photo": f"照片非可轉為base64的格式: {str(e)}"})
 
-            # 到此為止，確認所有資料有效且可創建，開始執行 Private 實例創建
             with transaction.atomic():
                 if isinstance(private_data, dict):
-                    # 使用 CustomUserManager 創建 Private 實例
                     private_instance = Private.objects.create_user(
                         email=private_data['email'],
                         password=private_data['password'],
                     )
                 elif isinstance(private_data, int):
-                    # 查詢已存在的 Private
                     private_instance = Private.objects.get(pk=private_data)
 
-                # 創建 Member 實例
                 member_instance = Member.objects.create(
                     private=private_instance,
                     graduate=graduate_instance,
@@ -165,10 +153,8 @@ class MemberSerializer(serializers.ModelSerializer):
                     **validated_data
                 )
 
-                # 設置 superuser 權限
                 self.check_and_set_superuser(member_instance, position_instance)
 
-                # 創建 Notice
                 Notice.objects.create(
                     member=member_instance,
                     email_notifications=True,
@@ -180,77 +166,52 @@ class MemberSerializer(serializers.ModelSerializer):
                 return member_instance
 
         except serializers.ValidationError as e:
-            raise e  # 傳遞序列化錯誤
+            raise e
         except Exception as e:
-            raise serializers.ValidationError(
-                {"detail": f"An unexpected error occurred during creation: {str(e)}"}
-            )
+            raise serializers.ValidationError({"detail": f"An unexpected error occurred during creation: {str(e)}"})
 
     def update(self, instance, validated_data):
-        # 移除根層的 school 和 grade，避免衝突
         validated_data.pop('school', None)
         validated_data.pop('grade', None)
 
         position_instance = None
-        # 處理 position 更新或創建
         position_data = validated_data.pop('position', None)
         if position_data:
-            position_title = position_data.get('title')  # 確認唯一屬性
+            position_title = position_data.get('title')
             if position_title:
-                # 嘗試從資料庫查詢已存在的 Position
                 position_instance = Position.objects.filter(title=position_title).first()
                 if position_instance:
-                    # 更新已有的 Position
                     for attr, value in position_data.items():
                         setattr(position_instance, attr, value)
                     position_instance.save()
                 else:
-                    # 找不到時，創建新的 Position
                     position_instance = Position.objects.create(**position_data)
             else:
                 raise serializers.ValidationError({"position": "選擇的職位未知，請重整網頁查看職位是否有被修改"})
             self.check_and_set_superuser(instance, position_instance)
             instance.position = position_instance
 
-        # 處理 graduate 更新或創建，避免批量影響
         graduate_data = validated_data.pop('graduate', None)
         if graduate_data:
             if instance.graduate:
-                # 檢查是否需要更新或創建新 graduate
-                if instance.graduate.school != graduate_data.get("school") \
-                     or instance.graduate.grade != graduate_data.get("grade") \
-                     or instance.graduate.student_id != graduate_data.get("student_id"):
-                    # 如果現有 graduate 被多個成員共享，則創建新的實例
-                    graduate_instance = Graduate.objects.create(**graduate_data)
-                    instance.graduate = graduate_instance
-                else:
-                    # 更新當前成員的 Graduate 屬性
-                    for attr, value in graduate_data.items():
-                        setattr(instance.graduate, attr, value)
-                    instance.graduate.save()
+                for attr, value in graduate_data.items():
+                    setattr(instance.graduate, attr, value)
+                instance.graduate.save()
             else:
-                # 如果沒有關聯的 graduate，則創建新的 Graduate 並關聯
                 graduate_instance = Graduate.objects.create(**graduate_data)
                 instance.graduate = graduate_instance
 
-        private_data = validated_data.pop('private_input', None)  # 處理 private_input 資料
-
+        private_data = validated_data.pop('private_input', None)
         if private_data:
-            # 更新當前成員的 Private 屬性
             for attr, value in private_data.items():
                 setattr(instance.private, attr, value)
                 instance.private.save()
 
-        # 更新其他非嵌套字段
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        instance.save()  # 保存所有變更
-
-        # 更新 superuser 權限
-
-
-        return instance  # 返回更新後的實例
+        instance.save()
+        return instance
 
 class MyListSerializer(serializers.ListSerializer):
     """
@@ -259,6 +220,7 @@ class MyListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
         # 調用原生邏輯，過濾掉 None
         return [item for item in super().to_representation(data) if item is not None]
+        
 
 class MemberSimpleSerializer(serializers.ModelSerializer):
     """
@@ -339,30 +301,30 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
     """
     position = serializers.SerializerMethodField()
     graduate = serializers.SerializerMethodField()
-    self_images = SelfImageSerializer(source='selfimage_set',many=True)  # 假設一個會員可以有多個 SelfImage
+    self_images = SelfImageSerializer(source='selfimage_set', many=True)  # 假設一個會員可以有多個 SelfImage
     company = CompanySearchSerializer(source='member')  # 假設一個會員只關聯一家公司
     company_images = CompanyImageSerializer(source='member.companyimage_set', many=True)
 
     class Meta:
         model = Member
-        fields = ['name','gender','intro','photo','position','graduate','company','company_images','self_images']
+        fields = ['name', 'gender', 'intro', 'photo', 'position', 'graduate', 'company', 'company_images', 'self_images']
 
     def get_position(self, instance):
-            position = getattr(instance, 'position', None)
-            if position:
-                return {
-                    "title": position.title,
-                }
-            return None
+        position = getattr(instance, 'position', None)
+        if position:
+            return {
+                "title": position.title,
+            }
+        return None
 
     def get_graduate(self, instance):
-            graduate = getattr(instance, 'graduate', None)
-            if graduate:
-                return {
-                    "school": graduate.school,
-                    "grade": graduate.grade
-                }
-            return None
+        graduate = getattr(instance, 'graduate', None)
+        if graduate:
+            return {
+                "school": graduate.school,
+                "grade": graduate.grade
+            }
+        return None
 
     def to_representation(self, instance):
         """
@@ -374,7 +336,6 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
         # 調用原始的序列化過程
         representation = super().to_representation(instance)
         return representation
-
 
 class OutstandingAlumniSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='member.name', read_only=True)
