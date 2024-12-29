@@ -1,0 +1,987 @@
+INFO 2024-12-28 15:50:34,620 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:50:46,942 basehttp "OPTIONS /basic/login HTTP/1.1" 200 0
+WARNING 2024-12-28 15:50:47,137 basehttp "POST /basic/login HTTP/1.1" 400 18
+WARNING 2024-12-28 15:50:50,181 basehttp "POST /basic/login HTTP/1.1" 400 18
+WARNING 2024-12-28 15:50:53,812 basehttp "POST /basic/login HTTP/1.1" 400 18
+INFO 2024-12-28 15:51:06,361 basehttp "POST /basic/login HTTP/1.1" 200 271
+INFO 2024-12-28 15:51:07,383 basehttp "OPTIONS /member/logined/selfInfo/ HTTP/1.1" 200 0
+INFO 2024-12-28 15:51:07,408 basehttp "GET /member/logined/selfInfo/ HTTP/1.1" 200 518
+WARNING 2024-12-28 15:51:07,438 basehttp "GET /static/member/f0c8ea6d-04d.webp HTTP/1.1" 404 179
+INFO 2024-12-28 15:51:07,440 basehttp - Broken pipe from ('127.0.0.1', 60591)
+INFO 2024-12-28 15:52:57,458 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 15:52:57,494 basehttp "GET /member/logined/selfInfo/ HTTP/1.1" 200 518
+WARNING 2024-12-28 15:52:57,499 basehttp "GET /static/member/f0c8ea6d-04d.webp HTTP/1.1" 404 179
+INFO 2024-12-28 15:52:57,501 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:53:20,009 basehttp "OPTIONS /company/industry/all/ HTTP/1.1" 200 0
+INFO 2024-12-28 15:53:20,010 basehttp "OPTIONS /company/data/selfInfo/ HTTP/1.1" 200 0
+INFO 2024-12-28 15:53:20,048 basehttp "GET /company/industry/all/ HTTP/1.1" 200 53
+INFO 2024-12-28 15:53:20,048 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:53:20,058 basehttp "GET /company/data/selfInfo/ HTTP/1.1" 200 347
+INFO 2024-12-28 15:53:22,949 basehttp "OPTIONS /api/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 15:53:22,952 basehttp "OPTIONS / HTTP/1.1" 200 0
+WARNING 2024-12-28 15:53:22,952 basehttp "GET /api/categories/ HTTP/1.1" 404 179
+WARNING 2024-12-28 15:53:22,955 basehttp "GET / HTTP/1.1" 404 179
+INFO 2024-12-28 15:53:22,965 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 15:54:58,912 basehttp "GET / HTTP/1.1" 404 179
+WARNING 2024-12-28 15:54:59,027 basehttp "GET /favicon.ico HTTP/1.1" 404 179
+INFO 2024-12-28 15:55:26,335 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/IC_alumni/settings.py changed, reloading.
+INFO 2024-12-28 15:55:27,051 autoreload Watching for file changes with StatReloader
+WARNING 2024-12-28 15:55:28,023 basehttp "GET / HTTP/1.1" 404 3478
+WARNING 2024-12-28 15:55:32,428 basehttp "GET /product/ HTTP/1.1" 404 5300
+INFO 2024-12-28 15:55:47,204 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 15:55:47,215 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 15:55:47,276 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:55:47,282 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 15:55:56,201 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:55:56,201 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+WARNING 2024-12-28 15:55:56,204 basehttp "GET / HTTP/1.1" 404 3478
+WARNING 2024-12-28 15:55:58,191 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 15:55:58,195 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:55:58,195 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+WARNING 2024-12-28 15:56:10,197 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 15:56:10,198 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:56:10,198 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 15:57:41,215 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:57:41,216 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+WARNING 2024-12-28 15:57:41,218 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 15:57:54,198 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 15:57:54,198 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 15:57:54,200 basehttp "GET / HTTP/1.1" 404 3478
+WARNING 2024-12-28 15:58:01,199 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 15:58:01,203 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 15:58:01,203 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 15:59:25,136 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:25,685 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:27,167 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:27,572 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:29,947 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:30,320 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:33,707 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:34,082 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:39,518 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:39,900 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:44,263 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:44,657 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:48,079 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:48,493 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:50,847 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:51,201 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:56,686 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:57,090 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 15:59:58,555 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 15:59:58,918 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:00:14,711 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:00:15,212 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:00:27,878 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:00:28,343 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:00:35,956 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:00:36,418 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:00:42,993 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:00:43,403 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:01:06,624 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:01:07,249 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:13:28,303 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/models.py changed, reloading.
+INFO 2024-12-28 16:13:28,957 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:13:39,248 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/models.py changed, reloading.
+INFO 2024-12-28 16:13:39,694 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:37:28,557 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:38:11,997 basehttp "OPTIONS /company/industry/all/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:11,998 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:11,998 basehttp "OPTIONS /article/all/tableOutput/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:11,998 basehttp "OPTIONS /picture/slide-images/active/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:11,999 basehttp "OPTIONS /company/data/randomCompanies/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:11,999 basehttp "OPTIONS /company/industry/all/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:12,003 basehttp "OPTIONS /company/search/?industry=1 HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:12,004 basehttp "OPTIONS /company/data/newUpload/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:12,006 basehttp "OPTIONS /company/data/mostView/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:12,022 basehttp "GET /company/industry/all/ HTTP/1.1" 200 53
+INFO 2024-12-28 16:38:12,022 basehttp "GET /picture/slide-images/active/ HTTP/1.1" 200 2
+INFO 2024-12-28 16:38:12,022 basehttp "GET /article/all/tableOutput/ HTTP/1.1" 200 2
+INFO 2024-12-28 16:38:12,031 basehttp "GET /company/data/randomCompanies/ HTTP/1.1" 200 160
+INFO 2024-12-28 16:38:12,061 basehttp "GET /company/search/?industry=1 HTTP/1.1" 200 441
+INFO 2024-12-28 16:38:12,062 basehttp "GET /company/industry/all/ HTTP/1.1" 200 53
+INFO 2024-12-28 16:38:12,062 basehttp "GET /company/data/newUpload/ HTTP/1.1" 200 160
+INFO 2024-12-28 16:38:12,063 basehttp "GET /company/data/mostView/ HTTP/1.1" 200 160
+INFO 2024-12-28 16:38:12,080 basehttp "GET /static/company/company_photo.jpeg HTTP/1.1" 200 239313
+WARNING 2024-12-28 16:38:12,124 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 401 183
+INFO 2024-12-28 16:38:12,349 basehttp "OPTIONS /api/token/verify/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:38:12,353 basehttp "POST /api/token/verify/ HTTP/1.1" 400 39
+INFO 2024-12-28 16:38:12,356 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:38:18,686 basehttp "OPTIONS /basic/login HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:18,990 basehttp "POST /basic/login HTTP/1.1" 200 271
+INFO 2024-12-28 16:38:20,019 basehttp "OPTIONS /member/logined/selfInfo/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:20,028 basehttp "GET /member/logined/selfInfo/ HTTP/1.1" 200 518
+WARNING 2024-12-28 16:38:20,053 basehttp "GET /static/member/f0c8ea6d-04d.webp HTTP/1.1" 404 1933
+INFO 2024-12-28 16:38:23,275 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:23,275 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:23,283 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 16:38:23,298 basehttp "GET / HTTP/1.1" 404 3478
+ERROR 2024-12-28 16:38:25,173 basehttp "GET /product/categories/ HTTP/1.1" 500 102112
+INFO 2024-12-28 16:38:30,226 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:30,233 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:38:30,235 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:38:30,260 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:38:30,269 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+ERROR 2024-12-28 16:38:32,232 basehttp "GET /product/categories/ HTTP/1.1" 500 101863
+INFO 2024-12-28 16:39:23,209 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:39:23,949 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:39:44,364 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:39:45,004 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:39:53,886 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:39:54,481 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:12,623 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:13,238 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:17,909 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:18,457 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:24,302 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:24,883 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:26,536 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:27,087 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:31,796 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:32,339 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:33,835 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:34,410 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:36,685 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:40:36,687 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:40:36,690 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:40:36,788 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:40:36,863 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+ERROR 2024-12-28 16:40:38,792 basehttp "GET /product/categories/ HTTP/1.1" 500 102097
+INFO 2024-12-28 16:40:48,742 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:40:49,471 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:40:53,716 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:40:53,717 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:40:53,717 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:40:53,754 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:40:53,786 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+ERROR 2024-12-28 16:40:56,705 basehttp "GET /product/categories/ HTTP/1.1" 500 134408
+INFO 2024-12-28 16:41:13,995 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:41:14,658 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:41:19,537 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:41:19,537 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:41:19,537 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:41:19,571 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:41:19,611 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:41:19,613 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:42:06,085 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:42:06,090 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:42:06,106 basehttp "OPTIONS / HTTP/1.1" 200 0
+WARNING 2024-12-28 16:42:06,133 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:42:06,146 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:42:06,151 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:42:48,419 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:42:49,092 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:42:51,626 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:42:52,153 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:42:54,627 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:42:55,147 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:43:15,349 basehttp "OPTIONS / HTTP/1.1" 200 0
+INFO 2024-12-28 16:43:15,352 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:43:15,353 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:43:15,397 basehttp "GET / HTTP/1.1" 404 3478
+INFO 2024-12-28 16:43:15,472 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:43:15,475 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:53:00,639 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:53:01,416 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:54:56,150 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:54:56,151 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:54:56,231 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:54:56,231 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:54:58,131 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:54:58,131 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:54:58,136 basehttp "OPTIONS /products/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:54:58,145 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:54:58,148 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+WARNING 2024-12-28 16:54:58,157 basehttp "GET /products/member/?category= HTTP/1.1" 404 3554
+INFO 2024-12-28 16:55:01,129 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:01,133 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:01,134 basehttp "OPTIONS /products/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:01,140 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 16:55:01,147 basehttp "GET /products/member/?category= HTTP/1.1" 404 3554
+INFO 2024-12-28 16:55:01,153 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:04,132 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:04,141 basehttp "OPTIONS /products/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:04,141 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:04,151 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 16:55:04,155 basehttp "GET /products/member/?category= HTTP/1.1" 404 3554
+INFO 2024-12-28 16:55:04,159 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:10,145 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:10,146 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:10,152 basehttp "OPTIONS /products/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:10,162 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+WARNING 2024-12-28 16:55:10,162 basehttp "GET /products/data/member/?category= HTTP/1.1" 404 3569
+INFO 2024-12-28 16:55:10,170 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:18,130 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:18,132 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:18,133 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:18,140 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:18,167 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:18,173 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:24,125 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:24,125 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:24,126 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:24,131 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:24,134 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:24,138 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:27,123 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:27,129 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:27,129 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:27,142 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:27,148 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:27,152 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:29,129 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:29,131 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:29,131 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:29,139 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:29,156 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:29,168 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:30,127 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:30,127 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:30,128 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:30,136 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:30,140 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:30,145 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:31,126 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:31,126 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:31,127 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:31,131 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:31,137 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:31,138 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:40,149 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:40,150 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:40,151 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:40,156 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:40,166 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:40,169 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:42,122 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:42,122 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:42,122 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:42,131 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:42,136 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:42,138 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:44,130 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:44,131 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:44,136 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:44,141 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:44,145 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:44,149 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:55,487 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:55,487 basehttp "OPTIONS /product/data/member/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:55:55,487 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+WARNING 2024-12-28 16:55:55,513 basehttp "GET /product/data/member/?category= HTTP/1.1" 400 29
+INFO 2024-12-28 16:55:55,534 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:55:55,550 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:56:21,876 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:56:21,877 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:56:21,877 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:56:21,895 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:56:21,900 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:56:23,582 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 16:56:23,582 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:56:23,597 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+ERROR 2024-12-28 16:56:23,959 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 500 98366
+ERROR 2024-12-28 16:56:26,130 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 98444
+INFO 2024-12-28 16:57:05,441 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 16:57:06,417 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 16:57:07,929 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:07,930 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:07,930 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:07,998 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 16:57:07,999 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:57:08,001 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:57:11,906 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:11,911 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:11,912 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:57:11,928 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:57:11,936 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 16:57:11,939 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:58:50,734 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 16:58:50,735 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 16:58:50,735 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 16:58:50,795 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:58:50,801 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:58:50,807 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 16:59:49,150 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:59:49,153 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 16:59:49,155 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 16:59:57,148 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 16:59:57,149 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 16:59:57,149 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:00:12,234 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:00:12,237 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:00:12,244 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:00:12,998 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:00:12,998 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+ERROR 2024-12-28 17:00:22,485 basehttp "POST /product/categories/ HTTP/1.1" 500 112193
+INFO 2024-12-28 17:00:34,850 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+ERROR 2024-12-28 17:00:36,958 basehttp "POST /product/categories/ HTTP/1.1" 500 111944
+INFO 2024-12-28 17:00:54,292 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:00:55,058 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:00:57,827 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:00:58,367 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:01:07,202 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:01:07,764 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:01:12,469 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:01:13,083 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:01:19,847 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:01:20,388 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:01:24,051 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:01:24,724 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:01:26,887 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:26,976 basehttp "POST /product/categories/ HTTP/1.1" 201 121
+INFO 2024-12-28 17:01:33,612 basehttp "OPTIONS /product/data/selfCompany/?category=1 HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:33,612 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:33,627 basehttp "GET /product/data/selfCompany/?category=1 HTTP/1.1" 200 2
+INFO 2024-12-28 17:01:33,637 basehttp "GET /product/categories/ HTTP/1.1" 200 173
+INFO 2024-12-28 17:01:47,510 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:47,512 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:47,532 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:47,548 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:01:47,552 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:01:47,559 basehttp "GET /product/categories/ HTTP/1.1" 200 173
+INFO 2024-12-28 17:01:48,761 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:48,762 basehttp "OPTIONS /product/data/selfCompany/?category=1 HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:48,773 basehttp "GET /product/data/selfCompany/?category=1 HTTP/1.1" 200 2
+INFO 2024-12-28 17:01:48,775 basehttp "GET /product/categories/ HTTP/1.1" 200 173
+INFO 2024-12-28 17:01:50,157 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:50,158 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:50,169 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:01:50,169 basehttp "GET /product/categories/ HTTP/1.1" 200 173
+INFO 2024-12-28 17:01:53,571 basehttp "OPTIONS /product/categories/1/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:01:53,600 basehttp "DELETE /product/categories/1/ HTTP/1.1" 204 0
+INFO 2024-12-28 17:02:03,313 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:02:03,313 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:02:03,313 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:02:03,349 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:02:03,356 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:02:03,356 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:02:59,877 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:02:59,879 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:03:04,168 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:03:04,169 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:03:06,532 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:03:06,533 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:03:07,466 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:03:07,466 basehttp "GET /product/categories/ HTTP/1.1" 200 52
+INFO 2024-12-28 17:03:13,266 basehttp "POST /product/categories/ HTTP/1.1" 201 120
+INFO 2024-12-28 17:03:16,908 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:03:16,917 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:03:16,917 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:06:21,067 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:06:21,068 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:06:21,087 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:06:21,091 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:07:27,074 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:27,077 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:27,085 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:27,095 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:07:27,107 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:07:27,107 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:07:39,835 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:39,835 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:39,841 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:07:39,844 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:07:41,669 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:41,670 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:41,679 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:41,706 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:07:41,711 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:07:41,722 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:07:42,950 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:42,954 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:42,963 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:07:42,966 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:07:45,138 basehttp "OPTIONS /product/categories/2/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:45,154 basehttp "PUT /product/categories/2/ HTTP/1.1" 200 119
+INFO 2024-12-28 17:07:53,030 basehttp "OPTIONS /product/categories/2/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:07:53,043 basehttp "PUT /product/categories/2/ HTTP/1.1" 200 119
+INFO 2024-12-28 17:09:04,088 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:04,089 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:04,133 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:04,140 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:13,057 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:13,057 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:13,073 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:13,077 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:20,058 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:20,059 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:20,072 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:20,075 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:22,048 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:22,049 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:22,057 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:22,059 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:24,047 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:24,047 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:24,053 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:24,055 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:39,062 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:39,062 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:39,090 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:39,093 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:09:55,051 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:55,051 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:09:55,060 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:09:55,061 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:10:10,046 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:10:10,050 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:10:10,065 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:10:10,068 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:11:36,052 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:36,052 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:36,111 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:36,120 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:11:39,031 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:39,031 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:39,039 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:39,070 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:11:39,077 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:11:39,084 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:40,365 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:40,379 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:40,379 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:40,379 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:40,390 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:40,392 basehttp "GET /product/categories/ HTTP/1.1" 200 171
+INFO 2024-12-28 17:11:43,698 basehttp "OPTIONS /product/categories/2/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:43,712 basehttp "PUT /product/categories/2/ HTTP/1.1" 200 120
+INFO 2024-12-28 17:11:43,716 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:43,724 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:11:49,285 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:49,291 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:49,293 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:49,312 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:11:49,322 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:49,323 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:11:50,397 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:50,407 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:50,412 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:50,413 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:11:50,424 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:11:50,424 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:57,842 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:11:57,852 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:11:57,854 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:11:59,994 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:11:59,994 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:00,005 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:00,783 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:00,798 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:00,801 basehttp "GET /product/categories/ HTTP/1.1" 200 172
+INFO 2024-12-28 17:12:04,535 basehttp "POST /product/categories/ HTTP/1.1" 201 121
+INFO 2024-12-28 17:12:04,550 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:10,223 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:10,228 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:10,233 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:24,562 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 17:12:24,573 basehttp "POST /product/data/new/ HTTP/1.1" 400 37
+INFO 2024-12-28 17:12:24,585 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:27,250 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:12:27,253 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:27,254 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:28,250 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:28,254 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:28,261 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:28,704 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:12:28,716 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:28,721 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:28,727 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:29,151 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:29,158 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:12:29,166 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:12:42,380 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 17:12:42,389 basehttp "POST /product/data/new/ HTTP/1.1" 400 37
+INFO 2024-12-28 17:12:42,394 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:12:42,402 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:16:30,341 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:16:31,178 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:16:35,080 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 17:16:35,984 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:16:39,009 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:16:39,010 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:16:39,020 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:16:39,089 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:16:39,092 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:16:39,100 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:16:48,000 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 17:16:48,027 basehttp "POST /product/data/new/ HTTP/1.1" 400 37
+INFO 2024-12-28 17:16:48,032 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:16:48,052 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:17:33,661 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:17:34,335 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:17:57,564 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:17:58,183 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:18:08,449 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 17:18:08,501 basehttp "POST /product/data/new/ HTTP/1.1" 400 37
+INFO 2024-12-28 17:18:08,505 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:18:08,514 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 2
+INFO 2024-12-28 17:20:32,028 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:20:32,895 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:20:35,400 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:20:35,962 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:20:38,624 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:20:39,173 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:20:40,843 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:20:41,556 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:20:58,615 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:20:59,322 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:21:03,202 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:21:03,809 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:21:07,510 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:21:08,161 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:21:52,511 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:52,590 basehttp "POST /product/data/new/ HTTP/1.1" 201 198
+INFO 2024-12-28 17:21:52,596 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:52,596 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:52,606 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:52,607 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:57,307 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:57,308 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:57,310 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:57,337 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:21:57,343 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:57,352 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:21:58,597 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:58,605 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:58,605 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:58,615 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:21:58,618 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:58,620 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:59,256 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,258 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,259 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,277 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:59,280 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:59,281 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:21:59,732 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,743 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,744 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:21:59,752 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:59,761 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:21:59,761 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:22:21,047 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,061 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,083 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:21,083 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:22:21,381 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,386 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,386 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,403 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:21,405 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:21,406 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:22:21,947 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,953 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,954 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:21,973 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:21,974 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:22:21,975 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:22,554 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:22,561 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:22,565 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:22:22,578 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:22:22,581 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:22:22,582 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:23:10,488 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:23:10,507 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:23:10,510 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:23:10,531 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:23:10,537 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:23:10,537 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:27:44,035 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:27:44,038 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:27:44,063 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:27:44,063 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:27:47,019 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:27:47,027 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:27:47,041 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:27:47,051 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:27:47,055 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:27:47,060 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:28:19,024 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:19,024 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:19,025 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:19,053 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:28:19,060 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:28:19,062 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:28:21,014 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:21,016 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:21,024 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:28:21,077 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:28:21,081 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:28:21,083 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:03,020 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:03,020 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:03,020 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:03,043 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:03,049 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:03,049 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:04,014 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:04,020 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:04,020 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:04,029 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:04,036 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:04,037 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:09,322 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:09,324 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:09,334 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:09,352 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:09,365 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:09,366 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:39,023 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:39,025 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:39,035 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:39,047 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:39,055 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:39,056 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:41,048 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:41,049 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:41,049 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:41,066 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:41,069 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:41,070 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:29:47,319 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:47,319 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:47,321 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:29:47,350 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:29:47,360 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:29:47,361 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:13,030 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:13,030 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:13,030 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:13,061 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:30:13,066 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:13,066 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:30:27,699 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:27,711 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:27,719 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:27,744 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:30:27,749 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:30:27,751 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:30,987 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:30,999 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:30,999 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:31,013 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:30:31,013 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:31,015 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:31,671 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:31,680 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:31,681 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:31,693 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:31,697 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:30:31,697 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:34,807 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:34,816 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:34,816 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:34,831 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:34,840 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:30:34,843 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:35,344 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:35,350 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:35,351 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:30:35,364 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:35,368 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:30:35,370 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:32:02,541 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,543 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,544 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,577 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:32:02,577 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:02,580 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:02,913 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,922 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,923 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:02,935 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:02,939 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:32:02,944 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:03,366 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:03,375 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:03,376 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:32:03,389 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:03,390 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:32:03,392 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:39:04,584 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:05,452 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:39:18,509 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:19,177 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:39:25,933 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:26,605 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:39:29,246 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:29,827 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:39:31,442 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:32,056 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:39:57,448 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:39:58,029 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:05,964 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:06,565 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:11,080 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:11,694 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:13,390 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:13,969 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:17,672 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:18,202 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:29,185 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:29,718 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:40:32,306 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:40:32,851 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:42:49,034 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:42:49,669 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:42:53,365 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:42:53,928 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:43:05,054 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:05,061 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:05,067 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:05,139 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:43:05,146 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:43:05,150 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 200
+INFO 2024-12-28 17:43:13,625 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:13,650 basehttp "POST /product/data/new/ HTTP/1.1" 201 200
+INFO 2024-12-28 17:43:13,655 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:13,655 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:13,664 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:43:13,665 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:43:15,827 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:15,834 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:15,838 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:15,849 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+ERROR 2024-12-28 17:43:17,822 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 500 139775
+ERROR 2024-12-28 17:43:18,298 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 500 139775
+INFO 2024-12-28 17:43:41,264 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/views.py changed, reloading.
+INFO 2024-12-28 17:43:41,928 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 17:43:55,108 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:55,111 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:55,111 basehttp "OPTIONS /product/data/selfCompany/?category=3 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:55,171 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 401
+INFO 2024-12-28 17:43:55,173 basehttp "GET /product/data/selfCompany/?category=3 HTTP/1.1" 200 401
+INFO 2024-12-28 17:43:55,175 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:43:58,224 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:58,233 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:58,234 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:43:58,250 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:43:58,251 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 401
+INFO 2024-12-28 17:43:58,251 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 401
+INFO 2024-12-28 17:46:50,890 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:50,896 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:50,896 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:50,916 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:46:50,919 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:46:50,919 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:46:51,413 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:51,420 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:51,421 basehttp "OPTIONS /product/data/selfCompany/?category=2 HTTP/1.1" 200 0
+INFO 2024-12-28 17:46:51,436 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:46:51,437 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 401
+INFO 2024-12-28 17:46:51,437 basehttp "GET /product/data/selfCompany/?category=2 HTTP/1.1" 200 401
+INFO 2024-12-28 17:52:35,804 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:35,805 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:35,806 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:35,826 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:52:35,828 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:52:35,831 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:52:42,954 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:42,971 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:42,971 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:52:42,987 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+ERROR 2024-12-28 17:52:44,946 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+ERROR 2024-12-28 17:52:45,544 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+INFO 2024-12-28 17:54:05,971 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:05,972 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:05,990 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+ERROR 2024-12-28 17:54:07,930 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+INFO 2024-12-28 17:54:11,966 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:11,967 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:11,982 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:54:12,964 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:12,966 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:12,972 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+ERROR 2024-12-28 17:54:14,354 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+ERROR 2024-12-28 17:54:14,782 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+INFO 2024-12-28 17:54:15,963 basehttp "OPTIONS /product/data/selfCompany/?category=manage HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:15,963 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:15,974 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+ERROR 2024-12-28 17:54:18,294 basehttp "GET /product/data/selfCompany/?category=manage HTTP/1.1" 500 153074
+INFO 2024-12-28 17:54:20,165 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:20,191 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:54:22,882 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:22,883 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:22,884 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:22,934 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 17:54:22,938 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:54:22,941 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:54:23,856 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:23,882 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:54:27,043 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:27,047 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:27,049 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:54:27,065 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:54:27,067 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:54:27,069 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+WARNING 2024-12-28 17:54:30,071 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 401 10129
+INFO 2024-12-28 17:54:30,121 basehttp "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3597
+INFO 2024-12-28 17:54:30,122 basehttp "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+INFO 2024-12-28 17:54:30,122 basehttp "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+INFO 2024-12-28 17:54:30,128 basehttp "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3385
+INFO 2024-12-28 17:54:30,129 basehttp "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1719
+INFO 2024-12-28 17:54:30,132 basehttp "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+INFO 2024-12-28 17:54:30,133 basehttp "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+INFO 2024-12-28 17:54:30,133 basehttp "GET /static/rest_framework/js/jquery-3.5.1.min.js HTTP/1.1" 200 89476
+INFO 2024-12-28 17:54:30,135 basehttp "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+INFO 2024-12-28 17:54:30,137 basehttp "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+INFO 2024-12-28 17:54:30,156 basehttp "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+WARNING 2024-12-28 17:54:30,296 basehttp "GET /favicon.ico HTTP/1.1" 404 3529
+INFO 2024-12-28 17:58:31,009 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:58:31,011 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:58:31,079 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:58:31,085 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:58:41,961 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:58:41,961 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:58:41,993 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:58:41,995 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:59:13,948 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:59:13,959 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:59:13,968 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:59:13,969 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 17:59:20,956 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 17:59:20,956 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 17:59:20,964 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 17:59:20,965 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:06,960 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:06,961 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:06,980 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:06,981 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:21,949 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:21,949 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:21,957 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:21,958 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:24,955 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:24,955 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:24,969 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:24,972 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:29,690 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:29,693 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:29,704 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:29,724 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:01:29,733 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:29,734 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:55,963 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:55,963 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:55,963 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:56,036 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:56,037 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:01:56,038 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:01:56,960 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:56,968 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:56,970 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:01:56,982 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:01:56,989 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:01:56,991 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:02:03,654 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:03,655 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:03,655 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:03,673 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:02:03,677 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:02:03,678 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:02:19,505 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:19,506 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:19,527 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:02:19,528 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:02:27,956 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:27,962 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:27,963 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:27,983 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:02:27,991 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:02:27,996 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:02:43,944 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:43,945 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:43,960 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:02:43,960 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:02:47,173 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:47,175 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:47,179 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:02:47,205 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:02:47,214 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:02:47,220 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:04:16,038 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:16,039 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:16,039 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:16,060 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:04:16,064 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:04:16,066 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:04:34,739 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:34,758 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:34,795 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:04:34,803 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:04:37,084 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:37,097 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:37,126 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:04:37,136 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:04:37,150 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:04:37,150 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 401
+INFO 2024-12-28 18:05:49,578 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:05:49,633 basehttp "POST /product/data/new/ HTTP/1.1" 201 199
+INFO 2024-12-28 18:05:49,638 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:05:49,639 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:05:49,649 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 601
+INFO 2024-12-28 18:05:49,649 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 601
+INFO 2024-12-28 18:25:22,940 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:22,941 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:23,037 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:25:23,040 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 601
+INFO 2024-12-28 18:25:38,942 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:38,943 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:39,015 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:25:39,020 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 601
+INFO 2024-12-28 18:25:57,743 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:57,797 basehttp "POST /product/data/new/ HTTP/1.1" 201 200
+INFO 2024-12-28 18:25:57,804 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:57,804 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:25:57,819 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 802
+INFO 2024-12-28 18:25:57,819 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 802
+INFO 2024-12-28 18:29:24,909 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:29:24,911 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:29:24,927 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:29:24,929 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 802
+INFO 2024-12-28 18:29:48,211 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:29:48,246 basehttp "POST /product/data/new/ HTTP/1.1" 201 204
+INFO 2024-12-28 18:29:48,251 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:29:48,252 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:29:48,263 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1007
+INFO 2024-12-28 18:29:48,263 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1007
+INFO 2024-12-28 18:31:22,910 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:31:22,911 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:31:22,934 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:31:22,936 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1007
+INFO 2024-12-28 18:31:32,850 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:31:32,883 basehttp "POST /product/data/new/ HTTP/1.1" 201 205
+INFO 2024-12-28 18:31:32,887 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:31:32,891 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:31:32,905 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:31:32,907 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:31:52,589 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 18:31:53,587 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 18:33:35,462 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 18:33:59,596 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:33:59,610 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:33:59,613 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:33:59,891 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:33:59,904 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:33:59,921 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:35:36,466 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 18:35:36,512 basehttp "POST /product/data/new/ HTTP/1.1" 400 336
+INFO 2024-12-28 18:35:36,519 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:35:36,535 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:37:56,306 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 18:37:57,334 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 18:38:24,478 basehttp "OPTIONS /picture/popup-ads/?active=true HTTP/1.1" 200 0
+INFO 2024-12-28 18:38:24,480 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:38:24,480 basehttp "OPTIONS /product/categories/ HTTP/1.1" 200 0
+INFO 2024-12-28 18:38:24,576 basehttp "GET /picture/popup-ads/?active=true HTTP/1.1" 200 52
+INFO 2024-12-28 18:38:24,580 basehttp "GET /product/categories/ HTTP/1.1" 200 294
+INFO 2024-12-28 18:38:24,589 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:38:35,250 basehttp "OPTIONS /product/data/new/ HTTP/1.1" 200 0
+WARNING 2024-12-28 18:38:35,268 basehttp "POST /product/data/new/ HTTP/1.1" 400 336
+INFO 2024-12-28 18:38:35,273 basehttp "OPTIONS /product/data/selfCompany/?category= HTTP/1.1" 200 0
+INFO 2024-12-28 18:38:35,283 basehttp "GET /product/data/selfCompany/?category= HTTP/1.1" 200 1213
+INFO 2024-12-28 18:39:10,732 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 18:39:11,506 autoreload Watching for file changes with StatReloader
+INFO 2024-12-28 18:39:14,084 autoreload /Users/apple/Desktop/Code/Project/IC_alumni/apps/product/serializer.py changed, reloading.
+INFO 2024-12-28 18:39:14,610 autoreload Watching for file changes with StatReloader
