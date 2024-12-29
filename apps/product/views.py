@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny , IsAuthenticat
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
+from django.db.models import Q
 
 from apps.product.models import Product, ProductImage , ProductCate
 from apps.product.serializer import ProductSerializer , ProductCateSerializer
@@ -57,13 +58,18 @@ class ProductViewSet(ViewSet):
         取得該公司的所以上架商品
         """
         from apps.member.models import Member
-        member_id = request.query_params.get('id')
+        member_id = request.query_params.get('member_id')
+        category = request.query_params.get("category", "")
 
         if not member_id:
             return Response({"error": "請提供系友ID"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            product = Product.objects.filter(company=Company.objects.get(member=request.user.member) , is_active=True)
+            product = Product.objects.filter(company=Company.objects.get(member_id=member_id) , is_active=True)
+            # 按分類篩選
+            if category:
+                product = product.filter(category_id=category)
+            
         except Product.DoesNotExist:
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -71,21 +77,44 @@ class ProductViewSet(ViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    @action(methods=['get'], detail=False,
-            authentication_classes=[JWTAuthentication] , permission_classes=[IsAuthenticated])
-    def selfCompany(self,request):
+    @action(
+        methods=['get'],
+        detail=False,
+        authentication_classes=[JWTAuthentication],
+        permission_classes=[IsAuthenticated]
+    )
+    def selfCompany(self, request):
         """
-        取得自身公司的上下架商品
+        取得自身公司的上下架商品，支援分類篩選與關鍵字搜尋。
         """
-        cate = request.query_params.get("category","")
-        
-        ob = Product.objects.filter(company=Company.objects.get(member = request.user.member))
-        if cate != "":
-            ob.filter(category_id = cate)
-        serializer = ProductSerializer(ob , many=True)
+        category = request.query_params.get("category", "")
+        search = request.query_params.get("search", "")
 
+        # 取得公司相關的商品
+        try:
+            company = Company.objects.get(member=request.user.member)
+        except Company.DoesNotExist:
+            return Response(
+                {"error": "Company not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 基本篩選條件
+        products = Product.objects.filter(company=company)
+
+        # 按分類篩選
+        if category:
+            products = products.filter(category_id=category)
+
+        # 按關鍵字搜尋 (針對名稱或描述進行搜尋)
+        if search:
+            products = products.filter(
+                Q(name__icontains=search) | Q(description__icontains=search)
+            )
+
+        # 序列化資料
+        serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        
 
     @action(methods=['put'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[IsAuthenticated])
     def change(self, request):
@@ -180,7 +209,14 @@ class ProductCateViewSet(viewsets.ModelViewSet):
         from apps.company.models import Company
         user = self.request.user
         company_id = self.request.query_params.get('company_id', None)
+        member_id = self.request.query_params.get('member_id', None)
+        try:
 
+            if member_id:
+                # 根據 company_id 過濾
+                return ProductCate.objects.filter(company_id=Company.objects.get(member_id=member_id).id).distinct()
+        except Company.DoesNotExist:
+            return Response("公司未知",status=404)
         if company_id:
             # 根據 company_id 過濾
             return ProductCate.objects.filter(company_id=company_id).distinct()

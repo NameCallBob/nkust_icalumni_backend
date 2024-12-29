@@ -159,6 +159,10 @@ class MemberAnyViewSet(viewsets.ViewSet):
         取得登入使用者的資料
         """
         member = get_object_or_404(Member, id=request.query_params.get("id",None))
+        
+        if not member.is_show : 
+            return Response("系友未找到" , status=404)
+        
         serializer = MemberSimpleDetailSerializer(member)
         return Response(serializer.data)
 
