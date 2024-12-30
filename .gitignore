@@ -16,6 +16,7 @@
 *.log
 *.log.*
 *.webp
+*.xlsx
 
 daily_debug.*
 

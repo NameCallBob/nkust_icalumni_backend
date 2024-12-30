@@ -98,12 +98,12 @@ class ConfirmAndCreateAccountsView(APIView):
             # 創建帳號
             try:
                 user = Private.objects.create_user(email=email, password=password)
-
+                from apps.notice.email import email as notice_email
                 # 發送通知信
-                Thread(target=email.member_account_created, args=(email, password)).start()
+                Thread(target=notice_email.member_account_created, args=(email, password)).start()
 
                 # 記錄成功創建的帳號
-                results["created"].append({"email": email, "password": password})
+                results["created"].append({"email": email})
             except Exception as e:
                 results["failed"].append({"email": email, "reason": str(e)})
 
