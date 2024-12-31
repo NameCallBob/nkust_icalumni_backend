@@ -10,8 +10,7 @@ from apps.picture.serializer import SelfImageSerializer , CompanyImageSerializer
 from apps.company.serializer import CompanySearchSerializer
 
 from django.core.files.base import ContentFile
-import base64
-import uuid
+import base64,uuid,binascii
 from asgiref.sync import sync_to_async
 
 class PositionSerializer(serializers.ModelSerializer):

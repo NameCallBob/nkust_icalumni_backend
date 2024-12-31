@@ -3,8 +3,10 @@ from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
 from apps.notice.email import email as notice_email
+
 #  自定義使用者之相關設定
 class CustomUserManager(BaseUserManager):
+    
     def create_user(self,email,password,**extra_fields):
         """建立一般使用者"""
         extra_fields.setdefault("is_staff", False)
