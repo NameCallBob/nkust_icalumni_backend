@@ -9,7 +9,7 @@ class ContactForm(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.email}"
-    
+
 import hashlib
 
 class QueryLogs(models.Model):
@@ -24,7 +24,7 @@ class QueryLogs(models.Model):
     def hash_ip(ip, salt="random_salt_value"):
         """用於哈希化 IP 的工具方法"""
         return hashlib.sha256(f"{ip}{salt}".encode()).hexdigest()
-    
+
 class PopularQueries(models.Model):
     query = models.TextField(unique=True)  # 查詢內容
     frequency = models.PositiveIntegerField(default=0)  # 出現次數
@@ -45,3 +45,22 @@ class ClickCount(models.Model):
         """增加點擊次數"""
         self.click_count += 1
         self.save()
+
+from django.contrib.auth.models import User
+
+class CRUDLog(models.Model):
+    ACTION_TYPES = [
+        ("create", "創建"),
+        ("update", "更新"),
+        ("delete", "刪除"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    app_name = models.CharField(max_length=50)
+    model_name = models.CharField(max_length=50)
+    action_type = models.CharField(max_length=10, choices=ACTION_TYPES)
+    data_snapshot = models.JSONField()  # 儲存資料快照
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.action_type} - {self.model_name}"
