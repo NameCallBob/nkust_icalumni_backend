@@ -25,7 +25,7 @@ def prevent_protected_user_modification(sender, instance, **kwargs):
         if (original.is_staff != instance.is_staff or
             original.is_superuser != instance.is_superuser or
             original.is_active != instance.is_active):
-            raise ValueError("此使用者以受保護，無法作任何更改，如有問題請聯絡管理員！")
+            raise PermissionError("此使用者以受保護，無法作任何更改，如有問題請聯絡管理員！")
 
 @receiver(pre_delete, sender=User)
 def prevent_protected_user_deletion(sender, instance, **kwargs):
@@ -34,4 +34,4 @@ def prevent_protected_user_deletion(sender, instance, **kwargs):
     """
     # 禁止刪除受保護的電子郵件
     if instance.email in PROTECTED_EMAILS:
-        raise ValueError("此使用者以受保護，無法刪除")
+        raise PermissionError("此使用者以受保護，無法刪除")
