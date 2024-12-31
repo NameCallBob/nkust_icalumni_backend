@@ -24,7 +24,7 @@ class AlumniAssociationImage(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
     is_active = models.BooleanField()
     def __str__(self):
-        return f"{self.created_at} - {self.get_image_type_display()}"
+        return f"{self.uploaded_at} - {self.get_image_type_display()}"
 
 
 class Constitution(models.Model):
