@@ -46,7 +46,7 @@ class ClickCount(models.Model):
         self.click_count += 1
         self.save()
 
-from django.contrib.auth.models import User
+from apps.private.models import Private
 
 class CRUDLog(models.Model):
     ACTION_TYPES = [
@@ -55,7 +55,7 @@ class CRUDLog(models.Model):
         ("delete", "刪除"),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(Private, on_delete=models.SET_NULL, null=True, blank=True)
     app_name = models.CharField(max_length=50)
     model_name = models.CharField(max_length=50)
     action_type = models.CharField(max_length=10, choices=ACTION_TYPES)

@@ -181,6 +181,21 @@ class MemberAnyViewSet(viewsets.ViewSet):
         serializer = MemberSimpleSerializer(members, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'], url_path='get-by-position', authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def get_by_position(self, request):
+        """
+        根據position查詢member。
+        """
+        position = request.query_params.get('position')
+        if not position:
+            return Response({'detail': '缺少 postition 参数'}, status=status.HTTP_400_BAD_REQUEST)
+        if position == "全部":
+            members = Member.objects.all()
+        else:
+            members = Member.objects.filter(position_id=position,is_show=True)
+        serializer = MemberSimpleSerializer(members, many=True)
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'], url_path='alumni-search', authentication_classes=[],permission_classes=[permissions.AllowAny])
     def alumni_search(self, request):
         query = request.query_params.get('q', '')
