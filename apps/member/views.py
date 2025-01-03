@@ -192,7 +192,7 @@ class MemberAnyViewSet(viewsets.ViewSet):
         if position == "全部":
             members = Member.objects.all()
         else:
-            members = Member.objects.filter(position_id=position,is_show=True)
+            members = Member.objects.filter(position__id=position,is_show=True)
         serializer = MemberSimpleSerializer(members, many=True)
         return Response(serializer.data)
 

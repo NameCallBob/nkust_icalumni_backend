@@ -46,10 +46,19 @@ class ProductSerializer(serializers.ModelSerializer):
     )
     category = serializers.PrimaryKeyRelatedField(
         queryset=ProductCate.objects.all(),
-        required=True,
+        required=False,  
+        allow_null=True, 
         help_text="產品分類的ID"
     )
-
+    
+    def to_internal_value(self, data):
+        if data == "":
+            return None
+        try:
+            return super().to_internal_value(data)
+        except serializers.ValidationError:
+            return None
+        
     class Meta:
         model = Product
         fields = [

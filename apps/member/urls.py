@@ -13,6 +13,7 @@ router.register(r'outstanding-alumni', views.OutstandingAlumniViewSet, basename=
 urlpatterns = router.urls
 
 urlpatterns += [
+    
     path("search/", views.MemberListView.as_view(), name="member_search"),
     path("search_user/", views.MemberListViewForAll.as_view(), name="member_search_notLogined function"),
     
