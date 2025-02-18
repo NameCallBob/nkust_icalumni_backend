@@ -93,7 +93,10 @@ class ConfirmAndCreateAccountsView(APIView):
                 continue
 
             # 生成隨機密碼
-            password = generate_random_password()
+            # password = generate_random_password()
+            
+            # 伺服器SMTP目前掛掉，此為預設密碼
+            password = ""
 
             # 創建帳號
             try:

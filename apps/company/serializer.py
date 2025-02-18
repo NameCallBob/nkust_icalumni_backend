@@ -37,6 +37,7 @@ class CompanySerializer(serializers.ModelSerializer):
     industry = serializers.CharField(source='industry.title')  # 只序列化 industry 的 title
     member_name = serializers.SerializerMethodField()
     photo = serializers.CharField(write_only=True)  # Base64 的圖片資料
+    photo_url= serializers.ImageField(source="photo",read_only=True)  # Base64 的圖片資料
 
     class Meta:
         model = Company

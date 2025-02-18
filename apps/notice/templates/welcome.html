@@ -34,6 +34,21 @@
             color: #888888;
             margin-top: 30px;
         }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #4CAF50;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -42,8 +57,15 @@
         <p>親愛的朋友，</p>
         <p>我們非常高興地通知您，您的帳號已成功創建！</p>
         <p>歡迎加入國立高雄科技大學智慧商務系系友會！</p>
-        <p>我們期待您與我們一起探索更多的可能性，並與系友們共同成長。</p>
-        <p>密碼{{password}}</p>為
+        <p>作為系友會的一員，您將享有以下權益：</p>
+        <ul>
+            <li>添加個人資訊，讓所有人能夠深度了解您公司和產品。</li>
+            <li>填寫公司資訊並也有招募訊息可填寫，為您增加多一點的曝光。</li>
+            <li>產品新增，有產品類別之功能，類別改為您目前促銷活動，展示目前時下最流行事務。</li>
+        </ul>
+        <p>使用說明：</p>
+        <p>您可以使用帳號與密碼登入我們的官網，以瀏覽專屬內容與參加活動。您的初始密碼為 <strong>{{password}}</strong>，建議您首次登入後立即更新密碼以確保帳戶安全。</p>
+        <a href="https://nkusticalumni.org/" class="button">前往官網</a>
         <p>再次感謝您的加入，讓我們攜手邁向更美好的未來！</p>
         <p>敬祝順心，</p>
         <p>國立高雄科技大學智慧商務系 系友會</p>

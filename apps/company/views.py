@@ -5,7 +5,7 @@ from apps.member.models import Member
 from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from asgiref.sync import sync_to_async
+from apps.record.func import create_query_log,increment_query_frequency
 
 from rest_framework import generics
 from django.db.models import Q
@@ -14,11 +14,28 @@ from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from rest_framework.pagination import PageNumberPagination
+class CustomPagination(PageNumberPagination):
+    page_size = 10  # 每頁顯示10筆資料
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class CompanyListView_forAnyone(generics.ListAPIView):
-    """For遊客的公司查詢"""
+    """For 遊客的公司查詢"""
     serializer_class = CompanySearchSerializer
     authentication_classes = []
     permission_classes = [permissions.AllowAny]
+    pagination_class = CustomPagination  # 強制使用分頁
+
+    def list(self, request, *args, **kwargs):
+        search = request.query_params.get('search', None)
+        if search is None:
+            search = request.query_params.get('industry', None)
+        ip = request.META.get('REMOTE_ADDR')
+        create_query_log(query=search, ip=ip, search_type='general')
+        if search:
+            increment_query_frequency(query=search)
+        return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="查詢公司資料，支持單一輸入值篩選多個欄位",
@@ -32,36 +49,36 @@ class CompanyListView_forAnyone(generics.ListAPIView):
         """
         根據單一查詢參數過濾公司資料。
         使用 `search` 進行多欄位查詢，並可額外根據產業篩選。
+        若未提供搜尋條件，則回傳所有公司資料，並啟用分頁。
         """
         queryset = Company.objects.all()
         search = self.request.query_params.get('search', None)
         industry = self.request.query_params.get('industry', None)
-
+        
         if industry and int(industry) != 0:
             queryset = queryset.filter(industry=industry)
 
         if search:
             query = (
-            Q(name__icontains=search) |  # 公司名稱
-            Q(member__name__icontains=search) |  # 系友名稱
-            Q(member__position__title__icontains=search) |  # 職位標題
-            Q(products__icontains=search) |  # 產品描述
-            Q(description__icontains=search) |
-            Q(address__icontains=search) |  # 地址
-            Q(email__icontains=search) |  # 電子郵件
-            Q(phone_number__icontains=search)  # 電話號碼
+                Q(name__icontains=search) |  # 公司名稱
+                Q(member__name__icontains=search) |  # 系友名稱
+                Q(member__position__title__icontains=search) |  # 職位標題
+                Q(products__icontains=search) |  # 產品描述
+                Q(description__icontains=search) |
+                Q(address__icontains=search) |  # 地址
+                Q(email__icontains=search) |  # 電子郵件
+                Q(phone_number__icontains=search)  # 電話號碼
             )
             queryset = queryset.filter(query)
 
         return queryset
-
 
 class CompanyListView(generics.ListAPIView):
     """For管理端的公司查詢"""
     serializer_class = CompanySearchSerializer
     authentication_classes=[]
     permission_classes=[permissions.AllowAny]
-
+    
     @swagger_auto_schema(
         operation_description="查詢公司資料，支持多個查詢參數進行篩選",
         manual_parameters=[
@@ -155,7 +172,9 @@ class CompanyViewSet(viewsets.ViewSet):
         try:
             company = Company.objects.get(member=Member.objects.get(private=request.user))
         except Company.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND,data="使用者尚未登陸資料")
+        except Member.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND,data="使用者跳過系友建立資料之過程")
         serializer = CompanySerializer(company)
         return Response(serializer.data)
 
