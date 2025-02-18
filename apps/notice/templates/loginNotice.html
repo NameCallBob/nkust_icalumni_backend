@@ -36,6 +36,25 @@
         .info p {
             margin: 5px 0;
         }
+        .actions {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .actions a {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #4CAF50;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .actions a:hover {
+            background-color: #45a049;
+        }
         .footer {
             text-align: center;
             font-size: 14px;
@@ -53,10 +72,17 @@
             <p><strong>時間：</strong>{{ login_time }}</p>
             <p><strong>IP 位址：</strong>{{ ip_address }}</p>
             <p><strong>裝置：</strong>{{ device_info }}</p>
+            <p><strong>登入地點：</strong>{{ location }}</p>
         </div>
-        <p>如果這是您本人操作，您可以忽略此郵件。</p>
-        <p>若您未進行此次登入，我們強烈建議您立即<a href="https://unknows/forgot_password/">重設您的密碼</a>以確保帳戶安全。</p>
-        <p>感謝您的理解與配合。</p>
+        <p>為保障您的帳戶安全，我們提供以下資訊：</p>
+        <ul>
+            <li>若非您本人操作，請立即<a href="https://nkusticalumni.org/forgot/">重設密碼</a>，並檢查您的帳戶活動。</li>
+            <li>若需要協助，請聯繫我們的客服團隊。</li>
+        </ul>
+        <div class="actions">
+            <a href="https://nkusticalumni.org/forgot/">重設密碼</a>
+        </div>
+        <p>感謝您的理解與配合。如有任何疑問，請隨時聯繫我們的客服支援團隊。</p>
         <p>敬祝安好，</p>
         <p>國立高雄科技大學_智慧商務系_系友會</p>
         <div class="footer">

@@ -9,6 +9,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from apps.record.func import create_query_log,increment_query_frequency
+
+
 from apps.member.models import Member  ,OutstandingAlumni
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer ,\
       MemberSimpleDetailSerializer , MemberSimpleAdminSerializer\
@@ -153,13 +156,25 @@ class MemberViewSet(viewsets.ViewSet):
 
 class MemberAnyViewSet(viewsets.ViewSet):
 
+    def __save_Record(self,request,query,type='general'):
+        """
+        自定義功能
+        """
+        ip = request.META.get('REMOTE_ADDR')
+        create_query_log(query=query, ip=ip, search_type=type)
+        increment_query_frequency(query=query)
+
+
     @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[permissions.AllowAny])
     def getOne(self, request):
         """
         取得登入使用者的資料
-        """
-        member = get_object_or_404(Member, id=request.query_params.get("id",None))
         
+        """
+        query = request.query_params.get("id",None)
+        member = get_object_or_404(Member, id=query)
+
+        self.__save_Record(request,query,'id')
         if not member.is_show : 
             return Response("系友未找到" , status=404)
         
@@ -172,8 +187,12 @@ class MemberAnyViewSet(viewsets.ViewSet):
         根據grade查詢member。
         """
         grade = request.query_params.get('grade')
+
+        query = grade
+        self.__save_Record(request,query,'grade')
+
         if not grade:
-            return Response({'detail': '缺少 grade 参数'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': '缺少年級参数'}, status=status.HTTP_400_BAD_REQUEST)
         if grade == "全部":
             members = Member.objects.all()
         else:
@@ -187,6 +206,9 @@ class MemberAnyViewSet(viewsets.ViewSet):
         根據position查詢member。
         """
         position = request.query_params.get('position')
+
+        self.__save_Record(request,position,'position')
+
         if not position:
             return Response({'detail': '缺少 postition 参数'}, status=status.HTTP_400_BAD_REQUEST)
         if position == "全部":
@@ -201,8 +223,9 @@ class MemberAnyViewSet(viewsets.ViewSet):
         query = request.query_params.get('q', '')
         if not query:
             return Response({"detail": "請提供搜尋關鍵字。"}, status=400)
-
-
+        
+        self.__save_Record(request,query)
+        
         # 查詢 Member 物件，並通過相關模型（Position、Graduate、Company 等）進行查詢
         member_results = Member.objects.filter(
             Q(name__icontains=query) |
@@ -305,7 +328,10 @@ class MemberAdminViewSet(viewsets.ViewSet):
             return Response({"error": "電子郵件沒有提供或沒說身份組"}, status=400)
 
         # 生成8碼隨機密碼
-        password = generate_random_password()
+        # password = generate_random_password()
+
+        # 伺服器SMTP目前掛掉，此為預設密碼
+        password = ""
 
         # 檢查使用者是否已存在
         if Private.objects.filter(email=user_email).exists():

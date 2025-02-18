@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status , mixins
+from rest_framework import viewsets, status , mixins , filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
@@ -25,6 +25,8 @@ class PrivateSearchViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = PrivateSerializer
     permission_classes = [IsAdminUser]
     pagination_class = PrivatePagination
+    filter_backends = [filters.SearchFilter]  # 啟用搜尋功能
+    search_fields = ['email__iexact']  # 允許搜尋 email 欄位
 
     def get_queryset(self):
         queryset = Private.objects.all()
