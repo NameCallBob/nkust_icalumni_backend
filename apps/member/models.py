@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Q
+from apps.private.models import Private
+
 
 class Position(models.Model):
     """
@@ -20,8 +22,9 @@ class Graduate(models.Model):
     - school: 畢業的學校名稱，使用 TextField 儲存，例如「國立高雄科技大學」。
     - grade: 畢業年級，使用 CharField 儲存，例如「109級 or 112」。
     """
-    school = models.TextField()
+    school = models.TextField(default="國立高雄科技大學智慧商務系")
     grade = models.CharField(max_length=20, null=False)
+    student_id = models.TextField(default="000000000")
 
     def __str__(self):
         return f"{self.school} - {self.grade}"
@@ -48,35 +51,51 @@ class Member(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
+    private = models.OneToOneField(Private, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     home_phone = models.CharField(max_length=15, blank=True, null=True)
     mobile_phone = models.CharField(max_length=15, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     address = models.TextField(blank=True, null=True)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=True)
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-    photo = models.ImageField(upload_to='static/', blank=True, null=True)
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True)
-    graduate = models.ForeignKey(Graduate, on_delete=models.CASCADE, null=True)
+    photo = models.ImageField(
+        upload_to='static/member/', blank=True, null=True)
+    position = models.ForeignKey(
+        Position, on_delete=models.SET_NULL, null=True)
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
     date_joined = models.DateField(auto_now_add=True)
+    is_show = models.BooleanField("是否要展示於官網",default=False)
 
     def __str__(self):
-        return f"{self.name} - {self.position}"
-    
+        return f"{self.private} - {self.name} - {self.position}"
+
     @staticmethod
-    def search_members(name=None, gender=None, school=None, position=None, is_paid=None):
+    def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None, is_active=None,is_show=None):
         """
-        搜尋會員資料，可以根據名字、性別、學校、職位和是否繳費進行篩選。
+        搜尋會員資料，可以根據名字、性別、學校、職位、是否繳費進行篩選，或根據 search 參數進行全域搜尋。
 
         :param name: 會員的名字 (部分或完整)
         :param gender: 會員的性別
         :param school: 畢業學校的名稱 (部分或完整)
         :param position: 職位名稱 (部分或完整)
         :param is_paid: 是否繳費
+        :param intro: 自我介紹
+        :param search: 搜尋所有欄位的關鍵字（排除照片）
         :return: 篩選後的會員 QuerySet
         """
         query = Q()
+
+        if search:
+            query &= (Q(name__icontains=search) |
+                      Q(home_phone__icontains=search) |
+                      Q(mobile_phone__icontains=search) |
+                      Q(gender__icontains=search) |
+                      Q(address__icontains=search) |
+                      Q(intro__icontains=search) |
+                      Q(position__title__icontains=search) |
+                      Q(graduate__school__icontains=search))
 
         if name:
             query &= Q(name__icontains=name)
@@ -86,8 +105,35 @@ class Member(models.Model):
             query &= Q(graduate__school__icontains=school)
         if position:
             query &= Q(position__title__icontains=position)
+        if intro:
+            query &= Q(intro__icontains=intro)
         if is_paid is not None:
             query &= Q(is_paid=is_paid)
+        if is_active is not None:
+            query &= Q(private__is_active=is_active)
+        if is_show is not None:
+            query &= Q(is_show=is_active)
 
         return Member.objects.filter(query)
+    
+class OutstandingAlumni(models.Model):
+    """
+    傑出系友
+    - member: 關聯的會員，使用 OneToOneField 連結 Member 模型。
+    - achievements: 傑出成就，使用 TextField 儲存，允許為空值。
+    - is_featured: 是否展示於官網，使用 BooleanField 儲存，默認為 False。
+    - highlight: 傑出事蹟摘要，使用 CharField 儲存。
+    - date_awarded: 授予日期，使用 DateField 儲存，允許為空值。
+    """
+    member = models.OneToOneField(
+        'Member', 
+        on_delete=models.CASCADE, 
+        related_name='outstanding_alumni'
+    )
+    achievements = models.TextField("傑出成就", blank=True, null=True)
+    is_featured = models.BooleanField("是否展示於官網", default=False)
+    highlight = models.CharField("傑出事蹟摘要", max_length=100)
+    date_awarded = models.DateField("授予日期", blank=True, null=True)
 
+    def __str__(self):
+        return f"傑出系友 - {self.member.name}"

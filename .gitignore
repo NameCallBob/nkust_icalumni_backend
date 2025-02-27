@@ -1,26 +1,30 @@
-
-# 環境變數
-
+# 環境
 *.env
 
 /venv_bob
 
-/apps/*/migrations
+# 後續決定將migrations做的紀錄上傳魚git方便後續資料庫迭代管控
+# /apps/*/migrations
 
 # 食譜的大容量檔案
 *.csv
+
 # BERT
 *.pth
 
 # System Record
 *.log
+*.log.*
+*.webp
+*.xlsx
 
 daily_debug.*
 
 *.png
 *.jpg
 *.jpeg
-
+*.pdf
+*.sql
 # python 存取
 __pycache__/
 *.pyc

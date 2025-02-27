@@ -51,11 +51,23 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('database/admin/', admin.site.urls),
+    # 帳號使用
     path('basic/',include("apps.private.urls")),
+    # 系友
     path("member/", include("apps.member.urls")),
+    # 系友公司
     path("company/",include("apps.company.urls")),
+    # 系友公司產品
     path("product/",include("apps.product.urls")),
-        
+    # 招募
+    path("recruit/",include('apps.recruit.urls')),
+    # 照片管理
+    path("picture/",include('apps.picture.urls')),
+    # 文章
+    path("article/",include('apps.article.urls')),
+    # 系友會簡介
+    path("info/", include('apps.Info.urls')),
+
     # API LIST
     path('server/api/swagger/', schema_view.with_ui('swagger',
          cache_timeout=0), name='schema-swagger-ui'),

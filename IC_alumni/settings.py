@@ -18,6 +18,7 @@ import os
 
 # 匯入環境變數
 load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,16 +29,22 @@ AUTH_USER_MODEL = 'Private.Private'
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SERCRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # 本機端
+    "127.0.0.1","localhost","0.0.0.0",
+    # 瓊文伺服器測試用
+    os.getenv("TEST_SERVER_IP"),
+    # 實際上架伺服器
+    # os.getenv("PRODUCTION_SERVER_IP"),
+    ]
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,12 +58,27 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
 
+    # 使用者相關
     "apps.private.apps.PrivateConfig",
     "apps.member.apps.MemberConfig",
     "apps.company.apps.CompanyConfig",
     "apps.product.apps.ProductConfig",
-    
+
+    # 功能
+    "apps.article.apps.ArticleConfig",
+    "apps.picture.apps.PictureConfig",
+    "apps.recruit.apps.RecruitConfig",
+    "apps.notice.apps.NoticeConfig",
+    "apps.Info.apps.InfoConfig",
+    "apps.record.apps.RecordConfig",
+
+    # swagger or redoc
     "drf_yasg",
+    # for article release
+    'ckeditor',
+    # CORS
+    'corsheaders',
+
 
 
 
@@ -69,6 +91,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # CORS
     'corsheaders.middleware.CorsMiddleware',
+    # 照片
+    'IC_alumni.middlewares.corsMiddleForStatic.CORSMiddlewareForStaticFiles',
+    # 錯誤寄信
+    "IC_alumni.middlewares.ErrorMiddleware.ExceptionEmailMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -78,7 +104,7 @@ ROOT_URLCONF = 'IC_alumni.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -106,6 +132,8 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     'SIGNING_KEY': SECRET_KEY,
     'USER_ID_FIELD': 'id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'BLACKLIST_AFTER_ROTATION': True,
     # 設定
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
     "TOKEN_OBTAIN_SERIALIZER": "data_maintenance.serializers.Member_TokenObtainPairSerializer",
@@ -200,9 +228,10 @@ STATIC_ROOT = BASE_DIR / 'static_files'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS setting
+# CORS setting_開發完後要打開
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000/"
+    "http://localhost:3000",
+    "http://nkusticalumni.org"
 ]
 
 CORS_ALLOW_METHODS = [
@@ -217,7 +246,7 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = [
     'Accept',
     'accept-encoding',
-    'authorization',
+    'Authorization',
     'Content-Type',
     'dnt',
     'origin',
@@ -231,11 +260,106 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 # SMTP Service
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'noreply_fourMei@gmail.com'
+DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'
+
+# 管理員收到信
+ADMINS = [
+    (os.getenv('ADMIN_NAME'),os.getenv('ADMIN_EMAIL'))
+]
+
+# 日誌文件目錄
+LOG_DIR = './log/'
+
+# 確保日誌目錄存在
+os.makedirs(LOG_DIR, exist_ok=True)
+
+from pythonjsonlogger import jsonlogger
+
+# 伺服器運行相關記錄
+
+import logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # 保留現有日誌
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',  # 使用 JsonFormatter
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s',  # 定義 JSON 格式
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'app.log'),  # 普通日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'error.log'),  # 錯誤日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
+            'formatter': 'verbose',
+        },
+        'json_file': {
+            'level': 'INFO',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'json.log'),  # JSON 格式日誌
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 365,
+            'formatter': 'json',  # 使用 JSON 格式
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file', 'json_file'],  # 一般日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['error_file'],  # 錯誤日誌
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file'],  # 資料庫錯誤
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'nkust_ic_alumni': {
+            'handlers': ['file'],  # 應用程序自訂日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

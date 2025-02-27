@@ -2,32 +2,47 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin
+from apps.notice.email import email as notice_email
 
 #  自定義使用者之相關設定
 class CustomUserManager(BaseUserManager):
-    def create_user(self,email,password,**extra_fields):
+
+    def create_user(self, email, password, **extra_fields):
         """建立一般使用者"""
+        if not email:
+            raise ValueError("使用者必須提供電子郵件地址")
+
+        email = self.normalize_email(email)  # 確保 email 小寫且格式正確
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
         extra_fields.setdefault("is_active", True)
-        user = self.model(email=email, **extra_fields)
+
+        user = self.model(email=email.lower(), **extra_fields)  # 確保 email 為小寫
         user.set_password(password)
         user.save()
+
+        from threading import Thread
+        Thread(target=notice_email.member_account_created, args=(email, password)).start()
+
         return user
-    
-    def create_superuser(self,email,password,**extra_fields):
+
+    def create_superuser(self, email, password, **extra_fields):
         """建立管理員或特別權限者"""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
+
         if extra_fields.get("is_staff") is not True:
-            raise ValueError(("Superuser must have is_staff=True."))
+            raise ValueError("Superuser 必須具有 is_staff=True。")
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError(("Superuser must have is_superuser=True."))
-        return self.create_user(email, password,**extra_fields)
+            raise ValueError("Superuser 必須具有 is_superuser=True。")
+
+        from threading import Thread
+        Thread(target=notice_email.member_account_created, args=(email, password)).start()
+
+        return self.create_user(email, password, **extra_fields)
 
 # 實際 自定義 Model
-
 class Private(AbstractBaseUser , PermissionsMixin):
     """
     使用者最高隱私之儲存內容
@@ -43,13 +58,16 @@ class Private(AbstractBaseUser , PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['password']
     objects = CustomUserManager()
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()  # 確保 email 為小寫
+        super().save(*args, **kwargs)
+
     @property
     def is_anonymous(self):
         return False
 
-    def __str__(self):
-        return f"帳號:{self.account}"
-    
+
 
 
 import random
@@ -58,7 +76,7 @@ from django.utils import timezone
 
 class PasswordResetCode(models.Model):
     private = models.ForeignKey(Private, on_delete=models.CASCADE)
-    code = models.CharField(max_length=6, editable=False, unique=True)    
+    code = models.CharField(max_length=6, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     expires_at = models.DateTimeField()
