@@ -16,20 +16,19 @@ class Industry(models.Model):
         return self.title
 
 class Company(models.Model):
-    name = models.CharField(max_length=255, verbose_name="公司名稱")
-    # 可能會出問題!關聯問題
-    member = models.OneToOneField(Member ,related_name="member",on_delete=models.CASCADE)
-
-    industry = models.ForeignKey(Industry,related_name="industry", on_delete=models.CASCADE)
-    positions = models.CharField(max_length=255, verbose_name="公司在職職位")
-    description = models.TextField(verbose_name="公司簡介")
-    products = models.CharField(max_length=255, verbose_name="販售商品")
-    product_description = models.TextField(verbose_name="販售商品簡介")
-    photo = models.ImageField(upload_to='static/company/', verbose_name="照片", null=True, blank=True)
-    website = models.URLField(max_length=500, verbose_name="公司網站連結")
+    name = models.CharField(max_length=255, verbose_name="公司名稱", null=True, blank=True)
+    # 關聯欄位也需要允許為空
+    member = models.OneToOneField(Member, related_name="member", on_delete=models.CASCADE, null=True, blank=True)
+    industry = models.ForeignKey(Industry, related_name="industry", on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
+    positions = models.CharField(max_length=255, verbose_name="公司在職職位", null=True, blank=True)
+    description = models.TextField(verbose_name="公司簡介", null=True, blank=True)
+    products = models.CharField(max_length=255, verbose_name="販售商品", null=True, blank=True)
+    product_description = models.TextField(verbose_name="販售商品簡介", null=True, blank=True)
+    photo = models.ImageField(upload_to='company/', verbose_name="照片", null=True, blank=True)
+    website = models.URLField(max_length=500, verbose_name="公司網站連結", null=True, blank=True)
     address = models.TextField(verbose_name="公司地點", null=True, blank=True)
     email = models.EmailField(verbose_name="聯絡信箱", null=True, blank=True)
-    clicks = models.BigIntegerField("點擊次數",default=0)
+    clicks = models.BigIntegerField("點擊次數", default=0)
     phone_number = models.CharField(max_length=100, verbose_name="聯絡電話", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
