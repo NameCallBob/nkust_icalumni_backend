@@ -93,17 +93,20 @@ class ConfirmAndCreateAccountsView(APIView):
                 continue
 
             # 生成隨機密碼
-            password = generate_random_password()
+            # password = generate_random_password()
+            
+            # 伺服器SMTP目前掛掉，此為預設密碼
+            password = ""
 
             # 創建帳號
             try:
                 user = Private.objects.create_user(email=email, password=password)
-
+                from apps.notice.email import email as notice_email
                 # 發送通知信
-                Thread(target=email.member_account_created, args=(email, password)).start()
+                Thread(target=notice_email.member_account_created, args=(email, password)).start()
 
                 # 記錄成功創建的帳號
-                results["created"].append({"email": email, "password": password})
+                results["created"].append({"email": email})
             except Exception as e:
                 results["failed"].append({"email": email, "reason": str(e)})
 

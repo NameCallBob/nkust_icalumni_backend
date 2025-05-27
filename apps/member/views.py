@@ -2,16 +2,23 @@ from rest_framework import viewsets, status , permissions
 from rest_framework.generics import ListAPIView
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
+from asgiref.sync import sync_to_async
+from asgiref.sync import async_to_sync
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from apps.record.func import create_query_log,increment_query_frequency
+
+
 from apps.member.models import Member  ,OutstandingAlumni
 from apps.member.serializer import MemberSerializer , MemberSimpleSerializer ,\
       MemberSimpleDetailSerializer , MemberSimpleAdminSerializer\
-      ,OutstandingAlumniSerializer
+      ,OutstandingAlumniSerializer , MemberCreateSerializer
 from django.shortcuts import get_object_or_404
+
+from IC_alumni.permission.admin import IsAdminOrReadOnly
 
 import random ; import string
 # jwt
@@ -134,14 +141,45 @@ class MemberViewSet(viewsets.ViewSet):
 
         return Response({'message': '密碼更新成功'}, status=status.HTTP_200_OK)
 
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def new(self, request):
+        """
+        新增會員資料
+        """
+        data = request.data.copy()
+        data['private_input'] = request.user.id
+        serializer = MemberCreateSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class MemberAnyViewSet(viewsets.ViewSet):
+
+    def __save_Record(self,request,query,type='general'):
+        """
+        自定義功能
+        """
+        ip = request.META.get('REMOTE_ADDR')
+        if query == None or query == "" :
+            pass
+        create_query_log(query=query, ip=ip, search_type=type)
+        increment_query_frequency(query=query)
+
 
     @action(methods=['get'] , detail=False , authentication_classes=[],permission_classes=[permissions.AllowAny])
     def getOne(self, request):
         """
         取得登入使用者的資料
+        
         """
-        member = get_object_or_404(Member, id=request.query_params.get("id",None))
+        query = request.query_params.get("id",None)
+        member = get_object_or_404(Member, id=query)
+
+        self.__save_Record(request,query,'id')
+        if not member.is_show : 
+            return Response("系友未找到" , status=404)
+        
         serializer = MemberSimpleDetailSerializer(member)
         return Response(serializer.data)
 
@@ -150,13 +188,33 @@ class MemberAnyViewSet(viewsets.ViewSet):
         """
         根據grade查詢member。
         """
-        grade = request.query_params.get('grade')
+        grade = request.query_params.get('grade','全部')
+
+        query = grade
+        self.__save_Record(request,query,'grade')
+
         if not grade:
-            return Response({'detail': '缺少 grade 参数'}, status=status.HTTP_400_BAD_REQUEST)
-        if grade == "全部":
+            return Response({'detail': '缺少年級参数'}, status=status.HTTP_400_BAD_REQUEST)
+        if grade == "全部" or grade == None:
             members = Member.objects.all()
         else:
             members = Member.objects.filter(graduate__grade=grade,is_show=True)
+        serializer = MemberSimpleSerializer(members, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='get-by-position', authentication_classes=[],permission_classes=[permissions.AllowAny])
+    def get_by_position(self, request):
+        """
+        根據position查詢member。
+        """
+        position = request.query_params.get('position','')
+        if position != '' :
+            self.__save_Record(request,position,'position')
+
+        if position == "全部" or not position:
+            members = Member.objects.all()
+        else:
+            members = Member.objects.filter(position__id=position,is_show=True)
         serializer = MemberSimpleSerializer(members, many=True)
         return Response(serializer.data)
 
@@ -165,8 +223,9 @@ class MemberAnyViewSet(viewsets.ViewSet):
         query = request.query_params.get('q', '')
         if not query:
             return Response({"detail": "請提供搜尋關鍵字。"}, status=400)
-
-
+        
+        self.__save_Record(request,query)
+        
         # 查詢 Member 物件，並通過相關模型（Position、Graduate、Company 等）進行查詢
         member_results = Member.objects.filter(
             Q(name__icontains=query) |
@@ -252,7 +311,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
 
 
-    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False, methods=['post'], authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAdminUser])
     def newUser_email(self, request):
         """建立新使用者（僅輸入電子郵件）"""
         from apps.private.models import Private
@@ -264,16 +323,19 @@ class MemberAdminViewSet(viewsets.ViewSet):
 
         user_email = request.data.get("email")
         user_type = request.data.get("is_superuser")
-
+        print(user_email) ; print(user_type)
         if not user_email or not user_type:
             return Response({"error": "電子郵件沒有提供或沒說身份組"}, status=400)
 
         # 生成8碼隨機密碼
         password = generate_random_password()
 
+        # 伺服器SMTP目前掛掉，此為預設密碼
+        # password = "12345678"
+
         # 檢查使用者是否已存在
         if Private.objects.filter(email=user_email).exists():
-            return Response({"error": "User with this email already exists."}, status=400)
+            return Response({"error": "此帳號已建立過了"}, status=400)
 
         # 創建新使用者
         if user_type == "Y":
@@ -293,7 +355,7 @@ class MemberAdminViewSet(viewsets.ViewSet):
         member_id = request.data.get('member_id')
         try:
             from apps.private.models import Private
-            private_id = Member.objects.get(id=member_id).private
+            private_id = Member.objects.get(id=member_id).private.id
             private_ob = Private.objects.get(id=private_id)
             private_ob.delete()
             return Response({"message": "Member deleted"}, status=status.HTTP_200_OK)
@@ -477,22 +539,73 @@ class MemberListViewForAll(ListAPIView):
         position = self.request.query_params.get('position', None)
 
         return Member.search_members(name=name, intro=intro, position=position)
-    
+
 
 class OutstandingAlumniViewSet(ModelViewSet):
     """
     傑出系友 API
     - 提供 CRUD 操作。
-    - 僅管理員可操作此資源。
+    - 所有人可查詢 `is_featured=True` 的資料。
+    - 僅管理員可進行修改操作。
     """
     queryset = OutstandingAlumni.objects.select_related('member').all()
     serializer_class = OutstandingAlumniSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [IsAdminOrReadOnly]
+    # filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    # search_fields = ['member__name']
+    # ordering = ['-created_at']
 
     def get_queryset(self):
         """
-        篩選已標註為展示於官網的傑出系友。
+        依使用者角色篩選資料：
+        - 非管理員僅能看到 `is_featured=True` 的資料。
+        - 管理員可看到所有資料。
         """
-        if self.request.method == 'GET' and not self.request.user.is_staff:
-            return self.queryset.filter(is_featured=True)
-        return self.queryset
+        if not self.request.user.is_staff:
+            return OutstandingAlumni.objects.filter(is_featured=True)
+        return OutstandingAlumni.objects.all()
+
+    @action(methods=["get"], detail=False)
+    def featured(self, request):
+        """
+        取得所有被設為精選的傑出系友資料。
+        所有使用者都可以訪問此端點。
+        """
+        queryset = self.queryset.filter(is_featured=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=["get"], detail=False)
+    def latest(self, request):
+        """
+        取得最新的傑出系友資料 (依建立時間排序)。
+        非管理員只能看到精選資料。
+        """
+        queryset = self.get_queryset().order_by('-created_at')[:10]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=["get"], detail=False)
+    def by_year(self, request):
+        """
+        依畢業年份分組取得系友資料。
+        非管理員只能看到精選資料。
+        """
+        queryset = self.get_queryset()
+        # 取得所有年份並排序
+        years = queryset.values_list('graduation_year', flat=True).distinct().order_by('graduation_year')
+        
+        result = {}
+        for year in years:
+            alumni_in_year = queryset.filter(graduation_year=year)
+            serializer = self.get_serializer(alumni_in_year, many=True)
+            result[year] = serializer.data
+            
+        return Response(result)
+
+

@@ -22,9 +22,9 @@ class Graduate(models.Model):
     - school: 畢業的學校名稱，使用 TextField 儲存，例如「國立高雄科技大學」。
     - grade: 畢業年級，使用 CharField 儲存，例如「109級 or 112」。
     """
-    school = models.TextField(default="國立高雄科技大學智慧商務系")
-    grade = models.CharField(max_length=20, null=False)
-    student_id = models.TextField(default="000000000")
+    school = models.TextField(default="國立高雄科技大學智慧商務系", null=True)
+    grade = models.CharField(max_length=20, null=True , default="尚未填寫")
+    student_id = models.TextField(default="尚未填寫", null=True)
 
     def __str__(self):
         return f"{self.school} - {self.grade}"
@@ -51,25 +51,28 @@ class Member(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
-    private = models.OneToOneField(Private, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
+    private = models.OneToOneField(Private, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=30, null=True, blank=True)
     home_phone = models.CharField(max_length=15, blank=True, null=True)
     mobile_phone = models.CharField(max_length=15, blank=True, null=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     address = models.TextField(blank=True, null=True)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=True)
     intro = models.TextField(blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
     photo = models.ImageField(
-        upload_to='static/member/', blank=True, null=True)
+        upload_to='member/', blank=True, null=True)
     position = models.ForeignKey(
-        Position, on_delete=models.SET_NULL, null=True)
-    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True)
+        Position, on_delete=models.SET_NULL, null=True, blank=True)
+    graduate = models.OneToOneField(Graduate, on_delete=models.CASCADE, null=True, blank=True)
     date_joined = models.DateField(auto_now_add=True)
-    is_show = models.BooleanField("是否要展示於官網",default=False)
+    is_show = models.BooleanField("是否要展示於官網", default=False)
 
     def __str__(self):
-        return f"{self.private} - {self.name} - {self.position}"
+        private_str = str(self.private) if self.private else "未指定帳號"
+        name_str = self.name if self.name else "未命名會員"
+        position_str = str(self.position) if self.position else "未指定職位"
+        return f"{private_str} - {name_str} - {position_str}"
 
     @staticmethod
     def search_members(name=None, gender=None, school=None, position=None, is_paid=None, intro=None, search=None, is_active=None,is_show=None):
