@@ -4,11 +4,11 @@ from ckeditor.fields import RichTextField
 
 # 圖片上傳路徑
 def upload_to_images(instance, filename):
-    return f'static/recruit/{filename}'
+    return f'recruit/{filename}'
 
 # Recruit 模型
 class Recruit(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE , related_name='recruits',null=True)
     title = models.CharField(max_length=50)
     intro = RichTextField()
     info_clicks = models.IntegerField(default=0)
@@ -31,7 +31,7 @@ class RecruitImage(models.Model):
     ]
 
     recruit = models.ForeignKey(Recruit, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='static/recruit/')
+    image = models.ImageField(upload_to='recruit/')
     image_type = models.CharField(max_length=5, choices=IMAGE_TYPE_CHOICES)  # 透過此欄位區分圖片類型
 
     def __str__(self):

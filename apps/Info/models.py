@@ -20,17 +20,17 @@ class AlumniAssociationImage(models.Model):
     image_type = models.CharField(
         max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    file = models.ImageField(upload_to="static/info/alumni_association_images/", verbose_name="圖片檔案")
+    file = models.ImageField(upload_to="info/alumni_association_images/", verbose_name="圖片檔案")
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
     is_active = models.BooleanField()
     def __str__(self):
-        return f"{self.created_at} - {self.get_image_type_display()}"
+        return f"{self.uploaded_at} - {self.get_image_type_display()}"
 
 
 class Constitution(models.Model):
     """系友會章程（PDF格式）"""
     description = RichTextField()
-    pdf_file = models.FileField(upload_to="static/info/constitutions/", verbose_name="章程 PDF 檔案")
+    pdf_file = models.FileField(upload_to="info/constitutions/", verbose_name="章程 PDF 檔案")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
@@ -47,7 +47,7 @@ class ConstitutionImage(models.Model):
     image_type = models.CharField(
         max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    file = models.ImageField(upload_to="static/info/constitution_images/", verbose_name="圖片檔案")
+    file = models.ImageField(upload_to="info/constitution_images/", verbose_name="圖片檔案")
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
     is_active = models.BooleanField()
     def __str__(self):
@@ -73,13 +73,14 @@ class OrganizationalStructureImage(models.Model):
     image_type = models.CharField(
         max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    file = models.ImageField(upload_to="static/info/organizational_structure_images/", verbose_name="圖片檔案")
+    file = models.ImageField(upload_to="info/organizational_structure_images/", verbose_name="圖片檔案")
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
     is_active = models.BooleanField()
     def __str__(self):
         return f"{self.organizational_structure.role_name} - {self.get_image_type_display()}"
 
 
+# 舊版
 class MembershipRequirement(models.Model):
     """系友會入會方式"""
     description = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
@@ -99,8 +100,19 @@ class MembershipRequirementImage(models.Model):
     image_type = models.CharField(
         max_length=10, choices=IMAGE_TYPE_CHOICES, verbose_name="圖片類型"
     )
-    file = models.ImageField(upload_to="static/info/membership_requirement_images/", verbose_name="圖片檔案")
+    file = models.ImageField(upload_to="info/membership_requirement_images/", verbose_name="圖片檔案")
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳時間")
     is_active = models.BooleanField()
     def __str__(self):
         return f"入會條件 {self.membership_requirement.id} - {self.get_image_type_display()}"
+
+#
+class MembershipRequirement_v2(models.Model):
+    """系友會入會方式"""
+    description = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
+    pdf_file = models.FileField(upload_to="info/membership_requirement_v2/", verbose_name="入會條件 PDF 檔案")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
+
+    def __str__(self):
+        return f"入會條件 ID: {self.id}"

@@ -24,6 +24,6 @@ router.register(r'requirement-images', MembershipRequirementImageViewSet, basena
 router.register(r'associations', AlumniAssociationViewSet, basename='alumni-association')
 router.register(r'constitutions', ConstitutionViewSet, basename='constitution')
 router.register(r'structures', OrganizationalStructureViewSet, basename='organizational-structure')
-router.register(r'requirement', MembershipRequirementViewSet, basename='membership-requirement-image')
+router.register(r'requirement', MembershipRequirementViewSet, basename='membership-requirement')
 
 urlpatterns = router.urls

@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-
+    # 'django.contrib.staticfiles',
+    "django_filters",
     # RESTful API & JWT token
     'rest_framework',
     'rest_framework_simplejwt',
@@ -63,13 +63,14 @@ INSTALLED_APPS = [
     "apps.member.apps.MemberConfig",
     "apps.company.apps.CompanyConfig",
     "apps.product.apps.ProductConfig",
-    
+
     # 功能
     "apps.article.apps.ArticleConfig",
     "apps.picture.apps.PictureConfig",
     "apps.recruit.apps.RecruitConfig",
     "apps.notice.apps.NoticeConfig",
     "apps.Info.apps.InfoConfig",
+    "apps.record.apps.RecordConfig",
 
     # swagger or redoc
     "drf_yasg",
@@ -78,10 +79,10 @@ INSTALLED_APPS = [
     # CORS
     'corsheaders',
 
-
-
-
 ]
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/GeoLite2-Country.mmdb')
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -93,7 +94,9 @@ MIDDLEWARE = [
     # 照片
     'IC_alumni.middlewares.corsMiddleForStatic.CORSMiddlewareForStaticFiles',
     # 錯誤寄信
-    "IC_alumni.middlewares.ErrorMiddleware.ExceptionEmailMiddleware",
+    # "IC_alumni.middlewares.ErrorMiddleware.ExceptionEmailMiddleware",
+    # 監控
+    "IC_alumni.middlewares.recordUserMiddleware.MonitoringMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -102,21 +105,39 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'IC_alumni.urls'
 
 REST_FRAMEWORK = {
+    # 僅接受 JSON，移除 Browsable API
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    # 權限：預設強制驗證，視專案需求可針對特定 view 開放 AllowAny
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ),
+    # 認證：JWT 為主（可視需求加入 OAuth2、SessionAuthentication 等）
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PARSER_CLASSES': [
+    # CSRF 仍由 Django middleware 保護
+    'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
-    ],
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    # 設置分頁
+    ),
+    # 分頁
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
+    # 篩選、防刷：建議加上 filter 與 throttle
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+    'user': '10000/day',
+    'anon': '5000/day',
+},
 }
+
 
 # JWTtoken設定
 
@@ -196,6 +217,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 監控相關設定
+MONITORING = {
+    'ENABLE_RATE_LIMITING': True,
+    'RATE_LIMIT_WINDOW': 60,  # 秒
+    'RATE_LIMIT_MAX_REQUESTS': 100,
+    'LOG_RETENTION_DAYS': 30,
+    'ADMIN_EMAILS': ['robin92062574@gmail.com'],
+    'AUTO_CLEANUP': True,
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -212,15 +243,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 
-# 開發
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+# # 開發
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',
+# ]
 
-# 實際架設
-STATIC_ROOT = BASE_DIR / 'static_files'
+# # 實際架設
+# STATIC_ROOT = BASE_DIR / 'static_files'
+
+MEDIA_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR ,'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -230,7 +264,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS setting_開發完後要打開
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://nkusticalumni.org"
+    "https://nkusticalumni.org"
 ]
 
 CORS_ALLOW_METHODS = [
@@ -254,9 +288,9 @@ CORS_ALLOW_HEADERS = [
     'ngrok-skip-browser-warning',
 ]
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = False
 # 開發轉為True，記得上線轉為False
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 # SMTP Service
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -271,3 +305,105 @@ DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'
 ADMINS = [
     (os.getenv('ADMIN_NAME'),os.getenv('ADMIN_EMAIL'))
 ]
+
+# 日誌文件目錄
+LOG_DIR = './log/'
+
+# 確保日誌目錄存在
+os.makedirs(LOG_DIR, exist_ok=True)
+
+from pythonjsonlogger import jsonlogger
+
+# 伺服器運行相關記錄
+
+import logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,  # 保留現有日誌
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',  # 使用 JsonFormatter
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s',  # 定義 JSON 格式
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'app.log'),  # 普通日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
+            'formatter': 'verbose',
+        },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'error.log'),  # 錯誤日誌文件
+            'when': 'midnight',  # 每天午夜輪替
+            'interval': 1,
+            'backupCount': 365,  # 保留最近 365 天
+            'formatter': 'verbose',
+        },
+        'json_file': {
+            'level': 'INFO',
+            'class': 'IC_alumni.log.rotating.CompressedTimedRotatingFileHandler',  # 替換為自定義壓縮處理器
+            'filename': os.path.join(LOG_DIR, 'json.log'),  # JSON 格式日誌
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 365,
+            'formatter': 'json',  # 使用 JSON 格式
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file', 'json_file'],  # 一般日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['error_file'],  # 錯誤日誌
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file'],  # 資料庫錯誤
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'nkust_ic_alumni': {
+            'handlers': ['file'],  # 應用程序自訂日誌
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

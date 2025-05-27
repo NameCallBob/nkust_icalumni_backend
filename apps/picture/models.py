@@ -5,7 +5,7 @@ from apps.product.models import Product
 
 class SelfImage(models.Model):
     member = models.ForeignKey(Member ,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='static/self_image/')
+    image = models.ImageField(upload_to='self_image/')
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     priority = models.IntegerField("優先度",default=0)
@@ -15,7 +15,7 @@ class SelfImage(models.Model):
 
 class CompanyImage(models.Model):
     company = models.ForeignKey(Company,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='static/company_image/')
+    image = models.ImageField(upload_to='company_image/')
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     priority = models.IntegerField("優先度",default=0)
@@ -24,7 +24,7 @@ class CompanyImage(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='static/product_image/')
+    image = models.ImageField(upload_to='product_image/')
     title = models.CharField(max_length=255,null=True)
     description = models.TextField(blank=True, null=True)
     priority = models.IntegerField("優先度",default=0)
@@ -33,8 +33,18 @@ class ProductImage(models.Model):
 
 class SlideImage(models.Model):
     type = models.TextField(default="None", null=False)
-    image = models.ImageField(upload_to='static/slide/')
+    image = models.ImageField(upload_to='slide/')
     title = models.CharField(max_length=255,null=True)
     description = models.TextField(blank=True, null=True)
     active = models.BooleanField("是否使用")
     created_at = models.DateTimeField(auto_now_add=True)
+
+class PopupAd(models.Model):
+    image =  models.ImageField(upload_to='popup/')
+    active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"PopupAd (Active: {self.active})"

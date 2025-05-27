@@ -118,6 +118,8 @@ class RecruitViewSet(viewsets.ViewSet):
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
+            recruit.info_clicks = recruit.info_clicks + 1 
+            recruit.save()
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -137,13 +139,63 @@ class RecruitViewSet(viewsets.ViewSet):
         """創建招聘資料"""
         from apps.company.models import Company
         tmp = request.data.copy()  # 確保 data 可變動
+        # 明確移除任何可能的ID
+        if 'id' in tmp:
+            del tmp['id']        
         tmp['company'] = Company.objects.get(member=request.user.member).id
         serializer = RecruitSerializer(data=tmp, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @swagger_auto_schema(
+        operation_description="部分更新招聘資料",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['id'],
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_STRING, description='招聘 ID'),
+                'title': openapi.Schema(type=openapi.TYPE_STRING, description='招聘標題'),
+                'intro': openapi.Schema(type=openapi.TYPE_STRING, description='招聘簡介'),
+                'deadline': openapi.Schema(type=openapi.TYPE_STRING, format='date', description='截止日期'),
+                'active': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='是否啟用'),
+                'contact': openapi.Schema(type=openapi.TYPE_OBJECT, description='聯絡人資料'),
+                'images': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_OBJECT), description='招聘圖片'),
+                'isPersonalContact': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='是否使用個人聯絡資料'),
+                'isPersonalCompany': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='是否使用個人公司資料')
+            }
+        ),
+        responses={
+            200: openapi.Response('更新成功', RecruitSerializer),
+            404: '招聘資料不存在',
+            400: '請求無效'
+        }
+    )
+    @action(methods=['patch'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    def patch_recruit(self, request):
+        """部分更新招聘資料"""
+        try:
+            pk = request.data.get("id")
+            if not pk:
+                return Response({"msg": "缺少招聘 ID"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            recruit = Recruit.objects.get(pk=pk)
+            
+            # 檢查用戶是否有權限更新此招聘資料
+            if hasattr(request.user, 'member') and recruit.company.member != request.user.member:
+                return Response({"detail": "您沒有權限更新此招聘資料"}, status=status.HTTP_403_FORBIDDEN)
+                
+        except Recruit.DoesNotExist:
+            return Response({"detail": "招聘資料不存在"}, status=status.HTTP_404_NOT_FOUND)
 
+        # 使用 partial=True 表示這是一個部分更新
+        serializer = RecruitSerializer(recruit, data=request.data, partial=True, context={'request': request})
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     @swagger_auto_schema(
         operation_description="更新招聘資料",
         request_body=RecruitSerializer,
@@ -167,7 +219,7 @@ class RecruitViewSet(viewsets.ViewSet):
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = RecruitSerializer(recruit, data=request.data)
+        serializer = RecruitSerializer(recruit, data=request.data ,context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

@@ -18,38 +18,57 @@ from django.utils.html import strip_tags
 import logging
 from datetime import datetime
 
+import requests
+import os
+
+def send_email_resend(subject, html_content, to_email, text_content=None):
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {os.getenv('RESEND_API_KEY')}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "noreply@nkusticalumni.org",
+                "to": [to_email],
+                "subject": subject,
+                "html": html_content,
+                "text": text_content or ""
+            }
+        )
+        if response.status_code == 200:
+            return True
+        else:
+            logging.getLogger('django').error(f"Resend 發信失敗: {response.status_code}, {response.text}")
+            return False
+    except Exception as e:
+        logging.getLogger('django').error(f"Resend API 錯誤: {e}")
+        return False
+
+
 def send_order_email(user_email, context, subject_template, html_template):
-    """
-    通用的訂單通知郵件發送函數。
-
-    param:
-        user_email: 接收者的電子郵件地址
-        context: 用於渲染模板的上下文資料
-        subject_template: 主題模板，包含需要格式化的部分
-        html_template: HTML內容模板名稱
-
-    return:
-        Boolean 是否寄送成功
-    """
-
+    logger = logging.getLogger('django')
     try:
         subject = subject_template.format(**context)
         html_content = render_to_string(html_template, context)
         text_content = strip_tags(html_content)
     except Exception as e:
-        logger = logging.getLogger('django')
-        logger.error(f"An error occurred-模板問題: {e}")
+        logger.error(f"模板處理錯誤: {e}")
         return False
 
+    # Step 1: 優先使用 Resend API
+    if send_email_resend(subject, html_content, user_email, text_content):
+        return True
+
+    # Step 2: 若 Resend 發信失敗，嘗試使用 Django SMTP 發信
     try:
         email = EmailMultiAlternatives(subject, text_content, 'noreply@4timeMei.com', [user_email])
         email.attach_alternative(html_content, "text/html")
         email.send()
         return True
     except Exception as e:
-        logger = logging.getLogger('django')
-        logger.error(f"An error occurred-寄信問題: {e}")
-        print("error:",e)
+        logger.error(f"SMTP 備援寄信錯誤: {e}")
         return False
 
 
@@ -81,25 +100,25 @@ class email:
         html_template = "loginNotice.html"
         return send_order_email(user_email, context, subject_template, html_template)
 
-if __name__ == "__main__":
-    # 測試使用
-    # 範例context的格式
-    context = {
-        'member_name' : "彬彬",
-        'order_number': '123456',
-        'order_status': '已處理',
-        'order_amount': 'NT$1000',
-        'order_time': '2024-07-28 12:34',
-        'payment_status': '已付款',
-        'order_note': '請盡快處理',
-        'store_name': '範例店家',
-        'store_phone': '02-12345678',
-        'store_address': '台北市範例路123號',
-        "takeOrder_number":'123213'
-    }
-    # 測試腳本
-    import django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Mei_four.settings')
-    django.setup()
-    # 發送郵件
-    send_order_email_forCustomer('C110156220@nkust.edu.tw', context)
+# if __name__ == "__main__":
+#     # 測試使用
+#     # 範例context的格式
+#     context = {
+#         'member_name' : "彬彬",
+#         'order_number': '123456',
+#         'order_status': '已處理',
+#         'order_amount': 'NT$1000',
+#         'order_time': '2024-07-28 12:34',
+#         'payment_status': '已付款',
+#         'order_note': '請盡快處理',
+#         'store_name': '範例店家',
+#         'store_phone': '02-12345678',
+#         'store_address': '台北市範例路123號',
+#         "takeOrder_number":'123213'
+#     }
+#     # 測試腳本
+#     import django
+#     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Mei_four.settings')
+#     django.setup()
+#     # 發送郵件
+#     send_order_email_forCustomer('C110156220@nkust.edu.tw', context)

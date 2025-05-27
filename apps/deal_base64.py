@@ -1,41 +1,77 @@
 import base64
 import six
 import uuid
+import os
+import logging
 from django.core.files.base import ContentFile
 from rest_framework import serializers
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 class Base64ImageField(serializers.ImageField):
     """
-    A Django REST framework field for handling image-uploads through raw base64-encoded image data.
+    處理通過原始 base64 編碼圖像數據的圖像上傳的 Django REST framework 字段。
     """
     def to_internal_value(self, data):
-        # Check if this is a base64 string
+        # 檢查是否為 None 或空字串
+        if data is None or data == '':
+            return None
+            
+        # 檢查是否為 base64 字串
         if isinstance(data, six.string_types):
-            # Check if the base64 string is in the "data:" format
+            # 檢查 base64 字串是否為 "data:" 格式
             if 'data:' in data and ';base64,' in data:
-                # Break out the header from the base64 content
+                # 從 base64 內容中分離標頭
                 header, data = data.split(';base64,')
+                logger.debug(f"解析 base64 圖片，標頭: {header}")
+            else:
+                logger.warning("收到的圖片資料沒有標準 base64 標頭")
 
-            # Try to decode the file. If it fails, raise an error.
+            # 嘗試解碼檔案，如果失敗，則引發錯誤
             try:
                 decoded_file = base64.b64decode(data)
-            except TypeError:
+                logger.debug(f"成功解碼 base64 圖片，大小: {len(decoded_file)} bytes")
+            except Exception as e:
+                logger.error(f"圖片解碼失敗: {str(e)}")
                 self.fail('invalid_image')
 
-            # Generate file name:
-            file_name = str(uuid.uuid4())[:12]  # 12 characters are enough for a file name
+            # 生成檔案名稱:
+            file_name = str(uuid.uuid4())[:12]  # 12 個字符足夠用作檔案名稱
             file_extension = self.get_file_extension(file_name, decoded_file)
             complete_file_name = f"{file_name}.{file_extension}"
+            logger.debug(f"生成檔案名稱: {complete_file_name}")
 
-            # Create a file from the decoded data
+            # 從解碼的數據創建檔案
             data = ContentFile(decoded_file, name=complete_file_name)
+            
+            # 記錄檔案資訊
+            logger.debug(f"已創建 ContentFile 對象: 名稱={data.name}, 大小={data.size} bytes")
+            
+            # 預期的檔案位置
+            expected_path = os.path.join(settings.MEDIA_ROOT, data.name)
+            logger.debug(f"預期檔案將被保存到: {expected_path}")
+            
+            # 檢查目錄是否存在
+            directory = os.path.dirname(expected_path)
+            if not os.path.exists(directory):
+                try:
+                    os.makedirs(directory, exist_ok=True)
+                    logger.info(f"已創建目錄: {directory}")
+                except Exception as e:
+                    logger.error(f"無法創建目錄 {directory}: {str(e)}")
 
         return super(Base64ImageField, self).to_internal_value(data)
 
     def get_file_extension(self, file_name, decoded_file):
-        # You can use the imghdr library to determine the file type
+        # 使用 imghdr 庫確定檔案類型
         import imghdr
         extension = imghdr.what(file_name, decoded_file)
         extension = "jpg" if extension == "jpeg" else extension
-
+        
+        # 如果 imghdr 無法確定類型，則使用默認值
+        if extension is None:
+            logger.warning("無法確定圖片類型，使用預設的 'jpg'")
+            extension = "jpg"
+            
         return extension
