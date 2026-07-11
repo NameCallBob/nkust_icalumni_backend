@@ -18,7 +18,7 @@ class Industry(models.Model):
 class Company(models.Model):
     name = models.CharField(max_length=255, verbose_name="公司名稱", null=True, blank=True)
     # 關聯欄位也需要允許為空
-    member = models.OneToOneField(Member, related_name="member", on_delete=models.CASCADE, null=True, blank=True)
+    member = models.OneToOneField(Member, related_name="company", on_delete=models.CASCADE, null=True, blank=True)
     industry = models.ForeignKey(Industry, related_name="industry", on_delete=models.SET_DEFAULT, default=1, null=True, blank=True)
     positions = models.CharField(max_length=255, verbose_name="公司在職職位", null=True, blank=True)
     description = models.TextField(verbose_name="公司簡介", null=True, blank=True)
@@ -35,6 +35,11 @@ class Company(models.Model):
     class Meta:
         verbose_name = "公司"
         verbose_name_plural = "公司"
+        # [效能修補 M1] 將先前 migration 加入但模型未宣告的索引補回模型，保持狀態一致。
+        indexes = [
+            models.Index(fields=['clicks'], name='company_clicks_idx'),
+            models.Index(fields=['created_at'], name='company_created_at_idx'),
+        ]
 
     def __str__(self):
         return self.name

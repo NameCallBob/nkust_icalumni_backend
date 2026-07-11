@@ -10,7 +10,7 @@ class ArticleImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArticleImage
-        fields = ['id', 'image', 'pic_type']
+        fields = ['id', 'image', 'pic_type', 'priority']
 
     def create(self, validated_data):
         image_data = validated_data.pop('image', None)

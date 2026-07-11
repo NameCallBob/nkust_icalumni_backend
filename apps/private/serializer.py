@@ -5,10 +5,8 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
     def validate_email(self, value):
-        try:
-            user = Private.objects.get(email=value)
-        except Private.DoesNotExist:
-            raise serializers.ValidationError("此電子郵件未註冊")
+        # [資安修補 SEC-017] 不再因「Email 未註冊」回傳可區分的錯誤，避免帳號列舉。
+        # 僅驗證 Email 格式（EmailField 已處理），是否存在由 view 端靜默處理。
         return value
 
     def create_reset_code(self, user):

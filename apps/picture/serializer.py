@@ -60,10 +60,10 @@ class SlideImageSerializer(serializers.ModelSerializer):
 
 class PopupAdSerializer(serializers.ModelSerializer):
     image = Base64ImageField()
-    
+
     class Meta:
         model = PopupAd
-        fields = ['id', 'image', 'active', 'created_at', 'updated_at']  # 允許的字段
+        fields = ['id', 'image', 'priority', 'active', 'created_at', 'updated_at']  # 允許的字段
         read_only_fields = ['created_at', 'updated_at']  # 僅供讀取的字段
         
     def update(self, instance, validated_data):

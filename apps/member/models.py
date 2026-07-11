@@ -68,6 +68,16 @@ class Member(models.Model):
     date_joined = models.DateField(auto_now_add=True)
     is_show = models.BooleanField("是否要展示於官網", default=False)
 
+    class Meta:
+        # [效能修補 M1] 將先前 migration 加入但模型未宣告的索引補回模型，
+        # 使遷移狀態與模型一致（避免被 makemigrations 誤判為應刪除）。
+        indexes = [
+            models.Index(fields=['is_paid'], name='member_is_paid_idx'),
+            models.Index(fields=['is_show'], name='member_is_show_idx'),
+            models.Index(fields=['gender'], name='member_gender_idx'),
+            models.Index(fields=['name'], name='member_name_idx'),
+        ]
+
     def __str__(self):
         private_str = str(self.private) if self.private else "未指定帳號"
         name_str = self.name if self.name else "未命名會員"
@@ -115,9 +125,10 @@ class Member(models.Model):
         if is_active is not None:
             query &= Q(private__is_active=is_active)
         if is_show is not None:
-            query &= Q(is_show=is_active)
+            query &= Q(is_show=is_show)  # [修正] 原誤用 is_active，導致 is_show 篩選錯誤
 
-        return Member.objects.filter(query)
+        # [效能修補 H8] 一併 select_related 關聯表，避免序列化時對 private/graduate/position 產生 N+1
+        return Member.objects.filter(query).select_related('private', 'graduate', 'position')
     
 class OutstandingAlumni(models.Model):
     """
@@ -127,16 +138,61 @@ class OutstandingAlumni(models.Model):
     - is_featured: 是否展示於官網，使用 BooleanField 儲存，默認為 False。
     - highlight: 傑出事蹟摘要，使用 CharField 儲存。
     - date_awarded: 授予日期，使用 DateField 儲存，允許為空值。
+    - sort_order: 排序順序，使用 IntegerField 儲存，數字越小排序越前。
     """
     member = models.OneToOneField(
-        'Member', 
-        on_delete=models.CASCADE, 
+        'Member',
+        on_delete=models.CASCADE,
         related_name='outstanding_alumni'
     )
     achievements = models.TextField("傑出成就", blank=True, null=True)
     is_featured = models.BooleanField("是否展示於官網", default=False)
     highlight = models.CharField("傑出事蹟摘要", max_length=100)
     date_awarded = models.DateField("授予日期", blank=True, null=True)
+    sort_order = models.IntegerField("排序順序", default=0, help_text="數字越小排序越前")
+
+    class Meta:
+        ordering = ['sort_order', '-date_awarded']
+        verbose_name = "傑出系友"
+        verbose_name_plural = "傑出系友"
+        # [效能修補 M1] featured/排序為熱門查詢，加上複合索引
+        indexes = [
+            models.Index(fields=['is_featured', 'sort_order'], name='oa_featured_sort_idx'),
+        ]
 
     def __str__(self):
         return f"傑出系友 - {self.member.name}"
+
+
+class SchoolOutstandingAlumni(models.Model):
+    """
+    傑出校友
+    - member: 關聯的會員，使用 OneToOneField 連結 Member 模型。
+    - achievements: 傑出成就，使用 TextField 儲存，允許為空值。
+    - is_featured: 是否展示於官網，使用 BooleanField 儲存，默認為 False。
+    - highlight: 傑出事蹟摘要，使用 CharField 儲存。
+    - date_awarded: 授予日期，使用 DateField 儲存，允許為空值。
+    - sort_order: 排序順序，使用 IntegerField 儲存，數字越小排序越前。
+    """
+    member = models.OneToOneField(
+        'Member',
+        on_delete=models.CASCADE,
+        related_name='school_outstanding_alumni'
+    )
+    achievements = models.TextField("傑出成就", blank=True, null=True)
+    is_featured = models.BooleanField("是否展示於官網", default=False)
+    highlight = models.CharField("傑出事蹟摘要", max_length=100)
+    date_awarded = models.DateField("授予日期", blank=True, null=True)
+    sort_order = models.IntegerField("排序順序", default=0, help_text="數字越小排序越前")
+
+    class Meta:
+        ordering = ['sort_order', '-date_awarded']
+        verbose_name = "傑出校友"
+        verbose_name_plural = "傑出校友"
+        # [效能修補 M1] featured/排序為熱門查詢，加上複合索引
+        indexes = [
+            models.Index(fields=['is_featured', 'sort_order'], name='soa_featured_sort_idx'),
+        ]
+
+    def __str__(self):
+        return f"傑出校友 - {self.member.name}"

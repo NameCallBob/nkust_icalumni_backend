@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist  # [SEC-018] 涵蓋無關聯 Member 帳號
 
 from apps.product.models import Product, ProductImage , ProductCate
 from apps.product.serializer import ProductSerializer , ProductCateSerializer
@@ -25,7 +26,7 @@ class ProductViewSet(ViewSet):
         try:
             # 自動填充 company
             data['company'] = Company.objects.get(member=request.user.member).id
-        except Company.DoesNotExist:
+        except (Company.DoesNotExist, ObjectDoesNotExist):
             return Response({"error": "找不到與使用者相關的公司"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ProductSerializer(data=data)
@@ -44,7 +45,7 @@ class ProductViewSet(ViewSet):
         if not product_id:
             return Response({"error": "請提供產品ID"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            product = Product.objects.get(id=product_id,is_active = True)
+            product = Product.objects.select_related('category').prefetch_related('images').get(id=product_id, is_active=True)
         except Product.DoesNotExist:
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -65,7 +66,7 @@ class ProductViewSet(ViewSet):
             return Response({"error": "請提供系友ID"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            product = Product.objects.filter(company=Company.objects.get(member_id=member_id) , is_active=True)
+            product = Product.objects.filter(company=Company.objects.get(member_id=member_id), is_active=True).select_related('category').prefetch_related('images')
             # 按分類篩選
             if category:
                 product = product.filter(category_id=category)
@@ -101,7 +102,7 @@ class ProductViewSet(ViewSet):
             )
 
         # 基本篩選條件
-        products = Product.objects.filter(company=company)
+        products = Product.objects.filter(company=company).select_related('category').prefetch_related('images')
 
         # 按分類篩選
         if category:
@@ -133,15 +134,16 @@ class ProductViewSet(ViewSet):
             return Response({"error": "請提供產品ID"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許更新屬於當前使用者公司的產品
+            product = Product.objects.select_related('category').get(id=product_id, company__member=request.user.member)
+        except (Product.DoesNotExist, ObjectDoesNotExist, AttributeError):
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data.copy()
         try:
             # 強制更新 company 為當前使用者的公司
             data['company'] = Company.objects.get(member=request.user.member).id
-        except Company.DoesNotExist:
+        except (Company.DoesNotExist, ObjectDoesNotExist):
             return Response({"error": "找不到與使用者相關的公司"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ProductSerializer(product, data=data, partial=False)
@@ -161,15 +163,16 @@ class ProductViewSet(ViewSet):
             return Response({"error": "請提供產品ID"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許更新屬於當前使用者公司的產品
+            product = Product.objects.select_related('category').get(id=product_id, company__member=request.user.member)
+        except (Product.DoesNotExist, ObjectDoesNotExist, AttributeError):
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data.copy()
         try:
             # 強制更新 company 為當前使用者的公司
             data['company'] = Company.objects.get(member=request.user.member).id
-        except Company.DoesNotExist:
+        except (Company.DoesNotExist, ObjectDoesNotExist):
             return Response({"error": "找不到與使用者相關的公司"}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ProductSerializer(product, data=data, partial=True)
@@ -190,10 +193,11 @@ class ProductViewSet(ViewSet):
         if not product_id:
             return Response({"error": "請提供產品ID"}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            product = Product.objects.get(id=product_id)
+            # [資安修補 HIGH-2] 僅允許刪除屬於當前使用者公司的產品
+            product = Product.objects.get(id=product_id, company__member=request.user.member)
             product.delete()
             return Response({"success": "產品已刪除"}, status=status.HTTP_200_OK)
-        except Product.DoesNotExist:
+        except (Product.DoesNotExist, ObjectDoesNotExist, AttributeError):
             return Response({"error": "找不到此產品"}, status=status.HTTP_404_NOT_FOUND)
 
 from rest_framework import viewsets

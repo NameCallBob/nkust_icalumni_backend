@@ -6,9 +6,13 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+def uuid4_hex():
+    """Generate UUID without hyphens (32 chars)"""
+    return uuid.uuid4().hex
+
 class RequestLog(models.Model):
     """使用者請求日誌模型"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(primary_key=True, default=uuid4_hex, max_length=32, editable=False)
     user_id = models.CharField(max_length=100, null=True, blank=True, help_text="使用者ID或匿名標識")
     ip_address = models.GenericIPAddressField(help_text="請求IP地址")
     method = models.CharField(max_length=10, help_text="HTTP方法")
@@ -222,3 +226,23 @@ class PerformanceMetric(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.value} {self.unit} ({self.timestamp})"
+
+class ContactMessage(models.Model):
+    """聯絡我們表單訊息（公開頁面送出，供管理員後台檢視）"""
+    name = models.CharField("姓名", max_length=100)
+    email = models.EmailField("電子郵件")
+    phone = models.CharField("聯絡電話", max_length=30, blank=True, null=True)
+    message = models.TextField("訊息內容")
+    is_handled = models.BooleanField("是否已處理", default=False)
+    created_at = models.DateTimeField("建立時間", auto_now_add=True)
+
+    class Meta:
+        db_table = 'contact_messages'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['is_handled']),
+            models.Index(fields=['created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.name} <{self.email}> ({self.created_at})"

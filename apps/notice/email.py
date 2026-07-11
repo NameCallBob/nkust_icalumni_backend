@@ -30,7 +30,8 @@ def send_email_resend(subject, html_content, to_email, text_content=None):
                 "Content-Type": "application/json"
             },
             json={
-                "from": "noreply@nkusticalumni.org",
+                # [資安修補 SEC-025] 寄件人網域改由環境變數設定（預設沿用既有值）。
+                "from": os.getenv("RESEND_FROM_EMAIL", "noreply@binbinbob.work"),
                 "to": [to_email],
                 "subject": subject,
                 "html": html_content,
@@ -63,7 +64,10 @@ def send_order_email(user_email, context, subject_template, html_template):
 
     # Step 2: 若 Resend 發信失敗，嘗試使用 Django SMTP 發信
     try:
-        email = EmailMultiAlternatives(subject, text_content, 'noreply@4timeMei.com', [user_email])
+        # [資安修補 SEC-025] 修正他專案殘留的寄件人網域（4timeMei.com），改用本專案設定。
+        from django.conf import settings as _settings
+        smtp_from = getattr(_settings, 'DEFAULT_FROM_EMAIL', None) or os.getenv('EMAIL_HOST_USER')
+        email = EmailMultiAlternatives(subject, text_content, smtp_from, [user_email])
         email.attach_alternative(html_content, "text/html")
         email.send()
         return True
@@ -74,12 +78,15 @@ def send_order_email(user_email, context, subject_template, html_template):
 
 class email:
 
-    def member_account_created(user_email,password):
-        """帳號已被創造通知"""
+    def member_account_created(user_email, password=None):
+        """帳號已被創造通知。
+
+        [資安修補 MED-5] 不再於郵件中寄送明文密碼。保留 password 參數僅為相容既有呼叫，
+        實際不放入信件內容；使用者改以「忘記密碼」流程自行設定密碼。
+        """
         subject_template = f"『 歡迎加入智慧商務系 系友會！ 』帳號已創建"
         context = {}
         context['current_year'] = datetime.now().year
-        context['password'] = password
         html_template = "welcome.html"
         return send_order_email(user_email, context, subject_template, html_template)
 

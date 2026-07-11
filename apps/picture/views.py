@@ -17,7 +17,7 @@ class SelfImageViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['get'], url_path='all', permission_classes=[permissions.IsAdminUser], authentication_classes=[JWTAuthentication])
     def all(self, request):
-        queryset = SelfImage.objects.all()
+        queryset = SelfImage.objects.all().order_by('-priority', '-created_at')
         serializer = SelfImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -27,7 +27,7 @@ class SelfImageViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def selfInfo(self, request):
-        queryset = SelfImage.objects.filter(member=request.user.member.id)
+        queryset = SelfImage.objects.filter(member=request.user.member.id).order_by('-priority', '-created_at')
         serializer = SelfImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -56,8 +56,9 @@ class SelfImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['put'], url_path='change', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
-            image = SelfImage.objects.get(id=request.data.get("id"))
-        except SelfImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者的 SelfImage
+            image = SelfImage.objects.get(id=request.data.get("id"), member=request.user.member)
+        except (SelfImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = SelfImageSerializer(image, data=request.data)
         if serializer.is_valid():
@@ -72,8 +73,9 @@ class SelfImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['delete'], url_path='delete', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
-            image = SelfImage.objects.get(id=request.data.get("id"))
-        except SelfImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者的 SelfImage
+            image = SelfImage.objects.get(id=request.data.get("id"), member=request.user.member)
+        except (SelfImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -93,11 +95,12 @@ class SelfImageViewSet(viewsets.ViewSet):
     def switch_active(self, request):
         image_id = request.data.get("id")
         try:
-            image = SelfImage.objects.get(id=image_id)
+            # [資安修補 SEC-004] 僅允許切換屬於當前使用者的 SelfImage
+            image = SelfImage.objects.get(id=image_id, member=request.user.member)
             image.active = not image.active
             image.save()
             return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
-        except SelfImage.DoesNotExist:
+        except (SelfImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
@@ -110,7 +113,7 @@ class CompanyImageViewSet(viewsets.ViewSet):
     )
     @action(detail=False, methods=['get'], url_path='all', permission_classes=[permissions.IsAdminUser], authentication_classes=[JWTAuthentication])
     def all(self, request):
-        queryset = CompanyImage.objects.all()
+        queryset = CompanyImage.objects.all().order_by('-priority', '-created_at')
         serializer = CompanyImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -123,7 +126,7 @@ class CompanyImageViewSet(viewsets.ViewSet):
         from apps.company.models import Company
         try:
             company = Company.objects.get(member=request.user.member)
-            queryset = CompanyImage.objects.filter(company=company)
+            queryset = CompanyImage.objects.filter(company=company).order_by('-priority', '-created_at')
             serializer = CompanyImageSerializer(queryset, many=True)
             return Response(serializer.data)
         except Company.DoesNotExist:
@@ -162,8 +165,9 @@ class CompanyImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['put'], url_path='change', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
-            image = CompanyImage.objects.get(id=request.data.get("id"))
-        except CompanyImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者公司的 CompanyImage
+            image = CompanyImage.objects.get(id=request.data.get("id"), company__member=request.user.member)
+        except (CompanyImage.DoesNotExist, AttributeError):
             return Response({"error": "找不到指定的圖片"}, status=status.HTTP_404_NOT_FOUND)
         serializer = CompanyImageSerializer(image, data=request.data)
         if serializer.is_valid():
@@ -178,8 +182,9 @@ class CompanyImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['delete'], url_path='delete', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
-            image = CompanyImage.objects.get(id=request.data.get("id"))
-        except CompanyImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者公司的 CompanyImage
+            image = CompanyImage.objects.get(id=request.data.get("id"), company__member=request.user.member)
+        except (CompanyImage.DoesNotExist, AttributeError):
             return Response({"error": "找不到指定的圖片"}, status=status.HTTP_404_NOT_FOUND)
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -199,11 +204,12 @@ class CompanyImageViewSet(viewsets.ViewSet):
     def switch_active(self, request):
         image_id = request.data.get("id")
         try:
-            image = CompanyImage.objects.get(id=image_id)
+            # [資安修補 SEC-004] 僅允許切換屬於當前使用者公司的 CompanyImage
+            image = CompanyImage.objects.get(id=image_id, company__member=request.user.member)
             image.active = not image.active
             image.save()
             return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
-        except CompanyImage.DoesNotExist:
+        except (CompanyImage.DoesNotExist, AttributeError):
             return Response({"error": "找不到指定的圖片"}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -214,9 +220,10 @@ class ProductImageViewSet(viewsets.ViewSet):
         operation_description="取得所有 ProductImage 資料",
         responses={200: ProductImageSerializer(many=True), 401: "未授權"}
     )
-    @action(detail=False, methods=['get'], url_path='all', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
+    # [資安修補 SEC-010] 與 SelfImage/CompanyImage 的 all 一致改為僅管理員，避免一般登入者讀取全平台產品圖。
+    @action(detail=False, methods=['get'], url_path='all', permission_classes=[permissions.IsAdminUser], authentication_classes=[JWTAuthentication])
     def all(self, request):
-        queryset = ProductImage.objects.all()
+        queryset = ProductImage.objects.all().order_by('-priority', '-created_at')
         serializer = ProductImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -228,7 +235,7 @@ class ProductImageViewSet(viewsets.ViewSet):
     def selfInfo(self, request):
         from apps.company.models import Company
         queryset = ProductImage.objects.filter(
-            company=Company.objects.get(member=request.user.member))
+            company=Company.objects.get(member=request.user.member)).order_by('-priority', '-created_at')
         serializer = ProductImageSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -241,9 +248,15 @@ class ProductImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'], url_path='new', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def new(self, request):
         data = request.data.copy()
-        data['product'] = request.data.get(
-            'product_id')  # 假設前端傳遞的產品 ID 使用 `product_id`
-        print(data['product'])
+        product_id = request.data.get('product_id')  # 前端傳遞的產品 ID 使用 `product_id`
+        # [資安修補 SEC-005] 僅允許將圖片掛到屬於當前使用者公司的產品，
+        # 避免信任前端 product_id 造成跨租戶資料注入。
+        from apps.product.models import Product
+        try:
+            product = Product.objects.get(id=product_id, company__member=request.user.member)
+        except (Product.DoesNotExist, AttributeError, ValueError, TypeError):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        data['product'] = product.id
         serializer = ProductImageSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -258,8 +271,9 @@ class ProductImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['put'], url_path='change', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def change(self, request):
         try:
-            image = ProductImage.objects.get(id=request.data.get("id"))
-        except ProductImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者公司產品的 ProductImage
+            image = ProductImage.objects.get(id=request.data.get("id"), product__company__member=request.user.member)
+        except (ProductImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ProductImageSerializer(image, data=request.data)
         if serializer.is_valid():
@@ -274,8 +288,9 @@ class ProductImageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['delete'], url_path='delete', permission_classes=[permissions.IsAuthenticated], authentication_classes=[JWTAuthentication])
     def delete(self, request):
         try:
-            image = ProductImage.objects.get(id=request.data.get("id"))
-        except ProductImage.DoesNotExist:
+            # [資安修補 HIGH-2] 僅允許操作屬於當前使用者公司產品的 ProductImage
+            image = ProductImage.objects.get(id=request.data.get("id"), product__company__member=request.user.member)
+        except (ProductImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
         image.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -295,11 +310,12 @@ class ProductImageViewSet(viewsets.ViewSet):
     def switch_active(self, request):
         image_id = request.data.get("id")
         try:
-            image = ProductImage.objects.get(id=image_id)
+            # [資安修補 SEC-004] 僅允許切換屬於當前使用者公司產品的 ProductImage
+            image = ProductImage.objects.get(id=image_id, product__company__member=request.user.member)
             image.active = not image.active
             image.save()
             return Response({"status": "active status toggled", "active": image.active}, status=status.HTTP_200_OK)
-        except ProductImage.DoesNotExist:
+        except (ProductImage.DoesNotExist, AttributeError):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
@@ -310,7 +326,7 @@ class PopupAdViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]  # 預設權限為任何人可讀取
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().order_by('-priority', '-created_at')
         active = self.request.query_params.get('active')  # 從查詢參數中獲取 `active`
         if active is not None:
             queryset = queryset.filter(active=active.lower() == 'true')

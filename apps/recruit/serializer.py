@@ -15,7 +15,7 @@ class RecruitImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RecruitImage
-        fields = ['image', 'image_type']
+        fields = ['image', 'image_type', 'priority']
 
 class RecruitSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(required=False, write_only=True)  # 允許寫入但不會出現在輸出中
@@ -130,11 +130,9 @@ class RecruitSerializer(serializers.ModelSerializer):
         
         # 檢查是否直接提供了 company_name
         company_name = validated_data.pop('company_name', None)
-        print(f"直接提供的 company_name: {company_name}")  # 調試輸出
         
         # 獲取 contact 資料
         contact_data = validated_data.pop('contact', None) or {}
-        print(f"聯絡人資料: {contact_data}")  # 調試輸出
         
         images_data = validated_data.pop('images', [])
         is_contact_self = validated_data.pop('isPersonalContact', False)
@@ -157,11 +155,9 @@ class RecruitSerializer(serializers.ModelSerializer):
             # 只有在使用者實際提供了 company_name 時才更新
             if company_name is not None:
                 contact.company_name = company_name
-                print(f"正在設置 company_name 為: {company_name}")  # 調試輸出
             # 只有在 contact_data 中有 company_name 時才從中更新
             elif contact_data and 'company_name' in contact_data:
                 contact.company_name = contact_data['company_name']
-                print(f"從 contact_data 設置 company_name 為: {contact_data['company_name']}")  # 調試輸出
                 
             # 只更新有傳送的聯絡人欄位
             if contact_data:
@@ -171,7 +167,6 @@ class RecruitSerializer(serializers.ModelSerializer):
             
             # 確保保存聯絡人資料
             contact.save()
-            print(f"保存後的 company_name: {contact.company_name}")  # 調試輸出
 
             # 只有在使用者實際提供了圖片資料時才更新
             if 'images' in self.initial_data and images_data:
@@ -181,7 +176,6 @@ class RecruitSerializer(serializers.ModelSerializer):
         except ValidationError as ve:
             raise ve
         except Exception as e:
-            print(f"發生錯誤: {str(e)}")  # 調試輸出
             raise ValidationError({"error": f"發生未預期的錯誤: {str(e)}"})
         
 class RecruitSerializer_forTable(serializers.ModelSerializer):

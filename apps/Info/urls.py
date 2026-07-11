@@ -4,6 +4,7 @@ from apps.Info.views import (
     AlumniAssociationViewSet,
     ConstitutionViewSet,
     OrganizationalStructureViewSet,
+    MembershipRequirementViewSet_v2,
 )
 from apps.Info.views_pic import (
     AlumniAssociationImageViewSet,
@@ -25,5 +26,6 @@ router.register(r'associations', AlumniAssociationViewSet, basename='alumni-asso
 router.register(r'constitutions', ConstitutionViewSet, basename='constitution')
 router.register(r'structures', OrganizationalStructureViewSet, basename='organizational-structure')
 router.register(r'requirement', MembershipRequirementViewSet, basename='membership-requirement')
+router.register(r'requirement-v2', MembershipRequirementViewSet_v2, basename='membership-requirement-v2')
 
 urlpatterns = router.urls

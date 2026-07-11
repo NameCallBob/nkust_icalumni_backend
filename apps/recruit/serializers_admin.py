@@ -137,11 +137,9 @@ class RecruitSerializer(serializers.ModelSerializer):
         
         # 處理直接提供的 company_name
         company_name = validated_data.pop('company_name', None)
-        print(f"直接提供的 company_name: {company_name}")  # 調試輸出
         
         # 處理 contact 資料
         contact_data = validated_data.pop('contact', None) or {}
-        print(f"聯絡人資料: {contact_data}")  # 調試輸出
         
         images_data = validated_data.pop('images', [])
         is_contact_self = validated_data.pop('isPersonalContact', False)
@@ -159,11 +157,9 @@ class RecruitSerializer(serializers.ModelSerializer):
             # 如果直接提供了 company_name，優先使用它
             if company_name is not None:
                 contact.company_name = company_name
-                print(f"正在設置 company_name 為: {company_name}")  # 調試輸出
             # 否則使用 contact_data 中的 company_name
             elif 'company_name' in contact_data:
                 contact.company_name = contact_data['company_name']
-                print(f"從 contact_data 設置 company_name 為: {contact_data['company_name']}")  # 調試輸出
                 
             # 更新其他聯絡人資料
             for attr, value in contact_data.items():
@@ -172,7 +168,6 @@ class RecruitSerializer(serializers.ModelSerializer):
             
             # 確保保存聯絡人資料
             contact.save()
-            print(f"保存後的 company_name: {contact.company_name}")  # 調試輸出
 
             # 更新圖片資料
             if images_data:
@@ -182,7 +177,6 @@ class RecruitSerializer(serializers.ModelSerializer):
         except ValidationError as ve:
             raise ve
         except Exception as e:
-            print(f"發生錯誤: {str(e)}")  # 調試輸出
             raise ValidationError({"error": f"發生未預期的錯誤: {str(e)}"})
 
 

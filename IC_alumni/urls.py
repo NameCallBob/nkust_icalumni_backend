@@ -31,6 +31,11 @@ from rest_framework_simplejwt.views import (
 )
 
 from django.conf.urls.static import static
+from django.views.static import serve
+from django.urls import re_path
+
+# 公開聯絡我們端點
+from apps.record.contact_views import ContactCreateView
 
 
 # swagger
@@ -69,14 +74,42 @@ urlpatterns = [
     path("article/",include('apps.article.urls')),
     # 系友會簡介
     path("info/", include('apps.Info.urls')),
-    
+
     path('api/monitoring/', include('apps.record.urls')),
 
-    # API LIST
-    path('server/api/swagger/', schema_view.with_ui('swagger',
-         cache_timeout=0), name='schema-swagger-ui'),
-    path('server/api/redoc/', schema_view.with_ui('redoc',
-         cache_timeout=0), name='schema-redoc'),
+    # 聯絡我們（公開表單，前端 ContactUsPage 使用）
+    path('record/contact/', ContactCreateView.as_view(), name='contact_create'),
+
+    # SEO 相關路由
+    path('api/seo/', include('apps.seo.urls')),
+
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# [資安修補 SEC-020] API schema 文件（Swagger/Redoc）會完整揭露所有端點/參數/資料模型，
+# 大幅降低攻擊門檻。改為僅在 DEBUG 或明確設定 EXPOSE_API_DOCS=1 時對外開放。
+import os as _os
+if settings.DEBUG or _os.getenv("EXPOSE_API_DOCS", "0") == "1":
+    urlpatterns += [
+        path('server/api/swagger/', schema_view.with_ui('swagger',
+             cache_timeout=0), name='schema-swagger-ui'),
+        path('server/api/redoc/', schema_view.with_ui('redoc',
+             cache_timeout=0), name='schema-redoc'),
+    ]
+
+# 靜態檔案和媒體檔案服務（支援DEBUG=False）
+if settings.DEBUG:
+    # 開發模式下的靜態檔案服務
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # 生產模式下的靜態檔案服務（僅限開發測試用）
+    urlpatterns += [
+        re_path(r'^static/(?P<path>.*)$', serve, {
+            'document_root': settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else settings.STATIC_ROOT,
+        }),
+        re_path(r'^media/+(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+    ]
 

@@ -32,7 +32,22 @@ AUTH_USER_MODEL = 'Private.Private'
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+# [資安] 生產環境安全標頭與 Cookie 設定。
+# 以環境變數 ENABLE_HTTPS_SECURITY 控制（預設關閉，避免本機 http 開發/測試被強制導向 HTTPS 而無法登入後台）。
+# 正式部署（已有 HTTPS）時設定環境變數 ENABLE_HTTPS_SECURITY=1 即可啟用。
+SECURE_CONTENT_TYPE_NOSNIFF = True          # 防止瀏覽器 MIME 嗅探
+X_FRAME_OPTIONS = 'DENY'                      # 防點擊劫持（搭配既有 XFrameOptionsMiddleware）
+_ENABLE_HTTPS_SECURITY = os.getenv("ENABLE_HTTPS_SECURITY", "0") == "1"
+if _ENABLE_HTTPS_SECURITY:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000           # 1 年
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = [
     # 本機端
@@ -41,6 +56,7 @@ ALLOWED_HOSTS = [
     os.getenv("TEST_SERVER_IP"),
     # 實際上架伺服器
     # os.getenv("PRODUCTION_SERVER_IP"),
+    "nkust-alumni-api.binbinbob.work",
     ]
 
 
@@ -51,7 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # 'django.contrib.staticfiles',
+    'django.contrib.staticfiles',
     "django_filters",
     # RESTful API & JWT token
     'rest_framework',
@@ -71,6 +87,7 @@ INSTALLED_APPS = [
     "apps.notice.apps.NoticeConfig",
     "apps.Info.apps.InfoConfig",
     "apps.record.apps.RecordConfig",
+    "apps.seo.apps.SeoConfig",
 
     # swagger or redoc
     "drf_yasg",
@@ -86,6 +103,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/GeoLite2-Country.mmdb')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # URL標準化（處理雙斜線問題）
+    'IC_alumni.middlewares.urlNormalizeMiddleware.URLNormalizeMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -109,9 +128,10 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    # 權限：預設強制驗證，視專案需求可針對特定 view 開放 AllowAny
+    # 權限：[資安] 預設強制驗證（IsAuthenticated）；公開端點需在各 view/action 明確標註 AllowAny。
+    # 此「預設拒絕」策略可根除「忘了加權限」造成的未授權存取。
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     # 認證：JWT 為主（可視需求加入 OAuth2、SessionAuthentication 等）
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -131,10 +151,19 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.UserRateThrottle',
         'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle',
     ),
+    # [資安修補 SEC-012] 讓 DRF 節流以可信代理 hop 取得真實 client IP，
+    # 避免偽造 X-Forwarded-For 規避匿名/登入節流（預設 1 層 nginx）。
+    'NUM_PROXIES': int(os.getenv("TRUSTED_PROXY_COUNT", "1")),
     'DEFAULT_THROTTLE_RATES': {
     'user': '10000/day',
     'anon': '5000/day',
+    # [資安修補 MED-4 / HIGH-1] 針對認證類端點的嚴格節流，抑制暴力破解
+    'login': '10/min',
+    'password_reset': '5/min',
+    'register': '10/hour',
+    'contact': '20/hour',
 },
 }
 
@@ -150,13 +179,17 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
     "ALGORITHM": "HS256",
-    'SIGNING_KEY': SECRET_KEY,
+    # [資安修補 CONFIG-SECRET] JWT 簽章金鑰可與 Django SECRET_KEY 分離並獨立輪換。
+    # 若未設定 JWT_SIGNING_KEY 則沿用 SECRET_KEY（維持相容）。正式環境建議設定獨立金鑰並定期輪換。
+    'SIGNING_KEY': os.getenv("JWT_SIGNING_KEY", SECRET_KEY),
     'USER_ID_FIELD': 'id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'BLACKLIST_AFTER_ROTATION': True,
     # 設定
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-    "TOKEN_OBTAIN_SERIALIZER": "data_maintenance.serializers.Member_TokenObtainPairSerializer",
+    # [資安修補 INFO-1] 原本指向不存在的 data_maintenance.serializers，若日後接上 TokenObtainPairView 會在 import 時 500。
+    # 登入流程實際使用 LoginView + RefreshToken.for_user，故移除此死設定，改用預設序列化器。
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
 
@@ -194,6 +227,9 @@ DATABASES = {
         'PASSWORD': os.getenv("SERVER_PWD"),
         'HOST': os.getenv("SERVER_IP"),
         'PORT': os.getenv("SERVER_PORT"),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -217,13 +253,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# [資安修補 SEC-012] 可信反向代理數量。get_client_ip 只信任代理附加的最後 N 個 hop，
+# 取最右側可信 IP，避免用戶端偽造 X-Forwarded-For 規避封鎖/限流。預設 1（單層 nginx）。
+# DRF 節流的 NUM_PROXIES 同步設定，使限流取得的 IP 與監控一致。
+TRUSTED_PROXY_COUNT = int(os.getenv("TRUSTED_PROXY_COUNT", "1"))
+
 # 監控相關設定
 MONITORING = {
     'ENABLE_RATE_LIMITING': True,
     'RATE_LIMIT_WINDOW': 60,  # 秒
     'RATE_LIMIT_MAX_REQUESTS': 100,
     'LOG_RETENTION_DAYS': 30,
-    'ADMIN_EMAILS': ['robin92062574@gmail.com'],
+    # [資安修補 SEC-025] 管理員通知信箱改由環境變數設定（預設沿用既有值，可逗號分隔多個）。
+    'ADMIN_EMAILS': [e.strip() for e in os.getenv("MONITORING_ADMIN_EMAILS", "robin92062574@gmail.com").split(",") if e.strip()],
     'AUTO_CLEANUP': True,
 }
 
@@ -243,17 +285,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 
-# # 開發
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-# ]
+# 開發
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
-# # 實際架設
-# STATIC_ROOT = BASE_DIR / 'static_files'
+# 實際架設
+STATIC_ROOT = BASE_DIR / 'static_files'
 
-MEDIA_URL = '/static/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR ,'static')
 
 # Default primary key field type
@@ -264,8 +306,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS setting_開發完後要打開
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://nkusticalumni.org"
+    "https://nkusticalumni.org",
+    "https://aaic.nkust.edu.tw",
+    "https://nkust_alumni_api.binbinbob.work"
 ]
+
+# Allow all localhost origins with any port during development
+CORS_ALLOW_ALL_ORIGINS = False
+# [資安修補 SEC-026 / 2026-07-11 加強] 放寬 localhost 任意 port 僅供開發。
+# 預設關閉（fail-safe）；本機開發需要時設 ENABLE_DEV_ORIGINS=1 才會開啟，
+# 避免正式環境忘記顯式關閉而擴大瀏覽器可呼叫來源面。
+CORS_ALLOWED_ORIGIN_REGEXES = []
+if os.getenv("ENABLE_DEV_ORIGINS", "0") == "1":
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^http://localhost:\d+$",
+        r"^http://127\.0\.0\.1:\d+$",
+    ]
 
 CORS_ALLOW_METHODS = [
     'GET',
@@ -289,8 +345,6 @@ CORS_ALLOW_HEADERS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = False
-# 開發轉為True，記得上線轉為False
-CORS_ALLOW_ALL_ORIGINS = False
 
 # SMTP Service
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -299,7 +353,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'noreply_nkustICalumni@gmail.com'
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", 'noreply_nkustICalumni@gmail.com')
 
 # 管理員收到信
 ADMINS = [

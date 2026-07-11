@@ -55,3 +55,23 @@ class PerformanceMetricSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerformanceMetric
         fields = '__all__'
+
+from apps.record.models import ContactMessage
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ['id', 'name', 'email', 'phone', 'message', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+    def validate_message(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("訊息內容不可為空")
+        if len(value) > 5000:
+            raise serializers.ValidationError("訊息內容過長（上限 5000 字）")
+        return value
+
+    def validate_name(self, value):
+        if not value or not value.strip():
+            raise serializers.ValidationError("姓名不可為空")
+        return value

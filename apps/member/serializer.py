@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.member.models import Member, Position, Graduate , OutstandingAlumni
+from apps.member.models import Member, Position, Graduate, OutstandingAlumni, SchoolOutstandingAlumni
 from apps.notice.models import Notice
 from apps.private.models import Private
 from django.db import transaction
@@ -72,6 +72,23 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         fields = '__all__'
 
+    # [資安修補 SEC-001/SEC-003] 僅 staff 的請求可寫入管理性欄位（is_paid / is_show）；
+    # private_input 一律僅允許安全欄位，權限欄位（is_staff/is_superuser/is_active）與密碼
+    # 絕不可經此巢狀序列化器寫入（密碼改用專屬端點、權限改用 PrivateViewSet.adjust-account）。
+    PRIVILEGED_MEMBER_FIELDS = ('is_paid', 'is_show')
+    ALLOWED_PRIVATE_INPUT_FIELDS = ('email',)
+
+    def _is_privileged(self):
+        request = self.context.get('request') if hasattr(self, 'context') else None
+        user = getattr(request, 'user', None)
+        return bool(user and getattr(user, 'is_authenticated', False) and getattr(user, 'is_staff', False))
+
+    def _strip_privileged_fields(self, validated_data):
+        """非 staff 請求移除管理性欄位，避免會員自助竄改繳費/展示狀態。"""
+        if not self._is_privileged():
+            for field in self.PRIVILEGED_MEMBER_FIELDS:
+                validated_data.pop(field, None)
+
     def get_email(self, instance):
         private = getattr(instance, 'private', None)
         return private.email if private else None
@@ -122,15 +139,10 @@ class MemberSerializer(serializers.ModelSerializer):
             }
         return None
 
-    def check_and_set_superuser(self, member_instance, position_instance):
-        """
-        檢查 position 條件並設置/取消 superuser 權限
-        """
-        if position_instance and (position_instance.title == "管理員" or (position_instance.priority and position_instance.priority <= 3)):
-            member_instance.private.is_superuser = True
-        else:
-            member_instance.private.is_superuser = False
-        member_instance.private.save()  # 保存更改到 private 模型
+    # [資安修補 CRIT-1] 移除依前端 position 自動賦予 superuser 的邏輯。
+    # 權限（is_superuser / is_staff）絕不可由使用者可控的 position 資料推導，
+    # 否則未驗證者可透過 POST /basic/register 直接提權為 Django 超級使用者。
+    # 權限調整僅能經由受管理員保護的後台流程進行。
 
     def validate_photo(self, value):
         """
@@ -260,6 +272,9 @@ class MemberSerializer(serializers.ModelSerializer):
                         # 如果Private創建失敗，不中斷整個過程
                         private_instance = None
 
+                # [資安修補 SEC-003] 非 staff（含匿名註冊）不可自設 is_paid / is_show
+                self._strip_privileged_fields(validated_data)
+
                 # 創建會員，移除可能導致錯誤的空值
                 create_data = {}
                 for key, value in validated_data.items():
@@ -277,13 +292,7 @@ class MemberSerializer(serializers.ModelSerializer):
                 except Exception as e:
                     raise serializers.ValidationError({"detail": "會員資料格式不正確，請檢查填寫的資料"})
 
-                # 設置超級用戶權限
-                if private_instance and position_instance:
-                    try:
-                        self.check_and_set_superuser(member_instance, position_instance)
-                    except Exception as e:
-                        # 權限設置失敗，記錄但不中斷
-                        pass
+                # [資安修補 CRIT-1] 不再依 position 設定 superuser 權限。
 
                 # 創建通知設定
                 try:
@@ -327,12 +336,7 @@ class MemberSerializer(serializers.ModelSerializer):
                         except Exception:
                             position_instance = None
                     
-                    if position_instance and instance.private:
-                        try:
-                            self.check_and_set_superuser(instance, position_instance)
-                        except Exception:
-                            pass
-                    
+                    # [資安修補 CRIT-1] 不再依 position 設定 superuser 權限。
                     if position_instance:
                         instance.position = position_instance
                 except Exception as e:
@@ -360,17 +364,24 @@ class MemberSerializer(serializers.ModelSerializer):
                     # 如果graduate更新失敗，記錄但不中斷整個過程
                     pass
 
-            # 處理 private 資料，更加寬鬆
+            # 處理 private 資料
+            # [資安修補 SEC-001] 僅允許白名單欄位（email），禁止經此途徑寫入
+            # is_staff / is_superuser / is_active / password 等敏感欄位，根除自助提權。
             private_data = validated_data.pop('private_input', None)
             if private_data and instance.private:
                 try:
                     for attr, value in private_data.items():
+                        if attr not in self.ALLOWED_PRIVATE_INPUT_FIELDS:
+                            continue
                         if value is not None and value != '':
                             setattr(instance.private, attr, value)
                     instance.private.save()
                 except Exception as e:
                     # 如果private更新失敗，記錄但不中斷整個過程
                     pass
+
+            # [資安修補 SEC-003] 非 staff 不可竄改 is_paid / is_show
+            self._strip_privileged_fields(validated_data)
 
             # 更新其他欄位，過濾空值
             for attr, value in validated_data.items():
@@ -473,9 +484,9 @@ class MemberSimpleDetailSerializer(serializers.ModelSerializer):
     """
     position = serializers.SerializerMethodField()
     graduate = serializers.SerializerMethodField()
-    self_images = SelfImageSerializer(source='selfimage_set', many=True)  # 假設一個會員可以有多個 SelfImage
-    company = CompanySearchSerializer(source='member')  # 假設一個會員只關聯一家公司
-    company_images = CompanyImageSerializer(source='member.companyimage_set', many=True)
+    self_images = SelfImageSerializer(source='selfimage_set', many=True, read_only=True)  # 假設一個會員可以有多個 SelfImage
+    company = CompanySearchSerializer(read_only=True)  # 不需要指定 source，因為欄位名稱就是 company
+    company_images = CompanyImageSerializer(source='company.companyimage_set', many=True, read_only=True)
 
     class Meta:
         model = Member
@@ -519,12 +530,13 @@ class OutstandingAlumniSerializer(serializers.ModelSerializer):
         model = OutstandingAlumni
         fields = [
             'id', 'member', 'name', 'photo',
-            'achievements', 'is_featured', 'highlight', 'date_awarded','position','graduate'
+            'achievements', 'is_featured', 'highlight', 'date_awarded',
+            'position', 'graduate', 'sort_order'
         ]
         read_only_fields = ['id', 'member_name', 'photo']
 
     def get_position(self, instance):
-            position = getattr(instance, 'position', None)
+            position = getattr(instance.member, 'position', None)
             if position:
                 return {
                     "title": position.title,
@@ -532,7 +544,7 @@ class OutstandingAlumniSerializer(serializers.ModelSerializer):
             return None
 
     def get_graduate(self, instance):
-            graduate = getattr(instance, 'graduate', None)
+            graduate = getattr(instance.member, 'graduate', None)
             if graduate:
                 return {
                     "school": graduate.school,
@@ -541,6 +553,37 @@ class OutstandingAlumniSerializer(serializers.ModelSerializer):
             return None
 
 
+class SchoolOutstandingAlumniSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='member.name', read_only=True)
+    photo = serializers.ImageField(source='member.photo', read_only=True)
+    position = serializers.SerializerMethodField()
+    graduate = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SchoolOutstandingAlumni
+        fields = [
+            'id', 'member', 'name', 'photo',
+            'achievements', 'is_featured', 'highlight', 'date_awarded',
+            'position', 'graduate', 'sort_order'
+        ]
+        read_only_fields = ['id', 'member_name', 'photo']
+
+    def get_position(self, instance):
+            position = getattr(instance.member, 'position', None)
+            if position:
+                return {
+                    "title": position.title,
+                }
+            return None
+
+    def get_graduate(self, instance):
+            graduate = getattr(instance.member, 'graduate', None)
+            if graduate:
+                return {
+                    "school": graduate.school,
+                    "grade": graduate.grade
+                }
+            return None
 
 
 class MemberCreateSerializer(serializers.ModelSerializer):

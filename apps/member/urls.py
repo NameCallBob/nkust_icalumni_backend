@@ -9,6 +9,7 @@ router.register(r'any', views.MemberAnyViewSet,basename="member_anymous_func")
 router.register(r'logined', views.MemberViewSet,basename="member_func")
 router.register(r'admin' ,views.MemberAdminViewSet,basename="member_admin_func")
 router.register(r'outstanding-alumni', views.OutstandingAlumniViewSet, basename='outstanding-alumni')
+router.register(r'school-outstanding-alumni', views.SchoolOutstandingAlumniViewSet, basename='school-outstanding-alumni')
 
 urlpatterns = router.urls
 

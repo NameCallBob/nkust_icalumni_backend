@@ -11,6 +11,13 @@ class Article(models.Model):
     view_count = models.PositiveIntegerField("查看次數", default=0)
     link = models.URLField("文章連結", max_length=500, null=True, blank=True)
 
+    class Meta:
+        # [效能修補 M1] 將先前 migration 加入但模型未宣告的索引補回模型，保持狀態一致。
+        indexes = [
+            models.Index(fields=['active'], name='article_active_idx'),
+            models.Index(fields=['active', 'created_at'], name='article_active_created_idx'),
+        ]
+
     def __str__(self):
         return self.title
 
@@ -23,6 +30,7 @@ class ArticleImage(models.Model):
     article = models.ForeignKey(Article, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='article/')
     pic_type = models.CharField("圖片大小", max_length=5, choices=IMAGE_SIZE_CHOICES, default='small')
+    priority = models.IntegerField("優先度",default=0)
 
     def __str__(self):
         return f"Image for {self.article.title}"

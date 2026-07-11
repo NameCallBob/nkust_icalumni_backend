@@ -80,6 +80,10 @@ class CompanySerializer(serializers.ModelSerializer):
             'product_description', 'photo', 'website', 'address', 'email',
             'clicks', 'phone_number', 'created_at', 'member_name'
         ]
+        # [資安修補 MED-1 / IDOR] clicks、created_at 不可由前端寫入；
+        # member 亦設為唯讀，避免使用者於 selfChange 將自己的公司改綁到他人 member。
+        # 建立公司時由 view 以 serializer.save(member=...) 於伺服器端綁定。
+        read_only_fields = ('clicks', 'created_at', 'member')
         extra_kwargs = {
             'name': {'required': False, 'allow_null': True, 'allow_blank': True},
             'member': {'required': False, 'allow_null': True},

@@ -1,0 +1,62 @@
+name: CI
+
+# 純檢查用 CI：只做語法/邏輯檢查、Django check、migration 檢查、跑測試，不會部署任何東西。
+# 部署仍由人工執行。
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop, safe-backup-branch]
+
+concurrency:
+  group: ci-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Syntax, Django Checks & Tests
+    runs-on: ubuntu-latest
+    env:
+      # 純 CI 用假值，不對應任何真實環境
+      SECRET_KEY: ci-dummy-secret-key-not-for-production
+      DJANGO_SETTINGS_MODULE: apps.member.test_settings
+      ENABLE_DEV_ORIGINS: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install system deps for mysqlclient
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-libmysqlclient-dev pkg-config build-essential
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Syntax / undefined-name check (blocking)
+        # 只抓真的會炸的問題（語法錯誤、未定義變數等），不含風格檢查，
+        # 避免現有程式碼的風格問題把 CI 直接卡死。
+        run: flake8 . --select=E9,F63,F7,F82 --exclude=venv-alumni,migrations,static,static_files,system_needed
+
+      - name: Django system check
+        run: python manage.py check
+
+      - name: Detect missing migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run tests
+        run: python manage.py test

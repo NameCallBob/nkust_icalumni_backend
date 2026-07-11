@@ -8,6 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.db.models import F
 
 class RecruitPagination(PageNumberPagination):
     page_size = 10  # 每頁顯示 10 筆資料
@@ -34,7 +35,7 @@ class RecruitViewSet(viewsets.ViewSet):
     @action(methods=['get'] , detail=False , authentication_classes=[] , permission_classes=[])
     def all_active(self, request):
         """查詢所有招聘資料，並進行分頁"""
-        queryset = Recruit.objects.all().filter(active=True)
+        queryset = Recruit.objects.filter(active=True).select_related('contact').prefetch_related('images')
         paginator = RecruitPagination()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
@@ -47,7 +48,7 @@ class RecruitViewSet(viewsets.ViewSet):
     @action(methods=['get'] , detail=False , authentication_classes=[JWTAuthentication] , permission_classes=[permissions.IsAuthenticated])
     def all(self, request):
         """查詢所有招聘資料，並進行分頁"""
-        queryset = Recruit.objects.all()
+        queryset = Recruit.objects.all().select_related('contact').prefetch_related('images')
         paginator = RecruitPagination()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
@@ -60,7 +61,7 @@ class RecruitViewSet(viewsets.ViewSet):
 
     @action(methods=['get'] , detail=False , authentication_classes=[] , permission_classes=[])
     def tableOutput(self,request):
-        queryset = Recruit.objects.all().filter(active=True)
+        queryset = Recruit.objects.filter(active=True).select_related('contact')
         paginator = RecruitPagination()
         page = paginator.paginate_queryset(queryset, request)
         if page is not None:
@@ -85,7 +86,7 @@ class RecruitViewSet(viewsets.ViewSet):
             raise NotFound("Company not found for the user.")
 
         # 查詢啟用的招聘信息
-        queryset = Recruit.objects.filter(active=True, company=company)
+        queryset = Recruit.objects.filter(active=True, company=company).select_related('contact')
 
         # 分頁處理
         paginator = RecruitPagination()
@@ -117,9 +118,9 @@ class RecruitViewSet(viewsets.ViewSet):
             pk = request.query_params.get("id", '')
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
-            recruit = Recruit.objects.get(pk=pk)
-            recruit.info_clicks = recruit.info_clicks + 1 
-            recruit.save()
+            recruit = Recruit.objects.select_related('contact').prefetch_related('images').get(pk=pk)
+            Recruit.objects.filter(pk=pk).update(info_clicks=F('info_clicks') + 1)
+            recruit.info_clicks += 1
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -182,7 +183,7 @@ class RecruitViewSet(viewsets.ViewSet):
             recruit = Recruit.objects.get(pk=pk)
             
             # 檢查用戶是否有權限更新此招聘資料
-            if hasattr(request.user, 'member') and recruit.company.member != request.user.member:
+            if getattr(request.user, 'member', None) is None or recruit.company.member != request.user.member:
                 return Response({"detail": "您沒有權限更新此招聘資料"}, status=status.HTTP_403_FORBIDDEN)
                 
         except Recruit.DoesNotExist:
@@ -216,6 +217,10 @@ class RecruitViewSet(viewsets.ViewSet):
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
+
+            # [資安修補 HIGH-2] 檢查用戶是否有權限更新此招聘資料
+            if getattr(request.user, 'member', None) is None or recruit.company.member != request.user.member:
+                return Response({"detail": "您沒有權限更新此招聘資料"}, status=status.HTTP_403_FORBIDDEN)
         except Recruit.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -244,6 +249,10 @@ class RecruitViewSet(viewsets.ViewSet):
             if pk == "":
                 return Response({"msg": "Id ?"}, status=status.HTTP_400_BAD_REQUEST)
             recruit = Recruit.objects.get(pk=pk)
+
+            # [資安修補 HIGH-2] 檢查用戶是否有權限刪除此招聘資料
+            if getattr(request.user, 'member', None) is None or recruit.company.member != request.user.member:
+                return Response({"detail": "您沒有權限刪除此招聘資料"}, status=status.HTTP_403_FORBIDDEN)
         except KeyError:
             return Response("id?",status=400)
         except Recruit.DoesNotExist:

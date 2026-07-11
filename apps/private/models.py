@@ -50,7 +50,7 @@ class Private(AbstractBaseUser , PermissionsMixin):
     id = models.AutoField("id",primary_key=True)
     email = models.CharField("電子郵件", max_length=50 ,null=False,unique=True)
     password = models.CharField("密碼",max_length=100,null=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)  # [效能修補 M1] 常以 is_active 過濾
     is_staff = models.BooleanField(default=False) # a admin user; non super-user
     is_superuser = models.BooleanField(default=False) # a superuser
     last_login = models.DateTimeField(auto_now=True,null=True, blank=True)
@@ -88,7 +88,9 @@ class PasswordResetCode(models.Model):
         super().save(*args, **kwargs)
 
     def generate_code(self):
-        return ''.join(random.choices('0123456789', k=6))
+        # [資安修補 HIGH-1] 改用密碼學安全亂數（secrets），避免可預測的 random 序列。
+        import secrets
+        return ''.join(secrets.choice('0123456789') for _ in range(6))
 
     def is_expired(self):
         return timezone.now() > self.expires_at

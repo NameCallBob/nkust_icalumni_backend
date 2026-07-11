@@ -2,8 +2,10 @@ from rest_framework import viewsets, status , permissions
 from rest_framework.decorators import action , authentication_classes , permission_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
+from django.db.models import F
 from apps.article.models import Article
 from apps.article.serializer import ArticleSerializer,ArticleSerializer_TableOutput
+from IC_alumni.permission.staff import IsStaffPermission  # [資安修補 HIGH-3]
 
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
@@ -21,7 +23,7 @@ class ArticleViewSet(viewsets.ViewSet):
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def all_active(self, request):
-        queryset = Article.objects.filter(active=True).order_by('-created_at')
+        queryset = Article.objects.filter(active=True).prefetch_related('images').order_by('-created_at')
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -41,7 +43,7 @@ class ArticleViewSet(viewsets.ViewSet):
     )
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def all(self, request):
-        queryset = Article.objects.all().order_by('-created_at')
+        queryset = Article.objects.all().prefetch_related('images').order_by('-created_at')
         serializer = ArticleSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -66,8 +68,8 @@ class ArticleViewSet(viewsets.ViewSet):
         except KeyError:
             return Response({'msg': "datakey not correct!"}, status=status.HTTP_400_BAD_REQUEST)
 
-        article.view_count += 1
-        article.save()
+        Article.objects.filter(pk=article.pk).update(view_count=F('view_count') + 1)
+        article.refresh_from_db(fields=['view_count'])
 
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
@@ -80,7 +82,8 @@ class ArticleViewSet(viewsets.ViewSet):
             400: '資料無效'
         }
     )
-    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    # [資安修補 HIGH-3] 站務文章管理僅限 staff
+    @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[IsStaffPermission])
     def new(self, request):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
@@ -97,7 +100,8 @@ class ArticleViewSet(viewsets.ViewSet):
             400: '資料無效'
         }
     )
-    @action(methods=['patch'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    # [資安修補 HIGH-3] 站務文章管理僅限 staff
+    @action(methods=['patch'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[IsStaffPermission])
     def change(self, request):
         try:
             pk = request.data.get("id", '')
@@ -128,7 +132,8 @@ class ArticleViewSet(viewsets.ViewSet):
             400: '資料無效'
         }
     )
-    @action(methods=['delete'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[permissions.IsAuthenticated])
+    # [資安修補 HIGH-3] 站務文章管理僅限 staff
+    @action(methods=['delete'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[IsStaffPermission])
     def delete(self, request):
         try:
             pk = request.data.get("id", '')

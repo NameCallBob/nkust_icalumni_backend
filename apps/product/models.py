@@ -64,6 +64,10 @@ class Product(models.Model):
     class Meta:
         verbose_name = "產品"
         verbose_name_plural = "產品"
+        # [效能修補 M1] 常以 company + is_active 查詢產品
+        indexes = [
+            models.Index(fields=['company', 'is_active'], name='product_company_active_idx'),
+        ]
 
     def __str__(self):
         return self.name
@@ -84,6 +88,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images", verbose_name="所屬產品")
     image = models.ImageField(upload_to='product/', verbose_name="產品圖片")
     is_primary = models.BooleanField(default=False, verbose_name="是否為主要圖片")
+    priority = models.IntegerField("優先度",default=0)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="上傳日期")
 
     class Meta:

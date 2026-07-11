@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             name='PopularQueries',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('query', models.TextField(unique=True)),
+                ('query', models.CharField(max_length=255, unique=True)),
                 ('frequency', models.PositiveIntegerField(default=0)),
                 ('last_searched', models.DateTimeField(auto_now=True)),
                 ('category', models.CharField(blank=True, max_length=50, null=True)),

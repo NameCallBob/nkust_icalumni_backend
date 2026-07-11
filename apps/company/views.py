@@ -6,6 +6,7 @@ from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.record.func import create_query_log,increment_query_frequency
+from IC_alumni.permission.staff import IsStaffPermission  # [資安修補 HIGH-2]
 
 from rest_framework import generics
 
@@ -49,15 +50,20 @@ class CompanyListView_forAnyone(generics.ListAPIView):
             # 記錄搜索日誌
             create_query_log(query=search_term, ip=ip, search_type='general')
 
-            
-        # 檢查搜索詞是否為熱門搜索（可以在緩存中存儲和獲取）
-        # if search_term:
-        #     cache_key = f"hot_search:{search_term}"
-        #     is_hot = cache.get(cache_key, False)
-        #     if not is_hot and get_query_frequency(search_term) > 10:  # 假設熱門閾值為10
-        #         cache.set(cache_key, True, 86400)  # 緩存一天
+        # 過濾掉不顯示的會員和非活躍帳號
+        queryset = self.get_queryset().filter(
+            member__is_show=True,
+            member__private__is_active=True
+        )
         
-        return super().list(request, *args, **kwargs)
+        # 使用過濾後的queryset進行分頁
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(
         operation_description="查詢公司資料，支持多種篩選條件",
@@ -79,7 +85,8 @@ class CompanyListView_forAnyone(generics.ListAPIView):
         若未提供搜尋條件，則回傳所有公司資料，並啟用分頁。
         """
         # 為了提高性能，先獲取基本查詢集
-        queryset = Company.objects.all().select_related('industry', 'member').prefetch_related('member__graduate')
+        # [效能修補 H6] 序列化器會存取 member.position 與 member.graduate，補上 select_related 避免 N+1
+        queryset = Company.objects.all().select_related('industry', 'member', 'member__graduate', 'member__position')
         
         # 獲取所有查詢參數
         search = self.request.query_params.get('search', None)
@@ -184,11 +191,13 @@ class CompanyListView_forAnyone(generics.ListAPIView):
                 count=Count('industry')
             ).order_by('-count')[:5]
             
+            industry_id_list = [item['industry'] for item in industry_ids if item['industry']]
+            industries_map = {i.id: i for i in Industry.objects.filter(id__in=industry_id_list)}
             related_industries = []
             for item in industry_ids:
                 industry_id = item['industry']
-                if industry_id:
-                    industry = Industry.objects.get(id=industry_id)
+                if industry_id and industry_id in industries_map:
+                    industry = industries_map[industry_id]
                     related_industries.append({
                         'id': industry.id,
                         'title': industry.title,
@@ -226,8 +235,10 @@ def get_hot_searches(limit=10):
 class CompanyListView(generics.ListAPIView):
     """For管理端的公司查詢"""
     serializer_class = CompanySearchSerializer
-    authentication_classes=[]
-    permission_classes=[permissions.AllowAny]
+    # [資安修補 SEC-007] 此為管理端查詢（無 is_show/is_active 過濾且回傳 email/電話/地址），
+    # 不應對匿名開放，否則全量公司聯絡資料外洩。改為限管理員；公開查詢請用 search_any/。
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsStaffPermission]
     
     @swagger_auto_schema(
         operation_description="查詢公司資料，支持多個查詢參數進行篩選",
@@ -247,7 +258,8 @@ class CompanyListView(generics.ListAPIView):
         根據查詢參數過濾公司資料。
         支持的查詢參數有：name, member, positions, products, address, email, phone_number。
         """
-        queryset = Company.objects.all()
+        # [效能修補 H5] CompanySearchSerializer 會存取 industry/member/graduate/position，補 select_related 避免 N+1
+        queryset = Company.objects.all().select_related('industry', 'member', 'member__graduate', 'member__position')
         name = self.request.query_params.get('name', None)
         industry = self.request.query_params.get('industry', None)
         member = self.request.query_params.get('member', None)
@@ -272,8 +284,9 @@ class CompanyListView(generics.ListAPIView):
             query &= Q(email__icontains=email)
         if phone_number:
             query &= Q(phone_number__icontains=phone_number)
-        if industry:
-            query &= Q(industry = industry)
+        # [健壯性修正] industry 為 FK id，僅在為數字時過濾，避免傳入非數字（如產業名稱）造成 500
+        if industry and str(industry).isdigit():
+            query &= Q(industry_id=int(industry))
 
         return queryset.filter(query)
 
@@ -302,11 +315,16 @@ class CompanyViewSet(viewsets.ViewSet):
     )
     @action(methods=['post'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
     def new(self, request):
-        request.data['private'] = request.user.id
-        request.data['member'] = Member.objects.get(private=request.user).id
+        # [資安修補 IDOR] member 由伺服器端綁定當前使用者，不信任前端傳入值。
+        try:
+            member = Member.objects.get(private=request.user)
+        except Member.DoesNotExist:
+            return Response({"detail": "使用者尚未建立系友資料"}, status=status.HTTP_400_BAD_REQUEST)
+        if Company.objects.filter(member=member).exists():
+            return Response({"detail": "此使用者已建立公司"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(member=member)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -356,7 +374,8 @@ class CompanyViewSet(viewsets.ViewSet):
             404: '公司不存在'
         }
     )
-    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[permissions.IsAuthenticated])
+    # [資安修補 HIGH-2] 刪除任意 private 的公司屬管理員動作，限制為 staff 權限
+    @action(methods=['delete'],detail=False,authentication_classes=[JWTAuthentication],permission_classes=[IsStaffPermission])
     def delete(self, request):
         try:
             id = request.data.get("id")
@@ -368,22 +387,34 @@ class CompanyViewSet(viewsets.ViewSet):
 
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def mostView(self, request):
-        # Fetch top 10 companies with the highest click counts
-        top_companies = Company.objects.order_by('-clicks')[:10]
-        serializer = SimpleCompanySerializer(top_companies,many=True)
+        """取得點擊次數最多的前10家公司"""
+        # [效能修補 H4] select_related 避免序列化時對 member/graduate 產生 N+1
+        top_companies = Company.objects.filter(
+            member__is_show=True,
+            member__private__is_active=True
+        ).select_related('member', 'member__graduate').order_by('-clicks')[:10]
+        serializer = SimpleCompanySerializer(top_companies, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def newUpload(self, request):
-        # Fetch latest companies ordered by upload time (created_at)
-        new_companies = Company.objects.order_by('-created_at')[:10]
-        serializer = SimpleCompanySerializer(new_companies,many=True)
+        """取得最新上傳的前10家公司"""
+        # [效能修補 H4] select_related 避免 N+1
+        new_companies = Company.objects.filter(
+            member__is_show=True,
+            member__private__is_active=True
+        ).select_related('member', 'member__graduate').order_by('-created_at')[:10]
+        serializer = SimpleCompanySerializer(new_companies, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False, authentication_classes=[], permission_classes=[permissions.AllowAny])
     def randomCompanies(self, request):
-        # Fetch 10 random companies
-        random_companies = Company.objects.order_by('?')[:10]
+        """隨機取得10家公司"""
+        # [效能修補 H4] select_related 避免 N+1（order_by('?') 於資料量大時仍偏重，資料量大時建議改快取候選集）
+        random_companies = Company.objects.filter(
+            member__is_show=True,
+            member__private__is_active=True
+        ).select_related('member', 'member__graduate').order_by('?')[:10]
         serializer = SimpleCompanySerializer(random_companies, many=True)
         return Response(serializer.data)
 

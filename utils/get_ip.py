@@ -7,12 +7,20 @@ from django.core.mail import send_mail
 from django.utils import timezone
 from apps.record.models import ErrorLog, IPLimit
 
+# [效能修補 H1] GeoIP 資料庫改為「整個程序只開啟一次」並重複使用。
+# 原本每個請求都 open + parse + close mmdb 檔，是監控中介層最大的單筆開銷。
+_geoip_reader = None
+
+def _get_geoip_reader():
+    global _geoip_reader
+    if _geoip_reader is None:
+        _geoip_reader = geoip2.database.Reader(settings.GEOIP_PATH)
+    return _geoip_reader
+
 def get_country_from_ip(ip_address):
-    """使用 GeoIP2 從 IP 獲取國家信息"""
+    """使用 GeoIP2 從 IP 獲取國家信息（共用單一 Reader 實例）"""
     try:
-        reader = geoip2.database.Reader(settings.GEOIP_PATH)
-        response = reader.country(ip_address)
-        reader.close()
+        response = _get_geoip_reader().country(ip_address)
         return response.country.name
     except Exception:
         return None
