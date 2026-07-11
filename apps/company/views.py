@@ -6,11 +6,13 @@ from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.record.func import create_query_log,increment_query_frequency
+from apps.record.models import QueryLog
 from IC_alumni.permission.staff import IsStaffPermission  # [資安修補 HIGH-2]
 
 from rest_framework import generics
 
 from django.db.models import Count, Q, F
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
