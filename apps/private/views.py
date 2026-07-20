@@ -2,6 +2,7 @@
 from rest_framework.decorators import action ,permission_classes ,authentication_classes
 from rest_framework import viewsets, permissions , status
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from rest_framework.response import Response
 from django.conf import settings
@@ -11,6 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # inner
 from apps.private.serializer import PasswordResetRequestSerializer
 from apps.member.serializer import MemberSerializer
+from apps.member.views import _parse_multipart_json_fields
 
 # time
 from django.utils import timezone
@@ -226,6 +228,9 @@ class MemberRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
     throttle_scope = 'register'
+    # 前端大頭照改用 multipart/form-data 送出，global DEFAULT_PARSER_CLASSES 只有
+    # JSONParser，不加這行會直接 415，還沒進到 serializer 就擋掉了整個註冊流程。
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @swagger_auto_schema(
         operation_description="註冊新的會員",
@@ -238,7 +243,10 @@ class MemberRegisterView(APIView):
     def post(self, request):
         # [資安修補 SEC-003] 帶 context 讓序列化器判定請求者非 staff（匿名註冊），
         # 自動移除 is_paid / is_show 等管理性欄位，禁止自助設定。
-        serializer = MemberSerializer(data=request.data, context={'request': request})
+        # multipart 表單無法原生表達巢狀物件，position/graduate/private_input
+        # 若以 JSON 字串送出，這裡還原成 dict 再交給 serializer。
+        data = _parse_multipart_json_fields(request.data.copy(), ['position', 'graduate', 'private_input'])
+        serializer = MemberSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

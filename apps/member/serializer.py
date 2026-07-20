@@ -9,8 +9,7 @@ from apps.deal_base64 import Base64ImageField
 from apps.picture.serializer import SelfImageSerializer , CompanyImageSerializer
 from apps.company.serializer import CompanySearchSerializer
 
-from django.core.files.base import ContentFile
-import base64,uuid,binascii
+import base64
 from asgiref.sync import sync_to_async
 
 from django.db import transaction, connections
@@ -240,16 +239,11 @@ class MemberSerializer(serializers.ModelSerializer):
                     except Exception:
                         position_instance = None
 
-            # 處理照片，更加寬鬆
-            photo = None
-            if photo_data and isinstance(photo_data, str) and photo_data.strip():
-                try:
-                    format, imgstr = photo_data.split(';base64,')
-                    ext = format.split('/')[-1]
-                    photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')
-                except Exception as e:
-                    # 如果照片處理失敗，記錄但不中斷創建過程
-                    photo = None
+            # photo 已由 Base64ImageField.to_internal_value 驗證/壓縮成 WebP，直接使用即可
+            # （之前這裡會把它當成原始 base64 字串再 split(';base64,') 一次，
+            # 但欄位轉換後 photo_data 早已是 ContentFile/None，isinstance(..., str)
+            # 永遠是 False，導致自助註冊上傳的大頭照被靜默丟棄）
+            photo = photo_data
 
             with transaction.atomic():
                 # 處理 private 資料，更加寬鬆

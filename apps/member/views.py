@@ -42,15 +42,26 @@ def _parse_multipart_json_fields(data, field_names):
     multipart/form-data 無法原生表達巢狀物件，前端改送 FormData 時會把巢狀欄位
     （如 graduate/position）以 JSON 字串送出；這裡在交給 serializer 前還原成 dict。
     JSON 請求本身這些欄位已經是 dict，會被 json.loads 的 TypeError 擋下而原樣略過。
+
+    回傳一般 dict（而非 QueryDict）：DRF 巢狀 Serializer 欄位（如 PositionSerializer/
+    GraduateSerializer）的 get_value() 只要偵測到輸入是 QueryDict/MultiValueDict
+    （具備 getlist），就會改用 HTML 表單的 bracket/dot-notation 爬取邏輯去找
+    'position.title' 這種 key，完全忽略我們剛還原好、直接放在 'position' key 底下
+    的 dict 值，導致 required=True 的巢狀欄位一律回報「此為必需欄位」。轉成一般
+    dict 後 is_html_input() 判定為 False，才會真的用 dict.get(field_name) 取值。
     """
+    result = {}
+    for key in data.keys():
+        values = data.getlist(key) if hasattr(data, 'getlist') else [data[key]]
+        result[key] = values[-1] if len(values) == 1 else values
     for field_name in field_names:
-        value = data.get(field_name)
+        value = result.get(field_name)
         if isinstance(value, str):
             try:
-                data[field_name] = json.loads(value)
+                result[field_name] = json.loads(value)
             except (ValueError, TypeError):
                 pass
-    return data
+    return result
 
 
 class CustomPageNumberPagination(PageNumberPagination):
