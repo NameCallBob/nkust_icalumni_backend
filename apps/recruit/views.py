@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from apps.recruit.models import Recruit
 from apps.recruit.serializer import RecruitSerializer,RecruitSerializer_forTable,RecruitAdminSerializer_forTable
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 # drf_yasg
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi

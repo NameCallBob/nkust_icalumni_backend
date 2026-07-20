@@ -1,6 +1,3 @@
-import base64
-import uuid
-from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from apps.Info.models import (
@@ -15,59 +12,7 @@ from apps.Info.models import (
     MembershipRequirement_v2,
 )
 from rest_framework.exceptions import ValidationError
-
-
-class Base64ImageField(serializers.ImageField):
-    """自定義序列化器欄位，用於處理 Base64 格式的圖片"""
-
-    def to_internal_value(self, data):
-        # [資安修補 INFO-2] 加入大小上限與「以內容判斷型別」白名單，不信任前端宣稱的副檔名
-        from apps.deal_base64 import ALLOWED_IMAGE_EXTENSIONS, MAX_IMAGE_UPLOAD_SIZE
-        import imghdr
-        try:
-            if isinstance(data, str) and data.startswith("data:image"):
-                # 提取圖片內容（忽略前端宣稱的格式，改以實際內容判斷）
-                _format, imgstr = data.split(";base64,")
-                if not imgstr:
-                    raise ValidationError("無效的圖片格式或內容缺失。")
-
-                try:
-                    decoded = base64.b64decode(imgstr)
-                except (TypeError, base64.binascii.Error) as decode_error:
-                    raise ValidationError(f"圖片解碼失敗: {str(decode_error)}")
-
-                if len(decoded) > MAX_IMAGE_UPLOAD_SIZE:
-                    raise ValidationError(
-                        f"圖片大小不能超過 {MAX_IMAGE_UPLOAD_SIZE // (1024 * 1024)}MB，請壓縮後再上傳"
-                    )
-
-                ext = imghdr.what(None, decoded)
-                ext = "jpg" if ext == "jpeg" else ext
-                if ext is None and decoded[:4] == b'RIFF' and decoded[8:12] == b'WEBP':
-                    ext = "webp"
-                if ext not in ALLOWED_IMAGE_EXTENSIONS:
-                    raise ValidationError("不支援的圖片格式，僅允許 JPG、PNG、GIF、WEBP")
-
-                file_name = f"{uuid.uuid4()}.{ext}"
-                data = ContentFile(decoded, name=file_name)
-
-            return super().to_internal_value(data)
-        except (ValueError, IndexError) as parse_error:
-            raise ValidationError(f"無效的圖片數據: {str(parse_error)}")
-        except Exception as e:
-            raise ValidationError(f"圖片處理時發生未預期錯誤: {str(e)}")
-
-    def to_representation(self, value):
-        try:
-            if value:
-                with open(value.path, "rb") as image_file:
-                    base64_data = base64.b64encode(image_file.read()).decode("utf-8")
-                    return f"data:image/{value.name.split('.')[-1]};base64,{base64_data}"
-            return None
-        except FileNotFoundError:
-            raise ValidationError("圖片文件未找到或無法訪問。")
-        except Exception as e:
-            raise ValidationError(f"圖片轉換 Base64 時發生錯誤: {str(e)}")
+from apps.deal_base64 import Base64ImageField
 
 # 照片區
 

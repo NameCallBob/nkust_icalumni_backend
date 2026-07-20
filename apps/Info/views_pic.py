@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action,authentication_classes,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser , AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.shortcuts import get_object_or_404
 from apps.Info.models import (
     AlumniAssociationImage,
@@ -20,6 +21,7 @@ class BaseImageViewSet(viewsets.ViewSet):
     """基礎圖片 ViewSet"""
     model = None
     serializer_class = None
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
         return self.model.objects.all()

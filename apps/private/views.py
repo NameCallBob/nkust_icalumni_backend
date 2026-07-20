@@ -4,6 +4,7 @@ from rest_framework import viewsets, permissions , status
 from rest_framework.views import APIView
 
 from rest_framework.response import Response
+from django.conf import settings
 # check
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -70,10 +71,27 @@ class LoginView(APIView):
         if user is not None:
             # authenticate 對停用帳號預設回 None，故此處 user 必為啟用中
             refresh = RefreshToken.for_user(user)
-            return Response(
-                {'message': "OK", 'token': str(refresh.access_token), 'is_super': user.is_superuser},
+            access_token = str(refresh.access_token)
+            # [資安修補 SEC-015] token 不再放進 JSON body（避免前端存 localStorage 或任何
+            # JS 可讀取的地方），只透過 HttpOnly Set-Cookie 交付——即使頁面被 XSS 也讀不到。
+            # 同時用 get_token() 順便讓 Django 在這次回應把 csrftoken cookie 設好，前端才有
+            # 值可以讀出來塞進後續寫入請求的 X-CSRFToken header（CookieJWTAuthentication 會檢查）。
+            from django.middleware.csrf import get_token
+            get_token(request)
+            response = Response(
+                {'message': "OK", 'is_super': user.is_superuser},
                 status=200,
             )
+            response.set_cookie(
+                settings.JWT_COOKIE_NAME,
+                access_token,
+                max_age=int(settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()),
+                httponly=True,
+                secure=settings.JWT_COOKIE_SECURE,
+                samesite=settings.JWT_COOKIE_SAMESITE,
+                path='/',
+            )
+            return response
 
         # 認證失敗：僅在「密碼正確但帳號停用」時回 403，避免外部列舉
         try:
@@ -83,6 +101,32 @@ class LoginView(APIView):
         except Private.DoesNotExist:
             pass
         return Response({'error': 'failed'}, status=400)
+
+
+class LogoutView(APIView):
+    """[資安修補 SEC-015] 清除 HttpOnly JWT cookie——前端 JS 無法直接刪除 HttpOnly cookie，
+    必須靠後端這支端點用 Set-Cookie 覆蓋成過期狀態。允許未登入狀態呼叫（冪等，方便前端直接呼叫不用先判斷）。"""
+    authentication_classes = []
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        response = Response({'message': 'logged out'}, status=200)
+        response.delete_cookie(settings.JWT_COOKIE_NAME, path='/')
+        return response
+
+
+class WhoAmIView(APIView):
+    """[資安修補 SEC-015] 取代前端原本用 api/token/verify/ + localStorage 裡的 token 驗證登入狀態的
+    方式（cookie 是 HttpOnly，前端已經沒有 token 可以放進 verify 請求的 body 了）。
+    前端只要打這支、看是 200 還是 401 就知道目前的 cookie 還有沒有效，不用自己保管 token。"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # 頁面重新整理後前端會靠這支確認登入狀態，順便補發一次 csrftoken cookie
+        # （例如瀏覽器清過 cookie 只剩 access_token，或使用者是從別的分頁帶著 session 過來）。
+        from django.middleware.csrf import get_token
+        get_token(request)
+        return Response({'is_super': request.user.is_superuser}, status=200)
             
 
 class PasswordResetRequestView(APIView):

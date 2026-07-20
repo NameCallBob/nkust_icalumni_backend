@@ -49,6 +49,20 @@ if _ENABLE_HTTPS_SECURITY:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# [資安修補 SEC-015] JWT 改存 HttpOnly cookie（見 apps/private/cookie_auth.py），
+# 不再依賴前端把 token 存 localStorage（XSS 可竊取）。
+# 前後端在正式環境是不同網域（aaic.nkust.edu.tw / nkust-alumni-api...），cookie 要跨站送出
+# 必須 SameSite=None 且 Secure=True（瀏覽器規範：SameSite=None 沒有 Secure 會被直接忽略）；
+# 本機 http 開發沒有 HTTPS，SameSite=None+Secure 在 http 下無法運作，改用 Lax 且不強制 Secure。
+# 沿用既有的 _ENABLE_HTTPS_SECURITY 旗標判斷「現在是不是有真的 HTTPS 環境」。
+JWT_COOKIE_NAME = "access_token"
+JWT_COOKIE_SECURE = _ENABLE_HTTPS_SECURITY
+JWT_COOKIE_SAMESITE = "None" if _ENABLE_HTTPS_SECURITY else "Lax"
+# csrftoken cookie 同樣要能跨網域送出才能配合上面的 JWT cookie 認證；
+# CSRF_COOKIE_HTTPONLY 不可設 True，前端要能用 JS 讀出來塞進 X-CSRFToken header。
+CSRF_COOKIE_SAMESITE = "None" if _ENABLE_HTTPS_SECURITY else "Lax"
+CSRF_COOKIE_HTTPONLY = False
+
 ALLOWED_HOSTS = [
     # 本機端
     "127.0.0.1","localhost","0.0.0.0",
@@ -117,6 +131,8 @@ MIDDLEWARE = [
     # 監控
     "IC_alumni.middlewares.recordUserMiddleware.MonitoringMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # CRUD 操作記錄（apps/record/signals.py）取得操作者/IP 用
+    'IC_alumni.middlewares.currentRequestMiddleware.CurrentRequestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -133,9 +149,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    # 認證：JWT 為主（可視需求加入 OAuth2、SessionAuthentication 等）
+    # 認證：JWT 為主。[資安修補 SEC-015] 改用 CookieJWTAuthentication——
+    # 優先吃 Authorization: Bearer header（向下相容），沒有 header 才吃 HttpOnly cookie。
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'apps.private.cookie_auth.CookieJWTAuthentication',
     ),
     # CSRF 仍由 Django middleware 保護
     'DEFAULT_PARSER_CLASSES': (
@@ -342,9 +359,20 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     # ngrok 免費版服務必須標頭 (開發會為no-simple request)
     'ngrok-skip-browser-warning',
+    # [資安修補 SEC-015] cookie 認證的 CSRF token header（前端從 csrftoken cookie 讀值後附上）
+    'x-csrftoken',
 ]
 
-CORS_ALLOW_CREDENTIALS = False
+# [資安修補 SEC-015] 改 True：HttpOnly JWT cookie 要跨網域（前端/後端不同網域）送出，
+# 瀏覽器要求前端 fetch/axios 明確帶 credentials:'include'/withCredentials:true，
+# 後端則要明確允許（CORS_ALLOWED_ORIGINS 已是白名單、非萬用字元，符合允許 credentials 的前提）。
+CORS_ALLOW_CREDENTIALS = True
+
+# [資安修補 SEC-015] cookie 型 CSRF 驗證需要 Django 信任這些來源送來的「不安全」請求（POST 等）。
+# 沿用 CORS_ALLOWED_ORIGINS 同一份清單，避免兩處分別維護、漏改其中一份。
+CSRF_TRUSTED_ORIGINS = list(CORS_ALLOWED_ORIGINS)
+if os.getenv("ENABLE_DEV_ORIGINS", "0") == "1":
+    CSRF_TRUSTED_ORIGINS += ["http://localhost:3000", "http://localhost:3005", "http://127.0.0.1:3005"]
 
 # SMTP Service
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

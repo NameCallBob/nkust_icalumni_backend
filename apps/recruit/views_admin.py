@@ -6,7 +6,7 @@ from apps.recruit.models import Recruit
 from apps.private.models import Private
 from apps.company.models import Company
 from .serializers_admin import RecruitSerializer, CompanySerializer, UserSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import pandas as pd

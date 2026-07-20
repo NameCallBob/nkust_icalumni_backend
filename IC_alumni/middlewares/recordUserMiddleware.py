@@ -7,10 +7,8 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 from django.utils.deprecation import MiddlewareMixin
 from django.utils import timezone
-from django.conf import settings
-import ipaddress
 from apps.record.models import RequestLog, IPLimit, ErrorLog, PerformanceMetric, QueryLog
-from utils.get_ip import get_country_from_ip
+from utils.get_ip import get_country_from_ip, get_client_ip
 import traceback
 
 # Module-level thread pool for async logging (max 4 background workers)
@@ -291,27 +289,8 @@ class MonitoringMiddleware(MiddlewareMixin):
         return body
 
     def get_client_ip(self, request):
-        """獲取客戶端真實 IP 地址。
-
-        [資安修補 SEC-012] 不再盲信用戶端可控的 X-Forwarded-For 第一個值
-        （否則攻擊者可偽造 IP 規避封鎖/限流，並於 log 注入任意字串）。
-        僅信任反向代理附加的最後 N 個 hop（N=settings.TRUSTED_PROXY_COUNT，預設 1），
-        取最右側可信 IP；無 XFF 或格式無效時退回 REMOTE_ADDR。
-        """
-        remote_addr = request.META.get('REMOTE_ADDR')
-        num_trusted = getattr(settings, 'TRUSTED_PROXY_COUNT', 1)
-        ip = remote_addr
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for and num_trusted > 0:
-            parts = [p.strip() for p in x_forwarded_for.split(',') if p.strip()]
-            if len(parts) >= num_trusted:
-                ip = parts[-num_trusted]
-        # 驗證 IP 格式，避免被注入非法字串
-        try:
-            ipaddress.ip_address(ip)
-        except (ValueError, TypeError):
-            ip = remote_addr
-        return ip
+        """獲取客戶端真實 IP 地址（邏輯統一移至 utils.get_ip.get_client_ip，避免多處實作漂移）。"""
+        return get_client_ip(request)
 
     def determine_search_type(self, path):
         """根據路徑確定搜索類型"""

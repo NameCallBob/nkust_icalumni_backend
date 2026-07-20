@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action , authentication_classes , permission_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser , AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser

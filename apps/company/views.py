@@ -1,10 +1,11 @@
 from rest_framework import viewsets, status , permissions ,filters
 from rest_framework.response import Response
 from rest_framework.decorators import action , authentication_classes , permission_classes
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from apps.member.models import Member
 from apps.company.models import Company , Industry
 from apps.company.serializer import CompanySerializer ,IndustrySerializer , SimpleCompanySerializer,CompanySearchSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from apps.record.func import create_query_log,increment_query_frequency
 from apps.record.models import QueryLog
 from IC_alumni.permission.staff import IsStaffPermission  # [資安修補 HIGH-2]
@@ -297,6 +298,7 @@ class CompanyViewSet(viewsets.ViewSet):
     公司資料查詢
     """
     permission_classes=[permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     @swagger_auto_schema(
         operation_description="列出所有公司資料",
         responses={200: '成功返回公司列表'}

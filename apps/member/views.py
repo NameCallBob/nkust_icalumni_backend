@@ -1,11 +1,14 @@
+import json
+
 from rest_framework import viewsets, status , permissions
 from rest_framework.generics import ListAPIView
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
 from asgiref.sync import sync_to_async
 from asgiref.sync import async_to_sync
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -33,6 +36,22 @@ from drf_yasg import openapi
 from django.contrib.auth.hashers import check_password
 
 from rest_framework.pagination import PageNumberPagination
+
+def _parse_multipart_json_fields(data, field_names):
+    """
+    multipart/form-data 無法原生表達巢狀物件，前端改送 FormData 時會把巢狀欄位
+    （如 graduate/position）以 JSON 字串送出；這裡在交給 serializer 前還原成 dict。
+    JSON 請求本身這些欄位已經是 dict，會被 json.loads 的 TypeError 擋下而原樣略過。
+    """
+    for field_name in field_names:
+        value = data.get(field_name)
+        if isinstance(value, str):
+            try:
+                data[field_name] = json.loads(value)
+            except (ValueError, TypeError):
+                pass
+    return data
+
 
 class CustomPageNumberPagination(PageNumberPagination):
     """
@@ -69,6 +88,7 @@ class MemberViewSet(viewsets.ViewSet):
     - 更新登入使用者的資料 (完整或部分更新)
     - 停用登入使用者的帳號
     """
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
 
     @swagger_auto_schema(
@@ -112,7 +132,8 @@ class MemberViewSet(viewsets.ViewSet):
         更新登入使用者的資料 (完整更新)
         """
         member = get_object_or_404(Member, private=request.user)
-        serializer = MemberSerializer(member, data=request.data, context={'request': request})
+        data = _parse_multipart_json_fields(request.data.copy(), ['graduate', 'position'])
+        serializer = MemberSerializer(member, data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -132,7 +153,8 @@ class MemberViewSet(viewsets.ViewSet):
         部分更新登入使用者的資料 (PATCH)
         """
         member = get_object_or_404(Member, private=request.user)
-        serializer = MemberSerializer(member, data=request.data, partial=True, context={'request': request})
+        data = _parse_multipart_json_fields(request.data.copy(), ['graduate', 'position'])
+        serializer = MemberSerializer(member, data=data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -179,7 +201,7 @@ class MemberViewSet(viewsets.ViewSet):
         """
         新增會員資料
         """
-        data = request.data.copy()
+        data = _parse_multipart_json_fields(request.data.copy(), ['graduate', 'position'])
         data['private_input'] = request.user.id
         serializer = MemberCreateSerializer(data=data)
         if serializer.is_valid():

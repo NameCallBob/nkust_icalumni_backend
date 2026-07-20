@@ -1,11 +1,14 @@
 from rest_framework import serializers
 from concurrent.futures import ThreadPoolExecutor
 from apps.article.models import Article, ArticleImage
-import base64
-from django.core.files.base import ContentFile
+from apps.deal_base64 import Base64ImageField
 
 class ArticleImageSerializer(serializers.ModelSerializer):
-    image = serializers.CharField(required=False)  # base64 圖片欄位，可選
+    # ModelSerializer 預設把 PK 設為 read_only，會讓 ArticleSerializer.update() 用來比對
+    # 「更新既有圖片 vs 新增圖片」的 id 永遠讀不到（validated_data 會被剝除），
+    # 導致每次編輯都誤刪既有圖片、新增出沒有檔案的空白列。這裡明確宣告成非唯讀以修正。
+    id = serializers.IntegerField(required=False)
+    image = Base64ImageField(required=False, allow_null=True)
     pic_type = serializers.ChoiceField(choices=(("small", "Small"), ("large", "Large")))
 
     class Meta:
@@ -13,28 +16,16 @@ class ArticleImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'pic_type', 'priority']
 
     def create(self, validated_data):
-        image_data = validated_data.pop('image', None)
-        if image_data:
-            try:
-                format, imgstr = image_data.split(';base64,')
-                ext = format.split('/')[-1]
-                data = ContentFile(base64.b64decode(imgstr), name=f'temp.{ext}')
-                validated_data['image'] = data
-            except Exception as e:
-                # 可記錄 log.warning(f"無法處理圖片: {e}") 或略過
-                raise serializers.ValidationError(f"圖片格式錯誤: {e}")
+        # id 只用於在 ArticleSerializer.update() 比對「更新既有圖片 vs 新增圖片」，
+        # 新建時絕不可讓呼叫端指定 PK（否則可能撞號或讓資料庫指派其他文章既有的 id）。
+        validated_data.pop('id', None)
+        # image 已由 Base64ImageField.to_internal_value 驗證/壓縮成 WebP，直接使用即可
         return ArticleImage.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        image_data = validated_data.pop('image', None)
-        if image_data:
-            try:
-                format, imgstr = image_data.split(';base64,')
-                ext = format.split('/')[-1]
-                data = ContentFile(base64.b64decode(imgstr), name=f'temp.{ext}')
-                instance.image = data
-            except Exception as e:
-                raise serializers.ValidationError(f"圖片格式錯誤: {e}")
+        image = validated_data.pop('image', None)
+        if image:
+            instance.image = image
         instance.pic_type = validated_data.get('pic_type', instance.pic_type)
         instance.save()
         return instance

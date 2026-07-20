@@ -1,11 +1,34 @@
 # monitoring/utils.py
 import hashlib
+import ipaddress
 import geoip2.database
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 from apps.record.models import ErrorLog, IPLimit
+
+
+def get_client_ip(request):
+    """獲取客戶端真實 IP 地址（與 MonitoringMiddleware.get_client_ip 同一套邏輯，單一來源避免日後修補漂移）。
+
+    [資安修補 SEC-012] 不信任用戶端可控的 X-Forwarded-For 第一個值，僅信任反向代理
+    附加的最後 N 個 hop（N=settings.TRUSTED_PROXY_COUNT，預設 1），取最右側可信 IP；
+    無 XFF 或格式無效時退回 REMOTE_ADDR。
+    """
+    remote_addr = request.META.get('REMOTE_ADDR')
+    num_trusted = getattr(settings, 'TRUSTED_PROXY_COUNT', 1)
+    ip = remote_addr
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for and num_trusted > 0:
+        parts = [p.strip() for p in x_forwarded_for.split(',') if p.strip()]
+        if len(parts) >= num_trusted:
+            ip = parts[-num_trusted]
+    try:
+        ipaddress.ip_address(ip)
+    except (ValueError, TypeError):
+        ip = remote_addr
+    return ip
 
 # [效能修補 H1] GeoIP 資料庫改為「整個程序只開啟一次」並重複使用。
 # 原本每個請求都 open + parse + close mmdb 檔，是監控中介層最大的單筆開銷。

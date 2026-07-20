@@ -3,7 +3,8 @@ from drf_yasg import openapi
 
 from rest_framework import status, viewsets , permissions
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from apps.picture.models import SlideImage
 from apps.picture.serializer import  SlideImageSerializer
 from rest_framework.decorators import action
@@ -22,6 +23,7 @@ def _invalidate_slides_cache():
 
 # SlideImageViewSet
 class SlideImageViewSet(viewsets.ViewSet):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
 
     @swagger_auto_schema(

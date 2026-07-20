@@ -1,7 +1,8 @@
 from rest_framework import status, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action, authentication_classes, permission_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from apps.picture.models import SelfImage, CompanyImage, ProductImage, PopupAd
 from apps.picture.serializer import SelfImageSerializer, CompanyImageSerializer, ProductImageSerializer, PopupAdSerializer
 from drf_yasg.utils import swagger_auto_schema
@@ -10,6 +11,7 @@ from IC_alumni.permission.admin import IsAdminOrReadOnly
 
 class SelfImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @swagger_auto_schema(
         operation_description="取得所有 SelfImage 資料",
@@ -106,6 +108,7 @@ class SelfImageViewSet(viewsets.ViewSet):
 
 class CompanyImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @swagger_auto_schema(
         operation_description="取得所有 CompanyImage 資料",
@@ -215,6 +218,7 @@ class CompanyImageViewSet(viewsets.ViewSet):
 
 class ProductImageViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @swagger_auto_schema(
         operation_description="取得所有 ProductImage 資料",
@@ -324,6 +328,7 @@ class PopupAdViewSet(viewsets.ModelViewSet):
     serializer_class = PopupAdSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrReadOnly]  # 預設權限為任何人可讀取
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
         queryset = super().get_queryset().order_by('-priority', '-created_at')

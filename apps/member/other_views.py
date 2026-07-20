@@ -5,7 +5,7 @@ from rest_framework.decorators import action , authentication_classes , permissi
 from apps.member.models import Position, Graduate
 from apps.member.serializer import PositionSerializer, GraduateSerializer
 from django.shortcuts import get_object_or_404
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from IC_alumni.permission.staff import IsStaffPermission
 
 class PositionViewSet(viewsets.ViewSet):

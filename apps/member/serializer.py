@@ -635,21 +635,8 @@ class MemberCreateSerializer(serializers.ModelSerializer):
         graduate_data = validated_data.pop('graduate', None)
         private_data = validated_data.pop('private_input', None)
 
-        photo = None
-        if 'photo' in validated_data:
-            photo_data = validated_data.pop('photo')
-
-            # 確保 photo_data 是字串，否則直接使用
-            if isinstance(photo_data, str) and photo_data.strip():
-                try:
-                    format, imgstr = photo_data.split(';base64,')
-                    ext = format.split('/')[-1]
-                    photo = ContentFile(base64.b64decode(imgstr), name=f'{uuid.uuid4()}.{ext}')
-                except (ValueError, TypeError, binascii.Error) as e:
-                    # 如果照片格式錯誤，記錄但不中斷創建過程
-                    photo = None
-            elif isinstance(photo_data, ContentFile):
-                photo = photo_data
+        # photo 已由 Base64ImageField.to_internal_value 驗證/壓縮成 WebP，直接使用即可
+        photo = validated_data.pop('photo', None)
 
         # 使用同步事務處理
         with transaction.atomic():

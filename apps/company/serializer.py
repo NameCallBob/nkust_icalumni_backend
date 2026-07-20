@@ -64,13 +64,12 @@ class CompanySearchSerializer(serializers.ModelSerializer):
         return None
 
 
-import base64
-from django.core.files.base import ContentFile
+from apps.deal_base64 import Base64ImageField
 
 class CompanySerializer(serializers.ModelSerializer):
     industry = serializers.CharField(source='industry.title', required=False, allow_null=True, allow_blank=True)
     member_name = serializers.SerializerMethodField(read_only=True)
-    photo = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
+    photo = Base64ImageField(write_only=True, required=False, allow_null=True)
     photo_url = serializers.ImageField(source="photo", read_only=True)
 
     class Meta:
@@ -104,17 +103,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         industry_data = validated_data.pop('industry', None)
-        photo_data = validated_data.pop('photo', None)
-
-        photo = None
-        if photo_data:
-            try:
-                format, imgstr = photo_data.split(';base64,')
-                ext = format.split('/')[-1]
-                photo = ContentFile(base64.b64decode(imgstr), name=f"company_photo.{ext}")
-            except (ValueError, AttributeError):
-                # 如果圖片資料格式不正確，不處理圖片
-                pass
+        photo = validated_data.pop('photo', None)
 
         with transaction.atomic():
             industry_instance = None
@@ -145,15 +134,9 @@ class CompanySerializer(serializers.ModelSerializer):
                 # 如果找不到對應的產業，不更新產業欄位
                 pass
 
-        photo_data = validated_data.pop('photo', None)
-        if photo_data:
-            try:
-                format, imgstr = photo_data.split(';base64,')
-                ext = format.split('/')[-1]
-                instance.photo = ContentFile(base64.b64decode(imgstr), name=f"company_photo.{ext}")
-            except (ValueError, AttributeError):
-                # 如果圖片資料格式不正確，不更新圖片
-                pass
+        photo = validated_data.pop('photo', None)
+        if photo:
+            instance.photo = photo
 
         # 更新其他欄位，只有當值存在時才更新
         for field, value in validated_data.items():

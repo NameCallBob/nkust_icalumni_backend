@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action , permission_classes , authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny , IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from rest_framework import status
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist  # [SEC-018] 涵蓋無關聯 Member 帳號

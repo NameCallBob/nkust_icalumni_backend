@@ -1,6 +1,9 @@
+import json
+
 from rest_framework import viewsets, status , permissions
 from rest_framework.decorators import action , authentication_classes , permission_classes
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from apps.private.cookie_auth import CookieJWTAuthentication as JWTAuthentication  # [資安修補 SEC-015] alias 成 cookie-aware 版本，向下相容 header 認證
 from rest_framework.response import Response
 from django.db.models import F
 from apps.article.models import Article
@@ -12,10 +15,50 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 
+def _build_article_request_data(request):
+    """
+    JSON 請求：images 欄位本身就是巢狀陣列，直接沿用 request.data。
+
+    multipart/form-data 請求：陣列/巢狀物件無法原生表達，前端改用：
+      - images_meta：JSON 字串，例如
+        '[{"id": 3, "pic_type": "small"}, {"is_new": true, "pic_type": "large"}]'
+        （保留既有圖片只帶 id/pic_type；新圖片標記 is_new）
+      - image_<index>：對應 images_meta 陣列中該 index 的檔案（僅 is_new 項目需要）
+
+    這裡在丟給 serializer 前，把兩者重組回一般的 images 陣列，並且回傳「一般 dict」
+    （而非 QueryDict），因為 DRF 的 ListSerializer 對 QueryDict 輸入會改用
+    bracket-notation（images[0]xxx）解析，不會讀取我們直接塞入的巢狀陣列。
+    """
+    if 'images_meta' not in request.data:
+        return request.data
+
+    data = dict(request.data.items())
+    data.pop('images_meta', None)
+
+    try:
+        images_meta = json.loads(request.data.get('images_meta') or '[]')
+    except (ValueError, TypeError):
+        images_meta = []
+
+    images_data = []
+    for index, item in enumerate(images_meta):
+        entry = {'pic_type': item.get('pic_type')}
+        if item.get('id'):
+            entry['id'] = item['id']
+        file_field = f'image_{index}'
+        if file_field in request.FILES:
+            entry['image'] = request.FILES[file_field]
+        images_data.append(entry)
+
+    data['images'] = images_data
+    return data
+
+
 class ArticleViewSet(viewsets.ViewSet):
     """
     處理文章的 CRUD 操作，同時處理文章圖片
     """
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     @swagger_auto_schema(
         operation_description="查詢所有文章_已發布",
@@ -85,7 +128,8 @@ class ArticleViewSet(viewsets.ViewSet):
     # [資安修補 HIGH-3] 站務文章管理僅限 staff
     @action(methods=['post'], detail=False, authentication_classes=[JWTAuthentication], permission_classes=[IsStaffPermission])
     def new(self, request):
-        serializer = ArticleSerializer(data=request.data)
+        data = _build_article_request_data(request)
+        serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -111,7 +155,8 @@ class ArticleViewSet(viewsets.ViewSet):
         except Article.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ArticleSerializer(article, data=request.data,partial=True)
+        data = _build_article_request_data(request)
+        serializer = ArticleSerializer(article, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

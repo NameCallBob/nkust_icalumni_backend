@@ -5,11 +5,11 @@ from rest_framework import permissions, status
 import os
 import pandas as pd
 from django.conf import settings
+from django.db import IntegrityError, transaction
 from apps.private.models import Private
 from apps.notice.email import email
 import string
 import random
-from threading import Thread
 from datetime import datetime
 import pytz
 
@@ -96,16 +96,20 @@ class ConfirmAndCreateAccountsView(APIView):
             # 一律產生高強度隨機密碼，使用者須透過「忘記密碼」流程設定自己的密碼。
             password = generate_random_password(12)
 
-            # 創建帳號
+            # [資安修補 SEC-028] 建立帳號：
+            # - 用 transaction.atomic() 包裹單筆建立成 savepoint，一筆失敗不會影響同批次其他筆。
+            # - 明確接住 IntegrityError（email unique constraint）：這是「先查不存在、後建立」
+            #   中間的 race window被另一個併發請求搶先建立同 email 時會出現的情況，屬於
+            #   「已存在」而非未知錯誤，回傳乾淨訊息、不外洩原始例外文字（內部 DB 細節）。
             try:
-                user = Private.objects.create_user(email=email, password=password)
-                from apps.notice.email import email as notice_email
-                # 發送通知信
-                Thread(target=notice_email.member_account_created, args=(email, password)).start()
-
-                # 記錄成功創建的帳號
+                with transaction.atomic():
+                    Private.objects.create_user(email=email, password=password)
+                # 通知信已由 Private.objects.create_user()（apps/private/models.py）內部發送，
+                # 這裡不再重複發送（原本重複呼叫會讓使用者收到兩封一樣的建帳通知信）。
                 results["created"].append({"email": email})
-            except Exception as e:
-                results["failed"].append({"email": email, "reason": str(e)})
+            except IntegrityError:
+                results["failed"].append({"email": email, "reason": "使用者已存在"})
+            except Exception:
+                results["failed"].append({"email": email, "reason": "建立帳號失敗，請稍後再試"})
 
         return Response(results, status=status.HTTP_200_OK)

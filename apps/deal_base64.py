@@ -1,4 +1,5 @@
 import base64
+import io
 import six
 import uuid
 import os
@@ -6,12 +7,47 @@ import logging
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from django.conf import settings
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
 # [資安修補 INFO-2] 圖片上傳的型別白名單與大小上限（可由 settings 覆寫）
 ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
 MAX_IMAGE_UPLOAD_SIZE = getattr(settings, 'MAX_IMAGE_UPLOAD_SIZE', 5 * 1024 * 1024)  # 預設 5MB
+
+# 全站圖片上傳統一轉存為 WebP 以節省空間（可由 settings 覆寫品質）
+IMAGE_WEBP_QUALITY = getattr(settings, 'IMAGE_WEBP_QUALITY', 80)
+
+
+def compress_to_webp(decoded_file, quality=IMAGE_WEBP_QUALITY):
+    """將圖片位元組轉換為 WebP 並回傳壓縮後的位元組；轉換失敗則回傳原始資料。"""
+    try:
+        image = Image.open(io.BytesIO(decoded_file))
+        is_animated = getattr(image, 'is_animated', False)
+        buffer = io.BytesIO()
+
+        if is_animated:
+            frames = []
+            durations = []
+            for frame_index in range(image.n_frames):
+                image.seek(frame_index)
+                frames.append(image.convert('RGBA'))
+                durations.append(image.info.get('duration', 100))
+            frames[0].save(
+                buffer, format='WEBP', save_all=True, append_images=frames[1:],
+                duration=durations, loop=image.info.get('loop', 0), quality=quality,
+            )
+        else:
+            if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
+                image = image.convert('RGBA')
+            else:
+                image = image.convert('RGB')
+            image.save(buffer, format='WEBP', quality=quality)
+
+        return buffer.getvalue()
+    except Exception as e:
+        logger.error(f"圖片轉換 WebP 失敗，將保留原始格式: {str(e)}")
+        return decoded_file
 
 
 class Base64ImageField(serializers.ImageField):
@@ -22,6 +58,8 @@ class Base64ImageField(serializers.ImageField):
         # 檢查是否為 None 或空字串
         if data is None or data == '':
             return None
+
+        decoded_file = None
 
         # 檢查是否為 base64 字串
         if isinstance(data, six.string_types):
@@ -40,7 +78,12 @@ class Base64ImageField(serializers.ImageField):
             except Exception as e:
                 logger.error(f"圖片解碼失敗: {str(e)}")
                 self.fail('invalid_image')
+        elif hasattr(data, 'read'):
+            # multipart/form-data 上傳的真實檔案（InMemoryUploadedFile/TemporaryUploadedFile）
+            decoded_file = data.read()
+            logger.debug(f"收到 multipart 圖片檔案，大小: {len(decoded_file)} bytes")
 
+        if decoded_file is not None:
             # [資安修補 INFO-2] 大小上限，避免超大檔案造成 DoS / 佔滿磁碟
             if len(decoded_file) > MAX_IMAGE_UPLOAD_SIZE:
                 raise serializers.ValidationError(
@@ -54,6 +97,14 @@ class Base64ImageField(serializers.ImageField):
                     "不支援的圖片格式，僅允許 JPG、PNG、GIF、WEBP"
                 )
 
+            # 統一壓縮轉存為 WebP（轉換失敗則退回原始格式，避免上傳整個失敗）
+            original_size = len(decoded_file)
+            compressed_file = compress_to_webp(decoded_file)
+            if compressed_file is not decoded_file:
+                decoded_file = compressed_file
+                sniff_ext = 'webp'
+                logger.debug(f"圖片已壓縮為 WebP: {original_size} bytes -> {len(decoded_file)} bytes")
+
             # 生成檔案名稱（隨機 uuid，避免可預測路徑）
             file_name = str(uuid.uuid4())[:12]  # 12 個字符足夠用作檔案名稱
             complete_file_name = f"{file_name}.{sniff_ext}"
@@ -61,14 +112,14 @@ class Base64ImageField(serializers.ImageField):
 
             # 從解碼的數據創建檔案
             data = ContentFile(decoded_file, name=complete_file_name)
-            
+
             # 記錄檔案資訊
             logger.debug(f"已創建 ContentFile 對象: 名稱={data.name}, 大小={data.size} bytes")
-            
+
             # 預期的檔案位置
             expected_path = os.path.join(settings.MEDIA_ROOT, data.name)
             logger.debug(f"預期檔案將被保存到: {expected_path}")
-            
+
             # 檢查目錄是否存在
             directory = os.path.dirname(expected_path)
             if not os.path.exists(directory):
