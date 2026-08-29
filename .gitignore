@@ -1,36 +1,115 @@
-# 環境
+# ─────────────────────────────────────────────
+# 機密與環境變數（最高優先，絕不可提交）
+# ─────────────────────────────────────────────
+.env
+.env.*
 *.env
+!.env.example
 
-/venv_bob
-venv-alumni/
+# 金鑰、憑證
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+*credential*
+*secret*
+!apps/**/secrets.py.example
+service-account*.json
+gcp-*.json
 
-# 靜態檔案與壓縮檔
-static_files/
-static.zip
-*.zip
+# ─────────────────────────────────────────────
+# 資料庫（含個資，嚴禁提交）
+# ─────────────────────────────────────────────
+*.sql
+*.sql.gz
+*.dump
+*.bak
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+system_needed/
 
-# 後續決定將migrations做的紀錄上傳魚git方便後續資料庫迭代管控
-# /apps/*/migrations
-
-# 食譜的大容量檔案
-*.csv
-
-# BERT
-*.pth
-
-# System Record
+# ─────────────────────────────────────────────
+# 日誌（含使用者 IP 與請求記錄）
+# 注意：只鎖定根目錄的日誌資料夾。IC_alumni/log/ 是套件目錄，
+# 內含 settings.py LOGGING 引用的 rotating.py，必須保留追蹤。
+# ─────────────────────────────────────────────
+/log/
+/logs/
 *.log
 *.log.*
-*.webp
-*.xlsx
-
 daily_debug.*
+!IC_alumni/log/
+!IC_alumni/log/**
 
+# ─────────────────────────────────────────────
+# 使用者上傳的媒體檔（MEDIA_ROOT，含會員照片等個資）
+# 注意：static/admin、static/ckeditor、static/drf-yasg、
+# static/rest_framework 為框架靜態資源，需保留追蹤。
+# ─────────────────────────────────────────────
+static/article/
+static/company/
+static/company_image/
+static/info/
+static/member/
+static/member_history/
+static/popup/
+static/product/
+static/product_image/
+static/recruit/
+static/self_image/
+static/slide/
+
+# collectstatic 產物
+static_files/
+
+# ─────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 虛擬環境
+venv/
+venv-*/
+/venv_bob
+.venv/
+env/
+
+# ─────────────────────────────────────────────
+# 大型檔案與壓縮檔
+# ─────────────────────────────────────────────
+*.zip
+*.tar
+*.tar.gz
+*.csv
+*.xlsx
+*.pth
+
+# ─────────────────────────────────────────────
+# 產出圖片／文件（多為上傳內容）
+# ─────────────────────────────────────────────
 *.png
 *.jpg
 *.jpeg
+*.webp
 *.pdf
-*.sql
-# python 存取
-__pycache__/
-*.pyc
+
+# ─────────────────────────────────────────────
+# 編輯器與作業系統
+# ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+.claude/settings.local.json
