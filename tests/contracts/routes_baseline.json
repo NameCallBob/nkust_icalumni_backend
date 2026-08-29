@@ -1,0 +1,2972 @@
+{
+  "_comment": "API 路由契約基準檔——由 `python -m tests.contracts.update_baseline` 產生。請勿手動編輯。任何差異都代表對外介面或權限設定有變動。",
+  "route_count": 220,
+  "routes": {
+    "api/monitoring/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "api/monitoring/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "rest_framework.routers.APIRootView"
+    },
+    "api/monitoring/crud-logs/(?P<pk>[^/.]+)/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/crud-logs/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.CRUDLogViewSet"
+    },
+    "api/monitoring/crud-logs/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/crud-logs/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.CRUDLogViewSet"
+    },
+    "api/monitoring/errors/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "api/monitoring/errors/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.ErrorLogViewSet"
+    },
+    "api/monitoring/errors/(?P<pk>[^/.]+)/mark_handled/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "api/monitoring/errors/(?P<pk>[^/.]+)/mark_handled/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.ErrorLogViewSet"
+    },
+    "api/monitoring/errors/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "api/monitoring/errors/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.ErrorLogViewSet"
+    },
+    "api/monitoring/ip-limits/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "api/monitoring/ip-limits/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.IPLimitViewSet"
+    },
+    "api/monitoring/ip-limits/(?P<pk>[^/.]+)/block/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "api/monitoring/ip-limits/(?P<pk>[^/.]+)/block/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.IPLimitViewSet"
+    },
+    "api/monitoring/ip-limits/(?P<pk>[^/.]+)/unblock/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "api/monitoring/ip-limits/(?P<pk>[^/.]+)/unblock/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.IPLimitViewSet"
+    },
+    "api/monitoring/ip-limits/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "api/monitoring/ip-limits/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.IPLimitViewSet"
+    },
+    "api/monitoring/performance/(?P<pk>[^/.]+)/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/performance/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.PerformanceMetricViewSet"
+    },
+    "api/monitoring/performance/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/performance/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.PerformanceMetricViewSet"
+    },
+    "api/monitoring/performance/statistics/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/performance/statistics/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.PerformanceMetricViewSet"
+    },
+    "api/monitoring/popular-queries/(?P<pk>[^/.]+)/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/popular-queries/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.PopularQueryViewSet"
+    },
+    "api/monitoring/popular-queries/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/popular-queries/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.PopularQueryViewSet"
+    },
+    "api/monitoring/queries/(?P<pk>[^/.]+)/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/queries/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.QueryLogViewSet"
+    },
+    "api/monitoring/queries/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/queries/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.QueryLogViewSet"
+    },
+    "api/monitoring/queries/popular_terms/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/queries/popular_terms/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.QueryLogViewSet"
+    },
+    "api/monitoring/requests/(?P<pk>[^/.]+)/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/requests/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.RequestLogViewSet"
+    },
+    "api/monitoring/requests/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/requests/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.RequestLogViewSet"
+    },
+    "api/monitoring/requests/statistics/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "api/monitoring/requests/statistics/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.record.views.RequestLogViewSet"
+    },
+    "api/seo/robots.txt::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "api/seo/robots.txt",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.seo.views.RobotsTxtView"
+    },
+    "api/seo/search/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "api/seo/search/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.seo.views.SearchSEOView"
+    },
+    "api/seo/sitemap.xml::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "api/seo/sitemap.xml",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.seo.views.DynamicSitemapView"
+    },
+    "api/token/verify/::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "api/token/verify/",
+      "permissions": [],
+      "throttle_scope": null,
+      "view": "rest_framework_simplejwt.views.TokenVerifyView"
+    },
+    "article/all/all/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "article/all/all/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/all_active/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "article/all/all_active/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/change/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "article/all/change/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "article/all/delete/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/get_one/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "article/all/get_one/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "article/all/new/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "article/all/tableOutput/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "article/all/tableOutput/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.article.views.ArticleViewSet"
+    },
+    "basic/forgot_password::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "basic/forgot_password",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": "password_reset",
+      "view": "apps.private.views.PasswordResetRequestView"
+    },
+    "basic/forgot_verify::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "basic/forgot_verify",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": "password_reset",
+      "view": "apps.private.views.PasswordResetConfirmView"
+    },
+    "basic/login::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "basic/login",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": "login",
+      "view": "apps.private.views.LoginView"
+    },
+    "basic/logout::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "basic/logout",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.views.LogoutView"
+    },
+    "basic/private/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "basic/private/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/adjust-account/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "basic/private/adjust-account/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "basic/private/delete/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/filter/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "basic/private/filter/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/query/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "basic/private/query/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/search/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "basic/private/search/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/toggle-active/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "basic/private/toggle-active/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/update/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "basic/private/update/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private/update_password/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "basic/private/update_password/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateViewSet"
+    },
+    "basic/private_search/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "basic/private_search/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.private_views.PrivateSearchViewSet"
+    },
+    "basic/register::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "basic/register",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": "register",
+      "view": "apps.private.views.MemberRegisterView"
+    },
+    "basic/whoami::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "basic/whoami",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.private.views.WhoAmIView"
+    },
+    "company/data/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/data/all/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "company/data/delete/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/mostView/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/data/mostView/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "company/data/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/newUpload/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/data/newUpload/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/randomCompanies/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/data/randomCompanies/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/selfChange/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "company/data/selfChange/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/data/selfInfo/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/data/selfInfo/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyViewSet"
+    },
+    "company/industry/all/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/industry/all/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.IndustryViewSet"
+    },
+    "company/industry/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "company/industry/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.IndustryViewSet"
+    },
+    "company/industry/delete/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "company/industry/delete/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.IndustryViewSet"
+    },
+    "company/industry/getone/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "company/industry/getone/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.IndustryViewSet"
+    },
+    "company/industry/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "company/industry/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.IndustryViewSet"
+    },
+    "company/search/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "company/search/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyListView"
+    },
+    "company/search_any/::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "company/search_any/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.company.views.CompanyListView_forAnyone"
+    },
+    "info/association-images/create_image/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/association-images/create_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/association-images/delete_image/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/association-images/delete_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/association-images/query_active_images/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/association-images/query_active_images/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/association-images/query_all_images/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/association-images/query_all_images/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/association-images/toggle_status/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/association-images/toggle_status/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/association-images/update_image/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/association-images/update_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.AlumniAssociationImageViewSet"
+    },
+    "info/associations/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/associations/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.AlumniAssociationViewSet"
+    },
+    "info/associations/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/associations/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.AlumniAssociationViewSet"
+    },
+    "info/associations/latest/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/associations/latest/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.AlumniAssociationViewSet"
+    },
+    "info/associations/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/associations/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.AlumniAssociationViewSet"
+    },
+    "info/associations/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/associations/remove/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.AlumniAssociationViewSet"
+    },
+    "info/constitution-images/create_image/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/constitution-images/create_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitution-images/delete_image/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/constitution-images/delete_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitution-images/query_active_images/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/constitution-images/query_active_images/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitution-images/query_all_images/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/constitution-images/query_all_images/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitution-images/toggle_status/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/constitution-images/toggle_status/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitution-images/update_image/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/constitution-images/update_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.ConstitutionImageViewSet"
+    },
+    "info/constitutions/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/constitutions/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.ConstitutionViewSet"
+    },
+    "info/constitutions/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/constitutions/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.ConstitutionViewSet"
+    },
+    "info/constitutions/latest/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/constitutions/latest/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.ConstitutionViewSet"
+    },
+    "info/constitutions/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/constitutions/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.ConstitutionViewSet"
+    },
+    "info/constitutions/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/constitutions/remove/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.ConstitutionViewSet"
+    },
+    "info/requirement-images/create_image/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/requirement-images/create_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-images/delete_image/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/requirement-images/delete_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-images/query_active_images/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-images/query_active_images/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-images/query_all_images/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-images/query_all_images/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-images/toggle_status/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/requirement-images/toggle_status/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-images/update_image/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/requirement-images/update_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.MembershipRequirementImageViewSet"
+    },
+    "info/requirement-v2/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-v2/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/requirement-v2/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/detail/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-v2/detail/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/download_pdf/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-v2/download_pdf/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/latest/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement-v2/latest/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/requirement-v2/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement-v2/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/requirement-v2/remove/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet_v2"
+    },
+    "info/requirement/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet"
+    },
+    "info/requirement/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/requirement/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet"
+    },
+    "info/requirement/latest/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/requirement/latest/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet"
+    },
+    "info/requirement/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/requirement/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet"
+    },
+    "info/requirement/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/requirement/remove/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.MembershipRequirementViewSet"
+    },
+    "info/structure-images/create_image/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/structure-images/create_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structure-images/delete_image/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/structure-images/delete_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structure-images/query_active_images/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/structure-images/query_active_images/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structure-images/query_all_images/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/structure-images/query_all_images/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structure-images/toggle_status/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/structure-images/toggle_status/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structure-images/update_image/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/structure-images/update_image/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views_pic.OrganizationalStructureImageViewSet"
+    },
+    "info/structures/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/structures/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.OrganizationalStructureViewSet"
+    },
+    "info/structures/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "info/structures/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.OrganizationalStructureViewSet"
+    },
+    "info/structures/latest/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "info/structures/latest/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.OrganizationalStructureViewSet"
+    },
+    "info/structures/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "info/structures/new/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.OrganizationalStructureViewSet"
+    },
+    "info/structures/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "info/structures/remove/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.Info.views.OrganizationalStructureViewSet"
+    },
+    "member/Add_byExcel/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "member/Add_byExcel/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.deal_files.UploadExcelPreviewView"
+    },
+    "member/Add_byExcel_checked/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "member/Add_byExcel_checked/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.deal_files.ConfirmAndCreateAccountsView"
+    },
+    "member/admin/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "member/admin/change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "member/admin/delete/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/getOne/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/admin/getOne/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/newUser_basic/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/admin/newUser_basic/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/newUser_email/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/admin/newUser_email/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/partial_change/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/admin/partial_change/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/switch_active/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/admin/switch_active/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/switch_paid/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/admin/switch_paid/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/tableOutput_all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/admin/tableOutput_all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/admin/update_password/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/admin/update_password/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAdminViewSet"
+    },
+    "member/any/alumni-search/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/any/alumni-search/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAnyViewSet"
+    },
+    "member/any/get-by-grade/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/any/get-by-grade/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAnyViewSet"
+    },
+    "member/any/get-by-position/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/any/get-by-position/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAnyViewSet"
+    },
+    "member/any/getOne/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/any/getOne/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberAnyViewSet"
+    },
+    "member/graduate/create-new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/graduate/create-new/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/get-all/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/graduate/get-all/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/get-one/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/graduate/get-one/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/modify/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/graduate/modify/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/remove/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/graduate/remove/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/replace/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/graduate/replace/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/graduate/unique-grades/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/graduate/unique-grades/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.GraduateViewSet"
+    },
+    "member/logined/change/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/logined/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/logined/getOne/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/logined/getOne/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/logined/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/logined/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/logined/partial_change/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/logined/partial_change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/logined/selfInfo/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/logined/selfInfo/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/logined/update_password/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/logined/update_password/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberViewSet"
+    },
+    "member/outstanding-alumni/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "member/outstanding-alumni/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/outstanding-alumni/(?P<pk>[^/.]+)/update_sort_order/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/outstanding-alumni/(?P<pk>[^/.]+)/update_sort_order/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/outstanding-alumni/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "member/outstanding-alumni/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/outstanding-alumni/batch_update_sort_order/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/outstanding-alumni/batch_update_sort_order/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/outstanding-alumni/featured/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/outstanding-alumni/featured/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/outstanding-alumni/latest/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/outstanding-alumni/latest/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.OutstandingAlumniViewSet"
+    },
+    "member/position/create-new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/position/create-new/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/get-all/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/position/get-all/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/get-one/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/position/get-one/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/modify/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "member/position/modify/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/remove/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/position/remove/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/replace/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "member/position/replace/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/position/show-page/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/position/show-page/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.other_views.PositionViewSet"
+    },
+    "member/school-outstanding-alumni/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "member/school-outstanding-alumni/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/school-outstanding-alumni/(?P<pk>[^/.]+)/update_sort_order/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/school-outstanding-alumni/(?P<pk>[^/.]+)/update_sort_order/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/school-outstanding-alumni/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "member/school-outstanding-alumni/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/school-outstanding-alumni/batch_update_sort_order/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "member/school-outstanding-alumni/batch_update_sort_order/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/school-outstanding-alumni/featured/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/school-outstanding-alumni/featured/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/school-outstanding-alumni/latest/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "member/school-outstanding-alumni/latest/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.SchoolOutstandingAlumniViewSet"
+    },
+    "member/search/::-": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [],
+      "path": "member/search/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberListView"
+    },
+    "member/search_user/::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "member/search_user/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.member.views.MemberListViewForAll"
+    },
+    "picture/company-images/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/company-images/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/company-images/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "picture/company-images/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/company-images/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "picture/company-images/delete/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/company-images/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/company-images/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/company-images/selfInfo/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/company-images/selfInfo/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/company-images/switch_active/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/company-images/switch_active/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.CompanyImageViewSet"
+    },
+    "picture/popup-ads/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "picture/popup-ads/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.PopupAdViewSet"
+    },
+    "picture/popup-ads/(?P<pk>[^/.]+)/toggle_active/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "picture/popup-ads/(?P<pk>[^/.]+)/toggle_active/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.PopupAdViewSet"
+    },
+    "picture/popup-ads/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "picture/popup-ads/",
+      "permissions": [
+        "IsAdminOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.PopupAdViewSet"
+    },
+    "picture/product-images/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/product-images/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/product-images/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "picture/product-images/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/product-images/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "picture/product-images/delete/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/product-images/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/product-images/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/product-images/selfInfo/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/product-images/selfInfo/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/product-images/switch_active/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/product-images/switch_active/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.ProductImageViewSet"
+    },
+    "picture/self-images/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/self-images/all/",
+      "permissions": [
+        "IsAdminUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/self-images/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "picture/self-images/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/self-images/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "picture/self-images/delete/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/self-images/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/self-images/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/self-images/selfInfo/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/self-images/selfInfo/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/self-images/switch_active/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/self-images/switch_active/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.views.SelfImageViewSet"
+    },
+    "picture/slide-images/active/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/slide-images/active/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/add/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/slide-images/add/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/slide-images/all/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/change/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "picture/slide-images/change/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/getOne_active/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/slide-images/getOne_active/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/getOne_auth/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "picture/slide-images/getOne_auth/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "picture/slide-images/remove/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "picture/slide-images/switch_active/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "picture/slide-images/switch_active/",
+      "permissions": [
+        "IsStaffPermission"
+      ],
+      "throttle_scope": null,
+      "view": "apps.picture.slide_views.SlideImageViewSet"
+    },
+    "product/categories/(?P<pk>[^/.]+)/::DELETE,GET,PATCH,PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE",
+        "GET",
+        "PATCH",
+        "PUT"
+      ],
+      "path": "product/categories/(?P<pk>[^/.]+)/",
+      "permissions": [
+        "IsAuthenticatedOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductCateViewSet"
+    },
+    "product/categories/::GET,POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "path": "product/categories/",
+      "permissions": [
+        "IsAuthenticatedOrReadOnly"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductCateViewSet"
+    },
+    "product/data/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "product/data/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/getOne/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "product/data/getOne/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/member/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "product/data/member/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "product/data/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/partial_change/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "product/data/partial_change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/remove/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "product/data/remove/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "product/data/selfCompany/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "product/data/selfCompany/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.product.views.ProductViewSet"
+    },
+    "record/contact/::-": {
+      "authentication": [],
+      "methods": [],
+      "path": "record/contact/",
+      "permissions": [
+        "AllowAny"
+      ],
+      "throttle_scope": "contact",
+      "view": "apps.record.contact_views.ContactCreateView"
+    },
+    "recruit/admin/admin/all_recruits/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/admin/admin/all_recruits/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/companies/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/admin/admin/companies/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/create/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "recruit/admin/admin/create/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "recruit/admin/admin/delete/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/export/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/admin/admin/export/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/getOne/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/admin/admin/getOne/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/update/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "recruit/admin/admin/update/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/admin/admin/users/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/admin/admin/users/",
+      "permissions": [
+        "IsAdminOrSuperUser"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views_admin.AdminRecruitViewSet"
+    },
+    "recruit/data/all/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/data/all/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/all_active/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/data/all_active/",
+      "permissions": [],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/change/::PUT": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PUT"
+      ],
+      "path": "recruit/data/change/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/delete/::DELETE": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "DELETE"
+      ],
+      "path": "recruit/data/delete/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/getOne/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/data/getOne/",
+      "permissions": [],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/new/::POST": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "POST"
+      ],
+      "path": "recruit/data/new/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/patch_recruit/::PATCH": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "PATCH"
+      ],
+      "path": "recruit/data/patch_recruit/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/tableOutput/::GET": {
+      "authentication": [],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/data/tableOutput/",
+      "permissions": [],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    },
+    "recruit/data/tableOutput_admin/::GET": {
+      "authentication": [
+        "CookieJWTAuthentication"
+      ],
+      "methods": [
+        "GET"
+      ],
+      "path": "recruit/data/tableOutput_admin/",
+      "permissions": [
+        "IsAuthenticated"
+      ],
+      "throttle_scope": null,
+      "view": "apps.recruit.views.RecruitViewSet"
+    }
+  }
+}
