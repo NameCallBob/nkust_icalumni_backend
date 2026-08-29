@@ -31,6 +31,13 @@ AUTH_USER_MODEL = 'Private.Private'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+# [資安 2026-08-29] SECRET_KEY 輪換緩衝。
+# 把舊金鑰放進 SECRET_KEY_FALLBACKS，輪換期間既有 session 與簽章仍能驗證，
+# 使用者不會被強制登出。待舊 session 自然過期（建議兩週）後，
+# 從 .env 移除 OLD_SECRET_KEY 即可完成輪換。
+_old_secret_key = os.getenv("OLD_SECRET_KEY")
+SECRET_KEY_FALLBACKS = [_old_secret_key] if _old_secret_key else []
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
