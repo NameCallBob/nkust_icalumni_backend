@@ -1,0 +1,35 @@
+[run]
+branch = True
+source = apps,IC_alumni,utils
+omit =
+    */migrations/*
+    */tests/*
+    */test_*.py
+    */tests.py
+    */__pycache__/*
+    */venv-alumni/*
+    */static/*
+    */static_files/*
+    manage.py
+    IC_alumni/wsgi.py
+    IC_alumni/asgi.py
+
+[report]
+# 覆蓋率門檻：低於此值 CI 失敗。調高時請連同 CI 一起調，不要只改一邊。
+fail_under = 55
+show_missing = True
+skip_covered = False
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+[html]
+directory = reports/coverage-html
+
+[xml]
+output = reports/coverage.xml

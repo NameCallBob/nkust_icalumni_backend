@@ -113,3 +113,10 @@ Thumbs.db
 .vscode/
 *.swp
 .claude/settings.local.json
+
+# ── 測試產物 ──
+reports/
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/

@@ -1,16 +1,7 @@
-"""測試專用設定"""
-from IC_alumni.settings import *
+"""相容用 shim：測試設定已移至 `tests/settings_test.py`。
 
-# 使用 SQLite 作為測試資料庫
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-    }
-}
-
-# 關閉 DEBUG 模式以獲得更真實的測試環境
-DEBUG = False
-
-# 簡化密碼驗證器以加快測試速度
-AUTH_PASSWORD_VALIDATORS = []
+保留這個模組是因為既有的指令、CI 設定與文件都寫著
+`DJANGO_SETTINGS_MODULE=apps.member.test_settings`。新的設定加在
+`tests/settings_test.py`，不要加在這裡。
+"""
+from tests.settings_test import *  # noqa: F401,F403
