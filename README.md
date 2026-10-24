@@ -27,7 +27,7 @@
 | `apps/product` | 企業產品/服務展示 |
 | `apps/recruit` | 徵才資訊發布與查詢 |
 | `apps/picture` | 首頁輪播圖、彈跳廣告、圖片素材管理 |
-| `apps/article` | 電子報／文章發布（CKEditor 富文本） |
+| `apps/article` | 電子報／文章發布（HTML 內容，前端以 react-quill 編輯） |
 | `apps/Info` | 系友會簡介、加入辦法、章程、幹部等靜態內容管理 |
 | `apps/notice` | 系統通知信（帳號建立、忘記密碼、登入通知），透過 Resend API 寄送，SMTP 為備援 |
 | `apps/record` | 請求監控/存取記錄、聯絡表單 |
@@ -40,7 +40,6 @@
 - **MySQL**（`mysqlclient`）— 主資料庫
 - **Redis**（`django-redis`）— 快取
 - **drf-yasg** — Swagger / Redoc API 文件（僅在 `DEBUG` 或 `EXPOSE_API_DOCS=1` 時對外開放）
-- **django-ckeditor** — 文章/簡介富文本編輯
 - **Resend**（`resend`）— 交易型郵件主要通道，SMTP 為備援
 - **GeoIP2**（MaxMind GeoLite2）— 依 IP 取得國別，用於監控/風控
 - **gunicorn** + **whitenoise** — 正式環境伺服應用與靜態檔
@@ -54,7 +53,7 @@ IC_alumni/
 ├── IC_alumni/              # 專案設定（settings.py, urls.py, middlewares/, permission/, log/）
 ├── apps/                   # 各業務模組（見上表）
 ├── geoip/                  # GeoLite2 資料庫
-├── static/                 # 靜態資源（ckeditor、drf-yasg 等第三方套件靜態檔）
+├── static/                 # 靜態資源（drf-yasg 等第三方套件靜態檔）
 ├── requirements.txt        # 套件需求清單
 ├── run_gunicorn.sh         # 正式環境啟動腳本
 ├── .github/workflows/ci.yml# CI：語法檢查、Django check、migration 檢查、測試
@@ -128,7 +127,7 @@ python manage.py test
 - 圖片/檔案上傳採內容嗅探（非僅信任副檔名）與大小限制。
 - `X-Forwarded-For` 僅信任 `TRUSTED_PROXY_COUNT` 指定層數之後的 hop，避免用戶端偽造來源 IP。
 
-完整歷史稽核紀錄與修補明細見 `SECURITY_PERFORMANCE_REPORT.md`。已知待辦（非阻斷）：CKEditor 4 已無官方安全更新、需評估升級至 CKEditor 5；金鑰輪換排程。
+完整歷史稽核紀錄與修補明細見 `SECURITY_PERFORMANCE_REPORT.md`。已知待辦（非阻斷）：CKEditor 4 已移除（富文本欄位改為 TextField 存 HTML）；金鑰輪換排程。
 
 ## CI
 

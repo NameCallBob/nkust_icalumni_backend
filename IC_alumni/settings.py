@@ -113,7 +113,6 @@ INSTALLED_APPS = [
     # swagger or redoc
     "drf_yasg",
     # for article release
-    'ckeditor',
     # CORS
     'corsheaders',
 

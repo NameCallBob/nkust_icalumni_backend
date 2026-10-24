@@ -1,9 +1,8 @@
 from django.db import models
-from ckeditor.fields import RichTextField
 
 class AlumniAssociation(models.Model):
     """系友會基本資料"""
-    description = RichTextField(verbose_name="簡介", help_text="支援 HTML 標籤")
+    description = models.TextField(verbose_name="簡介", help_text="支援 HTML 標籤")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
@@ -29,7 +28,7 @@ class AlumniAssociationImage(models.Model):
 
 class Constitution(models.Model):
     """系友會章程（PDF格式）"""
-    description = RichTextField()
+    description = models.TextField()
     pdf_file = models.FileField(upload_to="info/constitutions/", verbose_name="章程 PDF 檔案")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
@@ -56,7 +55,7 @@ class ConstitutionImage(models.Model):
 
 class OrganizationalStructure(models.Model):
     """系友會組織架構"""
-    description = RichTextField(verbose_name="職責描述", help_text="支援 HTML 標籤")
+    description = models.TextField(verbose_name="職責描述", help_text="支援 HTML 標籤")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
@@ -83,7 +82,7 @@ class OrganizationalStructureImage(models.Model):
 # 舊版
 class MembershipRequirement(models.Model):
     """系友會入會方式"""
-    description = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
+    description = models.TextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")
 
@@ -109,7 +108,7 @@ class MembershipRequirementImage(models.Model):
 #
 class MembershipRequirement_v2(models.Model):
     """系友會入會方式"""
-    description = RichTextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
+    description = models.TextField(verbose_name="入會條件", help_text="支援 HTML 標籤")
     pdf_file = models.FileField(upload_to="info/membership_requirement_v2/", verbose_name="入會條件 PDF 檔案")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立時間")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新時間")

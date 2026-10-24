@@ -1,6 +1,5 @@
 from django.db import models
 from apps.company.models import Company
-from ckeditor.fields import RichTextField
 
 # 圖片上傳路徑
 def upload_to_images(instance, filename):
@@ -10,7 +9,7 @@ def upload_to_images(instance, filename):
 class Recruit(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE , related_name='recruits',null=True)
     title = models.CharField(max_length=50)
-    intro = RichTextField()
+    intro = models.TextField()
     info_clicks = models.IntegerField(default=0)
     deadline = models.DateField()
     release_date = models.DateField(auto_now_add=True)

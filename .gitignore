@@ -49,7 +49,7 @@ daily_debug.*
 
 # ─────────────────────────────────────────────
 # 使用者上傳的媒體檔（MEDIA_ROOT，含會員照片等個資）
-# 注意：static/admin、static/ckeditor、static/drf-yasg、
+# 注意：static/admin、static/drf-yasg、
 # static/rest_framework 為框架靜態資源，需保留追蹤。
 # ─────────────────────────────────────────────
 static/article/

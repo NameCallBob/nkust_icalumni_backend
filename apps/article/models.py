@@ -1,9 +1,8 @@
 from django.db import models
-from ckeditor.fields import RichTextField
 
 class Article(models.Model):
     title = models.CharField(max_length=200)
-    content = RichTextField()  # 支援 HTML
+    content = models.TextField()  # 支援 HTML
     active = models.BooleanField("是否公開")
     created_at = models.DateTimeField(auto_now_add=True)
     publish_at = models.DateTimeField("發布時間", null=True, blank=True)
