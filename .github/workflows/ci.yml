@@ -6,10 +6,8 @@ name: CI
 # 全部測試皆為離線執行（SQLite in-memory、locmem 郵件、封鎖對外連線），
 # 因此這裡不需要 MySQL/Redis service container，也不會碰到任何真實資料或寄出郵件。
 
+# CI 已停用自動觸發（2026-10），僅保留手動執行；GitHub Actions 亦已在 repo 設定關閉。
 on:
-  pull_request:
-  push:
-    branches: [main, develop, safe-backup-branch]
   workflow_dispatch:
 
 concurrency:
