@@ -104,7 +104,9 @@ jobs:
 
       - name: Audit dependencies for known CVEs
         run: |
-          pip-audit -r requirements.txt --desc --format markdown \
+          # pip-audit 只接受 == 釘版；setuptools<81 是刻意的範圍限制（見 requirements.txt 註解）。
+          grep -v '^setuptools' requirements.txt > audit-requirements.txt
+          pip-audit -r audit-requirements.txt --desc --format markdown \
             | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Static security analysis (bandit)

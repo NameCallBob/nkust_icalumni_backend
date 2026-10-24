@@ -36,7 +36,8 @@ def send_email_resend(subject, html_content, to_email, text_content=None):
                 "subject": subject,
                 "html": html_content,
                 "text": text_content or ""
-            }
+            },
+            timeout=10,
         )
         if response.status_code == 200:
             return True

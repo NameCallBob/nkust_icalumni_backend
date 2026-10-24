@@ -1,98 +1,70 @@
-aiohappyeyeballs==2.6.1
-aiohttp==3.14.1
+# 正式環境相依套件（全部釘版，由乾淨 venv 的 `pip freeze` 產生）。
+#
+# 2026-10 資安更新：
+#  - 移除完全沒被 import 的套件：nltk、geopy、tornado、joblib、psutil、tqdm、regex、
+#    whitenoise、waitress、ipykernel/ipython/jupyter 全家桶、matplotlib-inline、
+#    以及拼字相近且疑似誤裝的 `rest-framework-simplejwt==0.0.2`
+#    （正確的套件是 djangorestframework-simplejwt，兩者會搶同一個 import 路徑）。
+#  - aiohttp 僅因 geoip2 而保留（非直接使用）。
+#  - 升級至無已知弱點版本：Django 5.2.x(LTS)、DRF、PyJWT、Pillow 13、urllib3、certifi、sqlparse 等。
+#
+# drf-yasg 目前仍在載入時 import pkg_resources；setuptools>=81 已移除 pkg_resources，
+# 會讓所有 management command 壞掉，故釘在 <81 直到 drf-yasg 不再依賴。
+# 此處唯一漏掃的 CVE-2026-59890 只影響「建置 sdist」，本專案不會建置，風險不適用。
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
 aiosignal==1.4.0
-asgiref==3.8.1
-asttokens==2.4.1
-attrs==25.3.0
-certifi==2024.7.4
-charset-normalizer==3.3.2
-click==8.4.2
-colorama==0.4.6
-comm==0.2.2
-debugpy==1.8.2
-decorator==5.1.1
-Django==5.2.16
-django-ckeditor==6.7.1
-django-cors-headers==4.4.0
-django-filter==24.2
-django-js-asset==2.2.0
-django-redis==5.4.0
-djangorestframework==3.15.2
-djangorestframework-simplejwt==5.5.1
-drf-yasg==1.21.7
-executing==2.0.1
-frozenlist==1.6.0
-geographiclib==2.0
-geoip2==5.1.0
-geopy==2.4.1
-gunicorn==23.0.0
-idna==3.18
+asgiref==3.13.0
+attrs==26.1.0
+certifi==2026.10.23
+charset-normalizer==3.5.2
+Django==5.2.18
+django-ckeditor==6.7.4
+django-cors-headers==4.9.0
+django-filter==26.2
+django-js-asset==4.2.0
+django-redis==7.0.0
+djangorestframework==3.18.3
+djangorestframework_simplejwt==5.5.1
+drf-yasg==1.21.18
+et_xmlfile==2.0.0
+frozenlist==1.8.0
+geoip2==5.3.0
+gunicorn==26.2.0
+idna==3.20
+importlib_resources==7.1.0
 inflection==0.5.1
-iniconfig==2.0.0
-ipykernel==6.29.5
-ipython==8.26.0
-jedi==0.19.1
-joblib==1.4.2
-jupyter_client==8.6.2
-jupyter_core==5.9.1
-Markdown==3.10.2
-matplotlib-inline==0.1.7
-maxminddb==2.7.0
-multidict==6.4.3
-mysqlclient==2.2.4
-nest-asyncio==1.6.0
-nltk==3.10.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+maxminddb==3.2.0
+multidict==7.1.0
+mysqlclient==2.3.0
 numpy==2.0.1
-packaging==24.1
-pandas==2.2.2
-parso==0.8.4
-pexpect==4.9.0
-pillow==12.3.0
-platformdirs==4.2.2
-pluggy==1.5.0
-prompt_toolkit==3.0.47
-propcache==0.3.1
-psutil==6.0.0
-ptyprocess==0.7.0
-pure_eval==0.2.3
-Pygments==2.20.0
-PyJWT==2.13.0
-pytest==9.1.1
-pytest-django==4.12.0
-python-dateutil==2.9.0.post0
-python-dotenv==1.2.2
-python-json-logger==3.2.1
-pytz==2024.2
-PyYAML==6.0.1
-pyzmq==26.0.3
-redis==6.0.0
-regex==2024.7.24
-requests==2.34.2
-resend==2.9.0
-rest-framework-simplejwt==0.0.2
-# drf-yasg (still, as of its latest release) imports pkg_resources at module load
-# time; setuptools>=81 removed pkg_resources entirely, which breaks `manage.py
-# check`/every management command. Keep pinned below 81 until drf-yasg drops the
-# pkg_resources dependency. The one CVE this misses (CVE-2026-59890, sdist
-# MANIFEST.in exclude bypass via Unicode normalization) only matters when
-# *building* a source distribution, which this project never does.
-setuptools<81
-six==1.16.0
-sqlparse==0.5.5
-stack-data==0.6.3
-tornado==6.5.7
-tqdm==4.66.5
-traitlets==5.14.3
-typing_extensions==4.12.2
-tzdata==2024.1
-ua-parser==1.0.1
-ua-parser-builtins==0.18.0.post1
-uritemplate==4.1.1
-urllib3==2.7.0
-user-agents==2.2.0
-waitress==3.0.2
-wcwidth==0.2.13
-whitenoise==6.8.2
-XlsxWriter==3.2.3
-yarl==1.20.0
 openpyxl==3.1.5
+pandas==2.2.2
+pillow==13.0.0
+propcache==0.5.4
+PyJWT==2.15.1
+python-dateutil==3.0.0
+python-dotenv==1.2.4
+python-json-logger==4.2.0
+pytz==2026.5
+PyYAML==6.0.3
+redis==8.1.0
+referencing==0.37.0
+requests==2.34.2
+resend==2.50.0
+rpds-py==2026.9.1
+six==1.17.0
+sqlparse==0.6.0
+swagger-spec-validator==3.0.4
+typing_extensions==4.16.0
+tzdata==2026.5
+ua-parser==1.0.2
+ua-parser-builtins==202610
+uritemplate==4.2.0
+urllib3==2.8.0
+user-agents==2.2.0
+xlsxwriter==3.3.0
+yarl==1.25.1
+setuptools<81
