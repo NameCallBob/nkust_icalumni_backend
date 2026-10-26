@@ -6,18 +6,18 @@
 
 # ── 測試框架 ──
 pytest==9.1.1
-pytest-django==4.12.0
+pytest-django==4.14.0
 pytest-cov==7.1.0
 # 每次以隨機順序執行，暴露「測試之間互相依賴」的隱性 bug。
 # 需要重現某次失敗順序時：pytest -p no:randomly 或 pytest -p randomly --randomly-seed=<seed>
-pytest-randomly==4.1.0
+pytest-randomly==5.0.0
 
 # ── 測試資料 ──
 factory-boy==3.3.3
 freezegun==1.5.5
 
 # ── 靜態檢查 ──
-flake8==7.3.0
+flake8==7.4.1
 
 # ── 依賴弱點掃描（CI 用；見 .github/workflows/ci.yml）──
 pip-audit==2.10.1

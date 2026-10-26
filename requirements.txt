@@ -18,7 +18,7 @@ asgiref==3.13.0
 attrs==26.1.0
 certifi==2026.10.23
 charset-normalizer==3.5.2
-Django==5.2.18
+Django==6.1.2
 django-cors-headers==4.9.0
 django-filter==26.2
 django-redis==7.0.0
@@ -37,9 +37,9 @@ jsonschema-specifications==2025.9.1
 maxminddb==3.2.0
 multidict==7.1.0
 mysqlclient==2.3.0
-numpy==2.0.1
+numpy==2.5.4
 openpyxl==3.1.5
-pandas==2.2.2
+pandas==3.1.0
 pillow==13.0.0
 propcache==0.5.4
 PyJWT==2.15.1
